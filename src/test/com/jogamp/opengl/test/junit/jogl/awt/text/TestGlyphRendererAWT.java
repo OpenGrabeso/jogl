@@ -44,10 +44,10 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.nio.ByteBuffer;
 
-import jogamp.opengl.util.awt.text.Glyph;
-import jogamp.opengl.util.awt.text.GlyphRenderer;
-import jogamp.opengl.util.awt.text.GlyphRendererGL2;
-import jogamp.opengl.util.awt.text.GlyphRendererGL3;
+import com.opengrabeso.ogltext.util.awt.text.Glyph;
+import com.opengrabeso.ogltext.util.awt.text.GlyphRenderer;
+import com.opengrabeso.ogltext.util.awt.text.GlyphRendererGL2;
+import com.opengrabeso.ogltext.util.awt.text.GlyphRendererGL3;
 
 import javax.swing.JFrame;
 

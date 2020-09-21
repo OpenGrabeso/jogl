@@ -36,13 +36,13 @@ import com.jogamp.opengl.awt.GLCanvas;
 
 import javax.swing.JFrame;
 
-import jogamp.opengl.util.awt.text.Quad;
-import jogamp.opengl.util.awt.text.QuadPipeline;
-import jogamp.opengl.util.awt.text.QuadPipelineGL10;
-import jogamp.opengl.util.awt.text.QuadPipelineGL11;
-import jogamp.opengl.util.awt.text.QuadPipelineGL15;
-import jogamp.opengl.util.awt.text.QuadPipelineGL30;
-import jogamp.opengl.util.awt.text.ShaderLoader;
+import com.opengrabeso.ogltext.util.awt.text.Quad;
+import com.opengrabeso.ogltext.util.awt.text.QuadPipeline;
+import com.opengrabeso.ogltext.util.awt.text.QuadPipelineGL10;
+import com.opengrabeso.ogltext.util.awt.text.QuadPipelineGL11;
+import com.opengrabeso.ogltext.util.awt.text.QuadPipelineGL15;
+import com.opengrabeso.ogltext.util.awt.text.QuadPipelineGL30;
+import com.opengrabeso.ogltext.util.awt.text.ShaderLoader;
 
 import org.junit.Test;
 

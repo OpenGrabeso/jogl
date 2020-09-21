@@ -32,7 +32,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
-import com.jogamp.opengl.util.awt.TextRenderer;
+import com.opengrabeso.ogltext.util.awt.TextRenderer;
 
 import java.awt.Color;
 import java.awt.Font;

@@ -32,9 +32,8 @@ import java.awt.Font;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import com.jogamp.opengl.util.awt.TextRenderer;
+import com.opengrabeso.ogltext.util.awt.TextRenderer;
 
-import com.jogamp.opengl.GL2ES1;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
