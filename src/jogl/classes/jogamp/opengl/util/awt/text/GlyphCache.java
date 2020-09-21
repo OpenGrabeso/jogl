@@ -318,7 +318,7 @@ public final class GlyphCache implements TextureBackingStore.EventListener {
     private static RectanglePacker createPacker(/*@Nonnull*/ final Font font,
                                                 /*@Nonnull*/ final BackingStoreManager manager) {
         final int size = findBackingStoreSizeForFont(font);
-        return new RectanglePacker(manager, size, size, 1f);
+        return new RectanglePacker(manager, size, size);
     }
 
     /**

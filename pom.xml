@@ -22,7 +22,7 @@
     </dependency>
     <dependency>
       <groupId>org.jogamp.gluegen</groupId>
-      <artifactId>gluegen</artifactId>
+      <artifactId>gluegen-rt-main</artifactId>
       <version>2.3.2</version>
       <scope>compile</scope>
     </dependency>

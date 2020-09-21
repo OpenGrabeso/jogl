@@ -30,6 +30,7 @@ package com.jogamp.opengl.test.junit.jogl.awt.text;
 import com.jogamp.opengl.DebugGL2;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLEventListener;
 
 
 /**
