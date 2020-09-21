@@ -25,16 +25,18 @@
  * authors and should not be interpreted as representing official policies, either expressed
  * or implied, of JogAmp Community.
  */
-package com.jogamp.opengl.test.junit.jogl.awt.text;
+package com.opengrabeso.ogltext.util.awt.text;
 
+import com.jogamp.opengl.DebugGL2;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLEventListener;
 
 
 /**
- * Skeletal implementation of {@link GLEventListener} for OpenGL 2 with debugging.
+ * Skeletal implementation of {@link GLEventListener} for OpenGL 2 with debugging enabled.
  */
-abstract class GL2EventAdapter extends AbstractGL2EventAdapter {
+abstract class DebugGL2EventAdapter extends AbstractGL2EventAdapter {
 
     /**
      * {@inheritDoc}
@@ -44,6 +46,8 @@ abstract class GL2EventAdapter extends AbstractGL2EventAdapter {
     @Override
     public final void init(final GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
-        doInit(gl);
+        final DebugGL2 dgl = new DebugGL2(gl);
+        drawable.setGL(dgl);
+        doInit(dgl);
     }
 }

@@ -26,7 +26,7 @@
  * or implied, of JogAmp Community.
  */
 
-package com.jogamp.opengl.test.junit.jogl.awt.text;
+package com.opengrabeso.ogltext.util.awt.text;
 
 import java.awt.Font;
 import java.io.OutputStream;

@@ -25,62 +25,25 @@
  * authors and should not be interpreted as representing official policies, either expressed
  * or implied, of JogAmp Community.
  */
-package com.jogamp.opengl.test.junit.jogl.awt.text;
+package com.opengrabeso.ogltext.util.awt.text;
 
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLEventListener;
 
 
 /**
- * Skeletal implementation of {@link GLEventListener}.
+ * Skeletal implementation of {@link GLEventListener} for OpenGL 2 with debugging.
  */
-abstract class GLEventAdapter implements GLEventListener  {
+abstract class GL2EventAdapter extends AbstractGL2EventAdapter {
 
     /**
-     * Handles initialize events.
+     * {@inheritDoc}
      *
-     * @param drawable Surface being initialized
-     * @throws NullPointerException if drawable is <tt>null</tt>
+     * @throws NullPointerException {@inheritDoc}
      */
     @Override
-    public void init(final GLAutoDrawable drawable) {
-        // pass
-    }
-
-    /**
-     * Handles display events.
-     *
-     * @param drawable Surface being drawn to
-     * @throws NullPointerException if drawable is <tt>null</tt>
-     */
-    @Override
-    public void display(final GLAutoDrawable drawable) {
-        // pass
-    }
-
-    /**
-     * Handles dispose events.
-     *
-     * @param drawable Surface being disposed of
-     * @throws NullPointerException if drawable is <tt>null</tt>
-     */
-    @Override
-    public void dispose(final GLAutoDrawable drawable) {
-        // pass
-    }
-
-    /**
-     * Handles window resizing events and invokes {@link #doReshape}.
-     *
-     * @param drawable Surface being reshaped
-     * @param x Left side of viewport
-     * @param y Top of viewport
-     * @param width Width of viewport
-     * @param height Height of viewport
-     * @throws NullPointerException if drawable is <tt>null</tt>
-     */
-    @Override
-    public void reshape(final GLAutoDrawable drawable, final int x, int y, final int width, int height) {
-        // pass
+    public final void init(final GLAutoDrawable drawable) {
+        final GL2 gl = drawable.getGL().getGL2();
+        doInit(gl);
     }
 }

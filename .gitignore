@@ -10,3 +10,4 @@ build*/
 make/lib/external/*
 /.idea/
 *.iml
+/target/

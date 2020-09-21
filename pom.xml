@@ -32,10 +32,4 @@
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
-
-  <build>
-    <sourceDirectory>${project.basedir}/src/jogl/classes</sourceDirectory>
-    <testSourceDirectory>${project.basedir}/src/test</testSourceDirectory>
-  </build>
-
 </project>

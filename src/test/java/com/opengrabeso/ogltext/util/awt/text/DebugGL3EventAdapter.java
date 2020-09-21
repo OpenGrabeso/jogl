@@ -25,16 +25,18 @@
  * authors and should not be interpreted as representing official policies, either expressed
  * or implied, of JogAmp Community.
  */
-package com.jogamp.opengl.test.junit.jogl.awt.text;
+package com.opengrabeso.ogltext.util.awt.text;
 
+import com.jogamp.opengl.DebugGL3;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLEventListener;
 
 
 /**
  * Skeletal implementation of {@link GLEventListener} for OpenGL 3 with debugging enabled.
  */
-abstract class GL3EventAdapter extends AbstractGL3EventAdapter {
+abstract class DebugGL3EventAdapter extends AbstractGL3EventAdapter {
 
     /**
      * {@inheritDoc}
@@ -44,6 +46,8 @@ abstract class GL3EventAdapter extends AbstractGL3EventAdapter {
     @Override
     public final void init(final GLAutoDrawable drawable) {
         final GL3 gl = drawable.getGL().getGL3();
-        doInit(gl);
+        final DebugGL3 dgl = new DebugGL3(gl);
+        drawable.setGL(dgl);
+        doInit(dgl);
     }
 }

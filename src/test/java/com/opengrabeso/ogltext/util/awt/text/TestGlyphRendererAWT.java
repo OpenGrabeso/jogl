@@ -25,7 +25,7 @@
  * authors and should not be interpreted as representing official policies, either expressed
  * or implied, of JogAmp Community.
  */
-package com.jogamp.opengl.test.junit.jogl.awt.text;
+package com.opengrabeso.ogltext.util.awt.text;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -43,11 +43,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.nio.ByteBuffer;
-
-import com.opengrabeso.ogltext.util.awt.text.Glyph;
-import com.opengrabeso.ogltext.util.awt.text.GlyphRenderer;
-import com.opengrabeso.ogltext.util.awt.text.GlyphRendererGL2;
-import com.opengrabeso.ogltext.util.awt.text.GlyphRendererGL3;
 
 import javax.swing.JFrame;
 
