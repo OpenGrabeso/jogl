@@ -36,7 +36,9 @@ import com.jogamp.opengl.awt.GLCanvas;
 
 import javax.swing.JFrame;
 
+import com.opengrabeso.ogltext.Headless;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 
 /**
