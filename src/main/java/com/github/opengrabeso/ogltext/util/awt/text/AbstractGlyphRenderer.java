@@ -397,7 +397,7 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
         }
 
         // Render any outstanding quads first
-        if (!pipeline.isEmpty()) {
+        if (pipeline != null && !pipeline.isEmpty()) {
             fireEvent(EventType.AUTOMATIC_FLUSH);
             final GL gl = GLContext.getCurrentGL();
             flush(gl);
