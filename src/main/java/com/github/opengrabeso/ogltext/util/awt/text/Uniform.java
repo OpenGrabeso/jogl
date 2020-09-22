@@ -64,9 +64,6 @@ abstract class Uniform {
         Check.argument(program >= 0, "Program cannot be negative");
 
         location = gl.glGetUniformLocation(program, name);
-        if (location == -1) {
-            throw new IllegalStateException("Could not find uniform in program");
-        }
     }
 
     /**
