@@ -74,6 +74,8 @@ public final class GlyphRendererGL3 extends AbstractGlyphRenderer {
      */
     private boolean restoreBlending;
 
+    private boolean restoreScissor;
+
     /**
      * True if depth test needs to be reset.
      */
@@ -153,6 +155,11 @@ public final class GlyphRendererGL3 extends AbstractGlyphRenderer {
             gl3.glDisable(GL.GL_DEPTH_TEST);
             restoreDepthTest = true;
         }
+        restoreScissor = false;
+        if (gl3.glIsEnabled(GL.GL_SCISSOR_TEST)) {
+            gl3.glDisable(GL.GL_SCISSOR_TEST);
+            restoreScissor = true;
+        }
 
         // Check transform
         if (ortho) {
@@ -193,6 +200,9 @@ public final class GlyphRendererGL3 extends AbstractGlyphRenderer {
         if (restoreBlending) {
             gl3.glDisable(GL.GL_BLEND);
         }
+        if (restoreScissor) {
+            gl3.glEnable(GL.GL_SCISSOR_TEST);
+        }
         if (restoreDepthTest) {
             gl3.glEnable(GL.GL_DEPTH_TEST);
         }
@@ -226,7 +236,9 @@ public final class GlyphRendererGL3 extends AbstractGlyphRenderer {
 
         final GL3 gl3 = gl.getGL3();
 
-        gl3.glUniformMatrix4fv(transform.location, 1, transpose, value, 0);
+        if (transform.location >= 0) {
+            gl3.glUniformMatrix4fv(transform.location, 1, transpose, value, 0);
+        }
         transform.dirty = true;
     }
 
