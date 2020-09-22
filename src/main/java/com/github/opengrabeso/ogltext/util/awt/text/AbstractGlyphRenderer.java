@@ -453,7 +453,7 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
         Check.state(!orthoMode, "Must be in 3D mode");
 
         // Render any outstanding quads first
-        if (!pipeline.isEmpty()) {
+        if (pipeline != null && !pipeline.isEmpty()) {
             fireEvent(EventType.AUTOMATIC_FLUSH);
             final GL gl = GLContext.getCurrentGL();
             flush(gl);
