@@ -91,6 +91,8 @@ final class TextureBackingStoreManager implements BackingStoreManager {
      */
     private boolean smooth = false;
 
+    private boolean useRed = false;
+
     /**
      * Constructs a {@link TextureBackingStoreManager}.
      *
@@ -103,7 +105,8 @@ final class TextureBackingStoreManager implements BackingStoreManager {
     TextureBackingStoreManager(/*@Nonnull*/ final Font font,
                                final boolean antialias,
                                final boolean subpixel,
-                               final boolean mipmap) {
+                               final boolean mipmap,
+                                final boolean useRed) {
 
         Check.notNull(font, "Font cannot be null");
 
@@ -111,6 +114,7 @@ final class TextureBackingStoreManager implements BackingStoreManager {
         this.antialias = antialias;
         this.subpixel = subpixel;
         this.mipmap = mipmap;
+        this.useRed = useRed;
     }
 
     /**
@@ -191,7 +195,7 @@ final class TextureBackingStoreManager implements BackingStoreManager {
                 width, height,
                 font,
                 antialias, subpixel,
-                smooth, mipmap);
+                smooth, mipmap, useRed);
     }
 
     /**

@@ -160,9 +160,9 @@ public final class GlyphCache implements TextureBackingStore.EventListener {
                        /*@Nonnull*/ final RenderDelegate rd,
                        final boolean antialias,
                        final boolean subpixel,
-                       final boolean mipmap) {
+                       final boolean mipmap, final boolean useRed) {
         this.renderDelegate = rd;
-        this.manager = new TextureBackingStoreManager(font, antialias, subpixel, mipmap);
+        this.manager = new TextureBackingStoreManager(font, antialias, subpixel, mipmap, useRed);
         this.packer = createPacker(font, manager);
     }
 
@@ -629,12 +629,12 @@ public final class GlyphCache implements TextureBackingStore.EventListener {
                                          /*@Nonnull*/ final RenderDelegate rd,
                                          final boolean antialias,
                                          final boolean subpixel,
-                                         final boolean mipmap) {
+                                         final boolean mipmap, final boolean useRed) {
 
         Check.notNull(font, "Font cannot be null");
         Check.notNull(rd, "Render delegate cannot be null");
 
-        final GlyphCache gc = new GlyphCache(font, rd, antialias, subpixel, mipmap);
+        final GlyphCache gc = new GlyphCache(font, rd, antialias, subpixel, mipmap, useRed);
         gc.manager.addListener(gc);
         return gc;
     }

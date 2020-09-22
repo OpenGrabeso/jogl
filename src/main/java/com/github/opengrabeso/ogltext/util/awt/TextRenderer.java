@@ -164,7 +164,7 @@ public final class TextRenderer {
      * @throws NullPointerException if font is null
      */
     public TextRenderer(/*@Nonnull*/ final Font font) {
-        this(font, false, false, null, false, null);
+        this(font, false, false, null, false, null, false);
     }
 
     /**
@@ -181,7 +181,7 @@ public final class TextRenderer {
      * @throws NullPointerException if font is null
      */
     public TextRenderer(/*@Nonnull*/ final Font font, final boolean mipmap) {
-        this(font, false, false, null, mipmap, null);
+        this(font, false, false, null, mipmap, null, false);
     }
 
     /**
@@ -199,8 +199,8 @@ public final class TextRenderer {
      */
     public TextRenderer(/*@Nonnull*/ final Font font,
                         final boolean antialias,
-                        final boolean subpixel) {
-        this(font, antialias, subpixel, null, false, null);
+                        final boolean subpixel, final boolean useRed) {
+        this(font, antialias, subpixel, null, false, null, useRed);
     }
 
     /**
@@ -222,7 +222,7 @@ public final class TextRenderer {
                         final boolean antialias,
                         final boolean subpixel,
                         /*@CheckForNull*/ final RenderDelegate rd) {
-        this(font, antialias, subpixel, rd, false, null);
+        this(font, antialias, subpixel, rd, false, null, false);
     }
 
     /**
@@ -247,7 +247,7 @@ public final class TextRenderer {
                         final boolean subpixel,
                         /*CheckForNull*/ final RenderDelegate rd,
                         final boolean mipmap) {
-        this(font, antialias, subpixel, rd, mipmap, null);
+        this(font, antialias, subpixel, rd, mipmap, null, false);
     }
 
     /**
@@ -275,7 +275,8 @@ public final class TextRenderer {
                         final boolean subpixel,
                         /*@CheckForNull*/ RenderDelegate rd,
                         final boolean mipmap,
-                        /*@CheckForNull*/ final UnicodeBlock ub) {
+                        /*@CheckForNull*/ final UnicodeBlock ub,
+                                     final boolean useRed) {
 
         Check.notNull(font, "Font cannot be null");
         if (rd == null) {
@@ -283,7 +284,7 @@ public final class TextRenderer {
         }
 
         this.font = font;
-        this.glyphCache = GlyphCache.newInstance(font, rd, antialias, subpixel, mipmap);
+        this.glyphCache = GlyphCache.newInstance(font, rd, antialias, subpixel, mipmap, useRed);
         this.glyphProducer = GlyphProducers.get(font, rd, glyphCache.getFontRenderContext(), ub);
     }
 

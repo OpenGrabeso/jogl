@@ -299,8 +299,8 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
         // Compute position and size
         quad.xl = x + (scale * glyph.kerning);
         quad.xr = quad.xl + (scale * glyph.width);
-        quad.yb = y - (scale * glyph.descent);
-        quad.yt = quad.yb + (scale * glyph.height);
+        quad.yb = y + (scale * glyph.descent);
+        quad.yt = quad.yb - (scale * glyph.height);
         quad.z = z;
         quad.sl = coords.left();
         quad.sr = coords.right();

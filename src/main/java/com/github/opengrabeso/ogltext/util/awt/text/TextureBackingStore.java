@@ -123,6 +123,11 @@ final class TextureBackingStore {
     private boolean smoothChanged = false;
 
     /**
+     * True if the textures should be stored as GL_RED instead of GL_INTENSITY
+     */
+    private boolean useRed = false;
+
+    /**
      * Constructs a {@link TextureBackingStore}.
      *
      * @param width Width of backing store
@@ -140,8 +145,9 @@ final class TextureBackingStore {
                         /*@Nonnull*/ final Font font,
                         final boolean antialias,
                         final boolean subpixel,
-                        final boolean smooth,
-                        final boolean mipmap) {
+                         final boolean smooth,
+                         final boolean mipmap,
+                         final boolean useRed) {
 
         Check.argument(width >= 0, "Width cannot be negative");
         Check.argument(height >= 0, "Height cannot be negative");
@@ -154,6 +160,7 @@ final class TextureBackingStore {
         this.pixels = getPixels(image);
         this.mipmap = mipmap;
         this.smooth = smooth;
+        this.useRed = useRed;
     }
 
     /**
@@ -258,7 +265,11 @@ final class TextureBackingStore {
      */
     private void ensureTexture(/*@Nonnull*/ final GL gl) {
         if (texture == null) {
-            texture = new GrayTexture2D(gl, width, height, smooth, mipmap);
+            if (useRed) {
+                texture = new RedTexture2D(gl, width, height, smooth, mipmap);
+            } else {
+                texture = new GrayTexture2D(gl, width, height, smooth, mipmap);
+            }
         }
     }
 
