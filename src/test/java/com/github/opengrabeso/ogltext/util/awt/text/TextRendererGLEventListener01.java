@@ -105,7 +105,7 @@ public class TextRendererGLEventListener01 implements GLEventListener {
             if (testNumber == 2) {
                 renderer.begin3DRendering();
                 renderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-                renderer.draw3D(text, 0, 0, 0, 0.002f);
+                renderer.draw3D(text, 0, 0, 0, 0.002f, false);
                 renderer.end3DRendering();
             }
         }

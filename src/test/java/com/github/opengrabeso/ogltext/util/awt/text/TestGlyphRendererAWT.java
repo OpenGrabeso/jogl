@@ -134,9 +134,9 @@ public class TestGlyphRendererAWT {
                 final TextureCoords coordinates = new TextureCoords(0, 1, 1, 0);
                 glyphRenderer.beginRendering(gl, true, 512, 512, true);
                 glyphRenderer.setColor(1, 0, 1, 1); // magenta
-                glyphRenderer.drawGlyph(gl, glyph, 40, 80, 0, 1.0f, coordinates);
+                glyphRenderer.drawGlyph(gl, glyph, 40, 80, 0, 1.0f, false, coordinates);
                 glyphRenderer.setColor(1, 1, 0, 1); // yellow
-                glyphRenderer.drawGlyph(gl, glyph, 260, 80, 0, 1.0f, coordinates);
+                glyphRenderer.drawGlyph(gl, glyph, 260, 80, 0, 1.0f, false, coordinates);
                 glyphRenderer.endRendering(gl);
             }
         });
@@ -207,9 +207,9 @@ public class TestGlyphRendererAWT {
                 final TextureCoords coordinates = new TextureCoords(0, 1, 1, 0);
                 glyphRenderer.beginRendering(gl, true, 512, 512, true);
                 glyphRenderer.setColor(1, 0, 1, 1); // magenta
-                glyphRenderer.drawGlyph(gl, glyph, 40, 80, 0, 1.0f, coordinates);
+                glyphRenderer.drawGlyph(gl, glyph, 40, 80, 0, 1.0f, false, coordinates);
                 glyphRenderer.setColor(1, 1, 0, 1); // yellow
-                glyphRenderer.drawGlyph(gl, glyph, 260, 80, 0, 1.0f, coordinates);
+                glyphRenderer.drawGlyph(gl, glyph, 260, 80, 0, 1.0f, false, coordinates);
                 glyphRenderer.endRendering(gl);
             }
         });

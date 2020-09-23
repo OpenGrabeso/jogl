@@ -290,6 +290,7 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
                                  /*@CheckForSigned*/ final float y,
                                  /*@CheckForSigned*/ final float z,
                                  /*@CheckForSigned*/ final float scale,
+                                              final boolean verticalFlip,
                                  /*@Nonnull*/ final TextureCoords coords) {
 
         Check.notNull(gl, "GL cannot be null");
@@ -297,10 +298,11 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
         Check.notNull(coords, "Texture coordinates cannot be null");
 
         // Compute position and size
+        float yScale = verticalFlip ? -scale : scale;
         quad.xl = x + (scale * glyph.kerning);
         quad.xr = quad.xl + (scale * glyph.width);
-        quad.yb = y + (scale * glyph.descent);
-        quad.yt = quad.yb - (scale * glyph.height);
+        quad.yb = y - (yScale * glyph.descent);
+        quad.yt = quad.yb + (yScale * glyph.height);
         quad.z = z;
         quad.sl = coords.left();
         quad.sr = coords.right();

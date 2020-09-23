@@ -415,7 +415,7 @@ public final class TextRenderer {
     public void draw(/*@Nonnull*/ final CharSequence text,
                      /*@CheckForSigned*/ final int x,
                      /*@CheckForSigned*/ final int y) {
-        draw3D(text, x, y, 0, 1);
+        draw3D(text, x, y, 0, 1, false);
     }
 
     /**
@@ -435,7 +435,7 @@ public final class TextRenderer {
     public void draw(/*@Nonnull*/ final String text,
                      /*@CheckForSigned*/ final int x,
                      /*@CheckForSigned*/ final int y) {
-        draw3D(text, x, y, 0, 1);
+        draw3D(text, x, y, 0, 1, false);
     }
 
     /**
@@ -457,8 +457,9 @@ public final class TextRenderer {
                        /*@CheckForSigned*/ final float x,
                        /*@CheckForSigned*/ final float y,
                        /*@CheckForSigned*/ final float z,
-                       /*@CheckForSigned*/ final float scale) {
-        draw3D(text.toString(), x, y, z, scale);
+                       /*@CheckForSigned*/ final float scale,
+                                    final boolean verticalFlip) {
+        draw3D(text.toString(), x, y, z, scale, verticalFlip);
     }
 
     /**
@@ -480,7 +481,9 @@ public final class TextRenderer {
                        /*@CheckForSigned*/ float x,
                        /*@CheckForSigned*/ final float y,
                        /*@CheckForSigned*/ final float z,
-                       /*@CheckForSigned*/ final float scale) {
+                       /*@CheckForSigned*/ final float scale,
+                                    final boolean verticalFlip
+                                    ) {
 
         Check.notNull(text, "Text cannot be null");
 
@@ -496,7 +499,7 @@ public final class TextRenderer {
                 glyphCache.upload(glyph);
             }
             final TextureCoords coords = glyphCache.find(glyph);
-            final float advance = glyphRenderer.drawGlyph(gl, glyph, x, y, z, scale, coords);
+            final float advance = glyphRenderer.drawGlyph(gl, glyph, x, y, z, scale, verticalFlip, coords);
             x += advance * scale;
         }
     }
@@ -1062,6 +1065,7 @@ public final class TextRenderer {
                                /*@CheckForSigned*/ final float y,
                                /*@CheckForSigned*/ final float z,
                                /*@CheckForSigned*/ final float scale,
+                               final boolean verticalFlip,
                                /*@Nonnull*/ final TextureCoords coords) {
 
             Check.notNull(gl, "GL cannot be null");
@@ -1071,7 +1075,7 @@ public final class TextRenderer {
             if (delegate == null) {
                 throw new IllegalStateException("Must be in render cycle!");
             } else {
-                return delegate.drawGlyph(gl, glyph, x, y, z, scale, coords);
+                return delegate.drawGlyph(gl, glyph, x, y, z, scale, verticalFlip, coords);
             }
         }
 

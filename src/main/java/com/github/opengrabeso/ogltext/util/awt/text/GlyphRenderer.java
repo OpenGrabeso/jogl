@@ -92,6 +92,7 @@ public interface GlyphRenderer {
                     /*@CheckForSigned*/ float y,
                     /*@CheckForSigned*/ float z,
                     /*@CheckForSigned*/ float scale,
+                    boolean verticalFlip,
                     /*@Nonnull*/ TextureCoords coords);
 
     /**
