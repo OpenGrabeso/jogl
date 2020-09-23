@@ -151,6 +151,15 @@ abstract class Texture2D extends Texture {
         gl.glPixelStorei(GL2.GL_UNPACK_SKIP_PIXELS, area.x);
         gl.glPixelStorei(GL2.GL_UNPACK_ROW_LENGTH, width);
 
+        // fonts look better when SRGB conversion is done on the textures
+        // this could be done in a shader for GL3, but not for GL2
+        byte[] srcPixels = pixels.array();
+        byte[] adjustedPixels = new byte[srcPixels.length];
+        for (int i = 0; i < adjustedPixels.length; i++) {
+            double s = (((int)srcPixels[i])&0xff) / 255.0;
+            double t = Math.pow(s, 1 / 2.2);
+            adjustedPixels[i] = (byte)(t * 255);
+        }
         // Update the texture
         gl.glTexSubImage2D(
                 GL.GL_TEXTURE_2D,     // target
@@ -161,7 +170,7 @@ abstract class Texture2D extends Texture {
                 area.height,          // height
                 getFormat(gl),        // format
                 GL.GL_UNSIGNED_BYTE,  // type
-                pixels);              // pixels
+                ByteBuffer.wrap(adjustedPixels));              // pixels
 
         // Reset unpack parameters
         gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, parameters[0]);
