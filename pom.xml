@@ -6,7 +6,7 @@
 
   <groupId>com.github.opengrabeso</groupId>
   <artifactId>text-renderer</artifactId>
-  <version>0.1.8</version>
+  <version>0.1.9</version>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -31,7 +31,9 @@
   <properties>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
 
   <build>
     <plugins>
