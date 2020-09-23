@@ -53,18 +53,16 @@ public final class GlyphRenderers {
      * @throws UnsupportedOperationException if GL is unsupported
      */
     /*@Nonnull*/
-    public static GlyphRenderer get(/*@Nonnull*/ final GL gl) {
+    public static GlyphRenderer get(/*@Nonnull*/ final GL gl, final boolean gl3) {
 
         Check.notNull(gl, "GL cannot be null");
 
         final GLProfile profile = gl.getGLProfile();
 
-        if (profile.isGL3()) {
+        if (gl3) {
             return new GlyphRendererGL3(gl.getGL3());
-        } else if (profile.isGL2()) {
-            return new GlyphRendererGL2();
         } else {
-            throw new UnsupportedOperationException("Profile currently unsupported");
+            return new GlyphRendererGL2();
         }
     }
 }

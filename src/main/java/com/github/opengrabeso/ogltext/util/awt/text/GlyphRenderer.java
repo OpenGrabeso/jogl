@@ -60,7 +60,7 @@ public interface GlyphRenderer {
                         boolean ortho,
                         /*@Nonnegative*/ int width,
                         /*@Nonnegative*/ int height,
-                        boolean disableDepthTest);
+                        boolean disableDepthTest, boolean gl3);
 
     /**
      * Frees resources used by this {@link GlyphRenderer}.

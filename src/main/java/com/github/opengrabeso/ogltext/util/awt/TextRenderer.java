@@ -42,6 +42,7 @@ import java.lang.Character.UnicodeBlock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import com.github.opengrabeso.ogltext.util.awt.text.Check;
 import com.github.opengrabeso.ogltext.util.awt.text.Glyph;
@@ -148,9 +149,16 @@ public final class TextRenderer {
     private final Mediator mediator = new Mediator();
 
     /**
+     * Use GL3 core features
+     * (GL2 is used otherwise)
+     * */
+    private boolean gl3 = false;
+
+    /**
      * True if this text renderer is ready to be used.
      */
     private boolean ready = false;
+
 
     /**
      * Constructs a {@link TextRenderer}.
@@ -165,6 +173,10 @@ public final class TextRenderer {
      */
     public TextRenderer(/*@Nonnull*/ final Font font) {
         this(font, false, false, null, false, null, false);
+    }
+
+    static public TextRenderer createTextRendererGL3(final Font font) {
+        return new TextRenderer(font, false, false, null, false, null, true);
     }
 
     /**
@@ -199,8 +211,8 @@ public final class TextRenderer {
      */
     public TextRenderer(/*@Nonnull*/ final Font font,
                         final boolean antialias,
-                        final boolean subpixel, final boolean useRed) {
-        this(font, antialias, subpixel, null, false, null, useRed);
+                        final boolean subpixel, final boolean gl3) {
+        this(font, antialias, subpixel, null, false, null, gl3);
     }
 
     /**
@@ -276,15 +288,16 @@ public final class TextRenderer {
                         /*@CheckForNull*/ RenderDelegate rd,
                         final boolean mipmap,
                         /*@CheckForNull*/ final UnicodeBlock ub,
-                                     final boolean useRed) {
+                                     final boolean gl3) {
 
         Check.notNull(font, "Font cannot be null");
         if (rd == null) {
             rd = DEFAULT_RENDER_DELEGATE;
         }
 
+        this.gl3 = gl3;
         this.font = font;
-        this.glyphCache = GlyphCache.newInstance(font, rd, antialias, subpixel, mipmap, useRed);
+        this.glyphCache = GlyphCache.newInstance(font, rd, antialias, subpixel, mipmap, gl3);
         this.glyphProducer = GlyphProducers.get(font, rd, glyphCache.getFontRenderContext(), ub);
     }
 
@@ -378,7 +391,7 @@ public final class TextRenderer {
 
         // Delegate to components
         glyphCache.beginRendering(gl);
-        glyphRenderer.beginRendering(gl, ortho, width, height, disableDepthTest);
+        glyphRenderer.beginRendering(gl, ortho, width, height, disableDepthTest, gl3);
     }
 
     /**
@@ -1016,7 +1029,7 @@ public final class TextRenderer {
                                    final boolean ortho,
                                    /*@Nonnegative*/ final int width,
                                    /*@Nonnegative*/ final int height,
-                                   final boolean disableDepthTest) {
+                                   final boolean disableDepthTest, final boolean gl3) {
 
             Check.notNull(gl, "GL cannot be null");
             Check.argument(width >= 0, "Width cannot be negative");
@@ -1025,7 +1038,7 @@ public final class TextRenderer {
             if (delegate == null) {
 
                 // Create the glyph renderer
-                delegate = GlyphRenderers.get(gl);
+                delegate = GlyphRenderers.get(gl, gl3);
 
                 // Add the event listeners
                 for (EventListener listener : listeners) {
@@ -1045,7 +1058,7 @@ public final class TextRenderer {
                 // Specify whether to use vertex arrays or not
                 delegate.setUseVertexArrays(useVertexArrays);
             }
-            delegate.beginRendering(gl, ortho, width, height, disableDepthTest);
+            delegate.beginRendering(gl, ortho, width, height, disableDepthTest, gl3);
         }
 
         @Override

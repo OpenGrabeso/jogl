@@ -141,7 +141,7 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
                                      final boolean ortho,
                                      /*@Nonnegative*/ final int width,
                                      /*@Nonnegative*/ final int height,
-                                     final boolean disableDepthTest) {
+                                     final boolean disableDepthTest, final boolean gl3) {
 
         Check.notNull(gl, "GL cannot be null");
         Check.argument(width >= 0, "Width cannot be negative");

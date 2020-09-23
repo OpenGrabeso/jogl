@@ -132,7 +132,7 @@ public class TestGlyphRendererAWT {
 
                 // Draw glyph
                 final TextureCoords coordinates = new TextureCoords(0, 1, 1, 0);
-                glyphRenderer.beginRendering(gl, true, 512, 512, true);
+                glyphRenderer.beginRendering(gl, true, 512, 512, true, false);
                 glyphRenderer.setColor(1, 0, 1, 1); // magenta
                 glyphRenderer.drawGlyph(gl, glyph, 40, 80, 0, 1.0f, false, coordinates);
                 glyphRenderer.setColor(1, 1, 0, 1); // yellow
@@ -205,7 +205,7 @@ public class TestGlyphRendererAWT {
 
                 // Draw glyph
                 final TextureCoords coordinates = new TextureCoords(0, 1, 1, 0);
-                glyphRenderer.beginRendering(gl, true, 512, 512, true);
+                glyphRenderer.beginRendering(gl, true, 512, 512, true, true);
                 glyphRenderer.setColor(1, 0, 1, 1); // magenta
                 glyphRenderer.drawGlyph(gl, glyph, 40, 80, 0, 1.0f, false, coordinates);
                 glyphRenderer.setColor(1, 1, 0, 1); // yellow

@@ -144,7 +144,7 @@ public class TestTextRendererAWT {
 
             @Override
             public void doInit(final GL3 gl) {
-                textRenderer = new TextRenderer(FONT);
+                textRenderer = TextRenderer.createTextRendererGL3(FONT);
             }
 
             @Override
