@@ -70,7 +70,7 @@ public final class GlyphRendererGL2 extends AbstractGlyphRenderer {
         gl2.glDisable(GL2.GL_LIGHTING);
         gl2.glEnable(GL2.GL_BLEND);
         gl2.glDisable(GL2.GL_SCISSOR_TEST);
-        gl2.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE_MINUS_SRC_ALPHA);
+        gl2.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
         gl2.glEnable(GL2.GL_TEXTURE_2D);
         gl2.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
 
