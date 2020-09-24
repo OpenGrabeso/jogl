@@ -31,6 +31,7 @@ import com.github.opengrabeso.jaagl.GL;
 import com.github.opengrabeso.jaagl.GL2;
 import com.github.opengrabeso.jaagl.GL3;
 import com.github.opengrabeso.jaagl.GLProfile;
+import com.github.opengrabeso.jaagl.jogl.JoGL;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.github.opengrabeso.ogltext.util.texture.TextureCoords;
 
@@ -104,7 +105,8 @@ public class TestGlyphRendererAWT {
         canvas.addGLEventListener(new DebugGL2EventAdapter() {
 
             @Override
-            public void doInit(final GL2 gl) {
+            public void doInit(final com.jogamp.opengl.GL2 jgl) {
+                GL gl = JoGL.wrap(jgl);
 
                 // Set up glyph renderer
                 glyphRenderer = new GlyphRendererGL2();
@@ -124,7 +126,8 @@ public class TestGlyphRendererAWT {
             }
 
             @Override
-            public void doDisplay(final GL2 gl) {
+            public void doDisplay(final com.jogamp.opengl.GL2 jgl) {
+                GL gl = JoGL.wrap(jgl);
 
                 // View
                 gl.glClearColor(0, 1, 1, 1);
@@ -178,7 +181,8 @@ public class TestGlyphRendererAWT {
         canvas.addGLEventListener(new DebugGL3EventAdapter() {
 
             @Override
-            public void doInit(final GL3 gl) {
+            public void doInit(final com.jogamp.opengl.GL3 jgl) {
+                GL3 gl = JoGL.wrap(jgl);
 
                 // Set up glyph renderer
                 glyphRenderer = new GlyphRendererGL3(gl);
@@ -197,7 +201,8 @@ public class TestGlyphRendererAWT {
             }
 
             @Override
-            public void doDisplay(final GL3 gl) {
+            public void doDisplay(final com.jogamp.opengl.GL3 jgl) {
+                GL3 gl = JoGL.wrap(jgl);
 
                 // Clear
                 gl.glClearColor(0, 1, 1, 1);

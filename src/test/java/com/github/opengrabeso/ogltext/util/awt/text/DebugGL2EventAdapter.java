@@ -45,7 +45,7 @@ abstract class DebugGL2EventAdapter extends AbstractGL2EventAdapter {
      */
     @Override
     public final void init(final GLAutoDrawable drawable) {
-        final GL2 gl = drawable.getGL().getGL2();
+        final com.jogamp.opengl.GL2 gl = drawable.getGL().getGL2();
         final DebugGL2 dgl = new DebugGL2(gl);
         drawable.setGL(dgl);
         doInit(dgl);

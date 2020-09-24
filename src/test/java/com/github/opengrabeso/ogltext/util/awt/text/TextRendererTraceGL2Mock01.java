@@ -66,7 +66,7 @@ public class TextRendererTraceGL2Mock01 extends TraceGL2 {
 
     TextRendererGLEventListener01 listener;
 
-    public TextRendererTraceGL2Mock01(final GL2 downstreamGL2, final PrintStream stream, final TextRendererGLEventListener01 listener) {
+    public TextRendererTraceGL2Mock01(final com.jogamp.opengl.GL2 downstreamGL2, final PrintStream stream, final TextRendererGLEventListener01 listener) {
         super(downstreamGL2, stream);
         this.listener = listener;
     }

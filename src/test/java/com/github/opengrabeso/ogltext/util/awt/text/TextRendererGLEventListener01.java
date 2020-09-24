@@ -32,13 +32,14 @@ import java.awt.Font;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import com.github.opengrabeso.jaagl.jogl.JoGL;
 import com.github.opengrabeso.ogltext.util.awt.TextRenderer;
 
 import com.github.opengrabeso.jaagl.GL2;
-import com.github.opengrabeso.jaagl.GLAutoDrawable;
-import com.github.opengrabeso.jaagl.GLEventListener;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
-import com.github.opengrabeso.jaagl.GLu.GLU;
+import com.jogamp.opengl.glu.GLU;
 
 import org.junit.Assert;
 
@@ -82,7 +83,9 @@ public class TextRendererGLEventListener01 implements GLEventListener {
     }
 
     public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width, final int height) {
-        final GL2 gl = drawable.getGL().getGL2();
+        final com.jogamp.opengl.GL2 jgl = drawable.getGL().getGL2();
+        GL2 gl = JoGL.wrap(jgl);
+
         gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
         gl.glLoadIdentity();
         glu.gluOrtho2D(0, 1, 0, 1);

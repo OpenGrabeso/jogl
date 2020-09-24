@@ -29,9 +29,11 @@ package com.github.opengrabeso.ogltext.util.awt.text;
 
 import static org.junit.Assert.*;
 
+import com.github.opengrabeso.jaagl.GL;
 import com.github.opengrabeso.jaagl.GL2;
 import com.github.opengrabeso.jaagl.GL2ES2;
 import com.github.opengrabeso.jaagl.GL3;
+import com.github.opengrabeso.jaagl.jogl.JoGL;
 import com.jogamp.opengl.awt.GLCanvas;
 
 import javax.swing.JFrame;
@@ -108,13 +110,16 @@ public class TestQuadPipelineAWT {
         canvas.addGLEventListener(new DebugGL2EventAdapter() {
 
             @Override
-            public void doInit(final GL2 gl) {
+            public void doInit(final com.jogamp.opengl.GL2 jgl) {
+                GL2 gl = JoGL.wrap(jgl);
+
                 pipeline = new QuadPipelineGL15(gl);
                 quad = createQuad();
             }
 
             @Override
-            public void doDisplay(final GL2 gl) {
+            public void doDisplay(final com.jogamp.opengl.GL2 jgl) {
+                GL2 gl = JoGL.wrap(jgl);
 
                 // View
                 gl.glViewport(0, 0, 512, 512);
@@ -158,14 +163,16 @@ public class TestQuadPipelineAWT {
         canvas.addGLEventListener(new DebugGL3EventAdapter() {
 
             @Override
-            public void doInit(final GL3 gl) {
+            public void doInit(final com.jogamp.opengl.GL3 jgl) {
+                GL3 gl = JoGL.wrap(jgl);
                 program = createProgram(gl);
                 pipeline = new QuadPipelineGL30(gl, program);
                 quad = createQuad();
             }
 
             @Override
-            public void doDisplay(final GL3 gl) {
+            public void doDisplay(final com.jogamp.opengl.GL3 jgl) {
+                GL3 gl = JoGL.wrap(jgl);
 
                 // View
                 gl.glViewport(0, 0, 512, 512);

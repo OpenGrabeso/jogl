@@ -29,7 +29,9 @@ package com.github.opengrabeso.ogltext.graph;
 
 import java.io.IOException;
 
-import com.github.opengrabeso.jaagl.GL2ES2;
+import com.github.opengrabeso.jaagl.GL2GL3;
+import com.github.opengrabeso.jaagl.jogl.JoGL;
+import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
@@ -138,7 +140,7 @@ public abstract class TextRendererGLELBase implements GLEventListener {
         this.renderer = RegionRenderer.create(rs, enableCallback, disableCallback);
         rs.setHintMask(RenderState.BITHINT_GLOBAL_DEPTH_TEST_ENABLED);
         this.textRenderUtil = new TextRegionUtil(renderModes);
-        final GL2ES2 gl = drawable.getGL().getGL2ES2();
+        final com.jogamp.opengl.GL2ES2 gl = drawable.getGL().getGL2ES2();
         renderer.init(gl, renderModes);
         rs.setColorStatic(staticRGBAColor[0], staticRGBAColor[1], staticRGBAColor[2], staticRGBAColor[3]);
         renderer.enable(gl, false);
@@ -153,7 +155,7 @@ public abstract class TextRendererGLELBase implements GLEventListener {
     @Override
     public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width, final int height) {
         if( null != renderer ) {
-            final GL2ES2 gl = drawable.getGL().getGL2ES2();
+            final com.jogamp.opengl.GL2ES2 gl = drawable.getGL().getGL2ES2();
             renderer.enable(gl, true);
             if( exclusivePMVMatrix ) {
                 // renderer.reshapePerspective(gl, 45.0f, width, height, 0.1f, 1000.0f);
@@ -172,7 +174,7 @@ public abstract class TextRendererGLELBase implements GLEventListener {
     @Override
     public void dispose(final GLAutoDrawable drawable) {
         if( null != renderer ) {
-            final GL2ES2 gl = drawable.getGL().getGL2ES2();
+            final com.jogamp.opengl.GL2ES2 gl = drawable.getGL().getGL2ES2();
             renderer.destroy(gl);
         }
     }

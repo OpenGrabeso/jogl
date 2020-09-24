@@ -28,7 +28,7 @@
 package com.github.opengrabeso.ogltext.util.awt.text;
 
 import com.github.opengrabeso.jaagl.GL2ES2;
-import com.jogamp.opengl.util.glsl.ShaderUtil;
+import com.github.opengrabeso.ogltext.util.glsl.ShaderUtil;
 
 
 /**
