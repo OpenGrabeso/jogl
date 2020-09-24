@@ -33,7 +33,7 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import com.jogamp.opengl.GL2;
+import com.github.opengrabeso.jaagl.GL2;
 import com.jogamp.opengl.TraceGL2;
 
 import com.jogamp.common.nio.Buffers;

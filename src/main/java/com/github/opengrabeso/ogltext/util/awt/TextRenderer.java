@@ -27,10 +27,9 @@
  */
 package com.github.opengrabeso.ogltext.util.awt;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GLContext;
-import com.jogamp.opengl.GLException;
-import com.jogamp.opengl.util.texture.TextureCoords;
+import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GLContext;
+import com.github.opengrabeso.ogltext.util.texture.TextureCoords;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -42,7 +41,6 @@ import java.lang.Character.UnicodeBlock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import com.github.opengrabeso.ogltext.util.awt.text.Check;
 import com.github.opengrabeso.ogltext.util.awt.text.Glyph;
@@ -93,9 +91,8 @@ import com.github.opengrabeso.ogltext.util.awt.text.GlyphRenderers;
  *
  * <p>
  * Internally, the renderer uses a rectangle packing algorithm to pack both glyphs and full
- * strings' rendering results (which are variable size) onto a larger OpenGL texture.  The internal
- * backing store is maintained using a {@link TextureRenderer
- * TextureRenderer}.  A least recently used (LRU) algorithm is used to discard previously rendered
+ * strings' rendering results (which are variable size) onto a larger OpenGL texture.
+ * A least recently used (LRU) algorithm is used to discard previously rendered
  * strings; the specific algorithm is undefined, but is currently implemented by flushing unused
  * strings' rendering results every few hundred rendering cycles, where a rendering cycle is
  * defined as a pair of calls to {@link #beginRendering beginRendering} / {@link #endRendering

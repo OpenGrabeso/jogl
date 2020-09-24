@@ -27,8 +27,8 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
+import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL2;
 
 
 
@@ -81,22 +81,22 @@ public final class QuadPipelineGL15 extends AbstractQuadPipeline {
         final GL2 gl2 = gl.getGL2();
 
         // Change state
-        gl2.glPushClientAttrib((int) GL2.GL_ALL_CLIENT_ATTRIB_BITS);
-        gl2.glBindBuffer(GL2.GL_ARRAY_BUFFER, vbo);
+        gl2.glPushClientAttrib((int) gl2.GL_ALL_CLIENT_ATTRIB_BITS());
+        gl2.glBindBuffer(gl2.GL_ARRAY_BUFFER(), vbo);
 
         // Points
-        gl2.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+        gl2.glEnableClientState(gl2.GL_VERTEX_ARRAY());
         gl2.glVertexPointer(
                 FLOATS_PER_POINT,   // size
-                GL2.GL_FLOAT,       // type
+                gl2.GL_FLOAT(),       // type
                 STRIDE,             // stride
                 POINT_OFFSET);      // offset
 
         // Coordinates
-        gl2.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+        gl2.glEnableClientState(gl2.GL_TEXTURE_COORD_ARRAY());
         gl2.glTexCoordPointer(
                 FLOATS_PER_COORD,   // size
-                GL2.GL_FLOAT,       // type
+                gl2.GL_FLOAT(),       // type
                 STRIDE,             // stride
                 COORD_OFFSET);      // offset
     }
@@ -123,14 +123,14 @@ public final class QuadPipelineGL15 extends AbstractQuadPipeline {
         // Upload data
         rewind();
         gl2.glBufferSubData(
-                GL2.GL_ARRAY_BUFFER, // target
+                gl2.GL_ARRAY_BUFFER(), // target
                 0,                   // offset
                 getSizeInBytes(),    // size
                 getData());          // data
 
         // Draw
         gl2.glDrawArrays(
-                GL2.GL_QUADS,         // mode
+                gl2.GL_QUADS(),         // mode
                 0,                    // first
                 getSizeInVertices()); // count
 
@@ -145,7 +145,7 @@ public final class QuadPipelineGL15 extends AbstractQuadPipeline {
         final GL2 gl2 = gl.getGL2();
 
         // Restore state
-        gl2.glBindBuffer(GL2.GL_ARRAY_BUFFER, 0);
+        gl2.glBindBuffer(gl2.GL_ARRAY_BUFFER(), 0);
         gl2.glPopClientAttrib();
     }
 }

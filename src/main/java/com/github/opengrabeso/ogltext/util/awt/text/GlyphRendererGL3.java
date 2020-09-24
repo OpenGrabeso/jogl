@@ -27,8 +27,8 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL3;
+import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL3;
 
 
 /**
@@ -145,19 +145,19 @@ public final class GlyphRendererGL3 extends AbstractGlyphRenderer {
 
         // Check blending and depth test
         restoreBlending = false;
-        if (!gl3.glIsEnabled(GL.GL_BLEND)) {
-            gl3.glEnable(GL.GL_BLEND);
-            gl3.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
+        if (!gl3.glIsEnabled(gl.GL_BLEND())) {
+            gl3.glEnable(gl.GL_BLEND());
+            gl3.glBlendFunc(gl.GL_ONE(), gl.GL_ONE_MINUS_SRC_ALPHA());
             restoreBlending = true;
         }
         restoreDepthTest = false;
-        if (disableDepthTest && gl3.glIsEnabled(GL.GL_DEPTH_TEST)) {
-            gl3.glDisable(GL.GL_DEPTH_TEST);
+        if (disableDepthTest && gl3.glIsEnabled(gl.GL_DEPTH_TEST())) {
+            gl3.glDisable(gl.GL_DEPTH_TEST());
             restoreDepthTest = true;
         }
         restoreScissor = false;
-        if (gl3.glIsEnabled(GL.GL_SCISSOR_TEST)) {
-            gl3.glDisable(GL.GL_SCISSOR_TEST);
+        if (gl3.glIsEnabled(gl.GL_SCISSOR_TEST())) {
+            gl3.glDisable(gl.GL_SCISSOR_TEST());
             restoreScissor = true;
         }
 
@@ -198,13 +198,13 @@ public final class GlyphRendererGL3 extends AbstractGlyphRenderer {
 
         // Check blending and depth test
         if (restoreBlending) {
-            gl3.glDisable(GL.GL_BLEND);
+            gl3.glDisable(gl.GL_BLEND());
         }
         if (restoreScissor) {
-            gl3.glEnable(GL.GL_SCISSOR_TEST);
+            gl3.glEnable(gl.GL_SCISSOR_TEST());
         }
         if (restoreDepthTest) {
-            gl3.glEnable(GL.GL_DEPTH_TEST);
+            gl3.glEnable(gl.GL_DEPTH_TEST());
         }
     }
 

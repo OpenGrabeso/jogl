@@ -28,8 +28,8 @@
 package com.github.opengrabeso.ogltext.util.awt.text;
 
 import com.jogamp.common.nio.Buffers;
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2GL3;
+import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL2GL3;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -281,13 +281,13 @@ abstract class AbstractQuadPipeline implements QuadPipeline {
         final int vbo = handles[0];
 
         // Allocate
-        gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, vbo);
+        gl.glBindBuffer(gl.GL_ARRAY_BUFFER(), vbo);
         gl.glBufferData(
-                GL2GL3.GL_ARRAY_BUFFER, // target
+                gl.GL_ARRAY_BUFFER(), // target
                 size,                   // size
                 null,                   // data
-                GL2GL3.GL_STREAM_DRAW); // usage
-        gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
+                gl.GL_STREAM_DRAW()); // usage
+        gl.glBindBuffer(gl.GL_ARRAY_BUFFER(), 0);
 
         return vbo;
     }

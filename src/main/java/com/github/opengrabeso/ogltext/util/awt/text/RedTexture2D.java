@@ -27,9 +27,9 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GL3;
+import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL2;
+import com.github.opengrabeso.jaagl.GL3;
 
 
 /**
@@ -58,12 +58,12 @@ final class RedTexture2D extends Texture2D {
     @Override
     protected int getFormat(/*@Nonnull*/ final GL gl) {
         Check.notNull(gl, "GL cannot be null");
-        return GL3.GL_RED;
+        return gl.gl3().GL_RED();
     }
 
     @Override
     protected int getInternalFormat(/*@Nonnull*/ final GL gl) {
         Check.notNull(gl, "GL cannot be null");
-        return GL3.GL_RED;
+        return gl.gl3().GL_RED();
     }
 }

@@ -27,8 +27,8 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.util.texture.TextureCoords;
+import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.ogltext.util.texture.TextureCoords;
 
 
 /**

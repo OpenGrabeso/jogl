@@ -35,8 +35,6 @@ import java.io.InputStream;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
-import com.jogamp.opengl.GLException;
-
 import com.jogamp.common.util.IntObjectHashMap;
 import com.jogamp.graph.font.Font;
 import com.jogamp.graph.font.FontSet;
@@ -92,9 +90,7 @@ public class JavaFontLoader implements FontSet {
 
     @Override
     public Font get(final int family, final int style) throws IOException {
-        if(null == javaFontPath) {
-            throw new GLException("java font path undefined");
-        }
+        assert(javaFontPath != null);
         Font font = (Font)fontMap.get( ( family << 8 ) | style );
         if (font != null) {
             return font;

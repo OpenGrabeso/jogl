@@ -27,8 +27,8 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GLAutoDrawable;
+import com.github.opengrabeso.jaagl.GL2;
+import com.github.opengrabeso.jaagl.GLAutoDrawable;
 
 
 /**

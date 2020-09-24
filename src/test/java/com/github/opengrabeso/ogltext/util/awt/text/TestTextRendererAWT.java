@@ -27,9 +27,9 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GL3;
+import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL2;
+import com.github.opengrabeso.jaagl.GL3;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.github.opengrabeso.ogltext.util.awt.TextRenderer;
@@ -98,7 +98,7 @@ public class TestTextRendererAWT {
 
                 // Clear
                 gl.glClearColor(0.85f, 0.85f, 0.85f, 1);
-                gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+                gl.glClear(gl.GL_COLOR_BUFFER_BIT());
 
                 // Draw
                 final int width = canvas.getWidth();
@@ -152,7 +152,7 @@ public class TestTextRendererAWT {
 
                 // Clear
                 gl.glClearColor(0.85f, 0.85f, 0.85f, 1);
-                gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+                gl.glClear(gl.GL_COLOR_BUFFER_BIT());
 
                 // Draw
                 final int width = canvas.getWidth();

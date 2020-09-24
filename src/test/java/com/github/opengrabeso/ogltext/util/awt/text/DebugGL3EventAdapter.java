@@ -28,7 +28,7 @@
 package com.github.opengrabeso.ogltext.util.awt.text;
 
 import com.jogamp.opengl.DebugGL3;
-import com.jogamp.opengl.GL3;
+import com.github.opengrabeso.jaagl.GL3;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 

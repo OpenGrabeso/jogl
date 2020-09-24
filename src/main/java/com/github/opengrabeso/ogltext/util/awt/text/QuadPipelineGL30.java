@@ -27,8 +27,8 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL3;
+import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL3;
 
 
 /**
@@ -113,7 +113,7 @@ public final class QuadPipelineGL30 extends AbstractQuadPipeline {
         final GL3 gl3 = gl.getGL3();
 
         // Bind the VBO and VAO
-        gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, vbo);
+        gl3.glBindBuffer(gl3.GL_ARRAY_BUFFER(), vbo);
         gl3.glBindVertexArray(vao);
     }
 
@@ -137,7 +137,7 @@ public final class QuadPipelineGL30 extends AbstractQuadPipeline {
 
         // Bind
         gl.glBindVertexArray(vao);
-        gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, vbo);
+        gl.glBindBuffer(gl.GL_ARRAY_BUFFER(), vbo);
 
         // Points
         final int pointLoc = gl.glGetAttribLocation(program, POINT_ATTRIB_NAME);
@@ -148,7 +148,7 @@ public final class QuadPipelineGL30 extends AbstractQuadPipeline {
             gl.glVertexAttribPointer(
                     pointLoc,            // location
                     FLOATS_PER_POINT,    // number of components
-                    GL3.GL_FLOAT,        // type
+                    gl.GL_FLOAT(),        // type
                     false,               // normalized
                     STRIDE,              // stride
                     POINT_OFFSET);       // offset
@@ -161,14 +161,14 @@ public final class QuadPipelineGL30 extends AbstractQuadPipeline {
             gl.glVertexAttribPointer(
                     coordLoc,            // location
                     FLOATS_PER_COORD,    // number of components
-                    GL3.GL_FLOAT,        // type
+                    gl.GL_FLOAT(),        // type
                     false,               // normalized
                     STRIDE,              // stride
                     COORD_OFFSET);       // offset
         }
 
         // Unbind
-        gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, 0);
+        gl.glBindBuffer(gl.GL_ARRAY_BUFFER(), 0);
         gl.glBindVertexArray(0);
 
         return vao;
@@ -221,14 +221,14 @@ public final class QuadPipelineGL30 extends AbstractQuadPipeline {
         // Upload data
         rewind();
         gl3.glBufferSubData(
-                GL3.GL_ARRAY_BUFFER, // target
+                gl3.GL_ARRAY_BUFFER(), // target
                 0,                   // offset
                 getSizeInBytes(),    // size
                 getData());          // data
 
         // Draw
         gl3.glDrawArrays(
-                GL3.GL_TRIANGLES,     // mode
+                gl3.GL_TRIANGLES(),     // mode
                 0,                    // first
                 getSizeInVertices()); // count
         clear();
@@ -242,7 +242,7 @@ public final class QuadPipelineGL30 extends AbstractQuadPipeline {
         final GL3 gl3 = gl.getGL3();
 
         // Unbind the VBO and VAO
-        gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, 0);
+        gl3.glBindBuffer(gl3.GL_ARRAY_BUFFER(), 0);
         gl3.glBindVertexArray(0);
     }
 }

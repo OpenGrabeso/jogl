@@ -27,9 +27,9 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GLExtensions;
+import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL2;
+import com.github.opengrabeso.jaagl.GLExtensions;
 
 
 /**
@@ -66,28 +66,28 @@ public final class GlyphRendererGL2 extends AbstractGlyphRenderer {
         final GL2 gl2 = gl.getGL2();
 
         // Change general settings
-        gl2.glPushAttrib(getAttribMask(ortho));
-        gl2.glDisable(GL2.GL_LIGHTING);
-        gl2.glEnable(GL2.GL_BLEND);
-        gl2.glDisable(GL2.GL_SCISSOR_TEST);
-        gl2.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
-        gl2.glEnable(GL2.GL_TEXTURE_2D);
-        gl2.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
+        gl2.glPushAttrib(getAttribMask(gl2, ortho));
+        gl2.glDisable(gl2.GL_LIGHTING());
+        gl2.glEnable(gl2.GL_BLEND());
+        gl2.glDisable(gl2.GL_SCISSOR_TEST());
+        gl2.glBlendFunc(gl2.GL_SRC_ALPHA(), gl2.GL_ONE_MINUS_SRC_ALPHA());
+        gl2.glEnable(gl2.GL_TEXTURE_2D());
+        gl2.glTexEnvi(gl2.GL_TEXTURE_ENV(), gl2.GL_TEXTURE_ENV_MODE(), gl2.GL_MODULATE());
 
         // Set up transformations
         if (ortho) {
             if (disableDepthTest) {
-                gl2.glDisable(GL2.GL_DEPTH_TEST);
+                gl2.glDisable(gl2.GL_DEPTH_TEST());
             }
-            gl2.glDisable(GL2.GL_CULL_FACE);
-            gl2.glMatrixMode(GL2.GL_PROJECTION);
+            gl2.glDisable(gl2.GL_CULL_FACE());
+            gl2.glMatrixMode(gl2.GL_PROJECTION());
             gl2.glPushMatrix();
             gl2.glLoadIdentity();
             gl2.glOrtho(0, width, 0, height, -1, +1);
-            gl2.glMatrixMode(GL2.GL_MODELVIEW);
+            gl2.glMatrixMode(gl2.GL_MODELVIEW());
             gl2.glPushMatrix();
             gl2.glLoadIdentity();
-            gl2.glMatrixMode(GL2.GL_TEXTURE);
+            gl2.glMatrixMode(gl2.GL_TEXTURE());
             gl2.glPushMatrix();
             gl2.glLoadIdentity();
         }
@@ -100,17 +100,7 @@ public final class GlyphRendererGL2 extends AbstractGlyphRenderer {
 
         final GL2 gl2 = gl.getGL2();
 
-        if (useVertexArrays) {
-            if (gl2.isExtensionAvailable(GLExtensions.VERSION_1_5)) {
-                return new QuadPipelineGL15(gl2);
-            } else if (gl2.isExtensionAvailable("GL_VERSION_1_1")) {
-                return new QuadPipelineGL11();
-            } else {
-                return new QuadPipelineGL10();
-            }
-        } else {
-            return new QuadPipelineGL10();
-        }
+        return new QuadPipelineGL15(gl2);
     }
 
     protected void doDispose(/*@Nonnull*/ final GL gl) {
@@ -126,11 +116,11 @@ public final class GlyphRendererGL2 extends AbstractGlyphRenderer {
 
         // Reset transformations
         if (isOrthoMode()) {
-            gl2.glMatrixMode(GL2.GL_PROJECTION);
+            gl2.glMatrixMode(gl2.GL_PROJECTION());
             gl2.glPopMatrix();
-            gl2.glMatrixMode(GL2.GL_MODELVIEW);
+            gl2.glMatrixMode(gl2.GL_MODELVIEW());
             gl2.glPopMatrix();
-            gl2.glMatrixMode(GL2.GL_TEXTURE);
+            gl2.glMatrixMode(gl2.GL_TEXTURE());
             gl2.glPopMatrix();
         }
 
@@ -175,11 +165,11 @@ public final class GlyphRendererGL2 extends AbstractGlyphRenderer {
 
         final GL2 gl2 = gl.getGL2();
 
-        gl2.glMatrixMode(GL2.GL_PROJECTION);
+        gl2.glMatrixMode(gl2.GL_PROJECTION());
         gl2.glPushMatrix();
         gl2.glLoadIdentity();
         gl2.glOrtho(0, width, 0, height, -1, +1);
-        gl2.glMatrixMode(GL2.GL_MODELVIEW);
+        gl2.glMatrixMode(gl2.GL_MODELVIEW());
         gl2.glPushMatrix();
         gl2.glLoadIdentity();
     }
@@ -190,12 +180,12 @@ public final class GlyphRendererGL2 extends AbstractGlyphRenderer {
      * @param ortho True if using orthographic projection
      * @return Attribute bits for {@code glPushAttrib} calls
      */
-    private static int getAttribMask(final boolean ortho) {
-        return GL2.GL_ENABLE_BIT |
-               GL2.GL_TEXTURE_BIT |
-               GL2.GL_COLOR_BUFFER_BIT |
-               GL2.GL_SCISSOR_BIT |
-               (ortho ? (GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_TRANSFORM_BIT) : 0);
+    private static int getAttribMask(final GL2 gl2, final boolean ortho) {
+        return gl2.GL_ENABLE_BIT() |
+               gl2.GL_TEXTURE_BIT() |
+               gl2.GL_COLOR_BUFFER_BIT() |
+               gl2.GL_SCISSOR_BIT() |
+               (ortho ? (gl2.GL_DEPTH_BUFFER_BIT() | gl2.GL_TRANSFORM_BIT()) : 0);
     }
 
     @Override

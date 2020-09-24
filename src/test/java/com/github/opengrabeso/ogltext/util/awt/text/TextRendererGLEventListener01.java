@@ -34,11 +34,11 @@ import java.io.PrintStream;
 
 import com.github.opengrabeso.ogltext.util.awt.TextRenderer;
 
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLEventListener;
+import com.github.opengrabeso.jaagl.GL2;
+import com.github.opengrabeso.jaagl.GLAutoDrawable;
+import com.github.opengrabeso.jaagl.GLEventListener;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
-import com.jogamp.opengl.glu.GLU;
+import com.github.opengrabeso.jaagl.GLu.GLU;
 
 import org.junit.Assert;
 

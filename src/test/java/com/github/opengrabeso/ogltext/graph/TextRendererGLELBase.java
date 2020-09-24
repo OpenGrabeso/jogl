@@ -29,7 +29,7 @@ package com.github.opengrabeso.ogltext.graph;
 
 import java.io.IOException;
 
-import com.jogamp.opengl.GL2ES2;
+import com.github.opengrabeso.jaagl.GL2ES2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;

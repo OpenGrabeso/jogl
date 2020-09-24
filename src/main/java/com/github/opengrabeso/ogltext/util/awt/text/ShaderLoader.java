@@ -27,8 +27,7 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL2ES2;
-import com.jogamp.opengl.GLException;
+import com.github.opengrabeso.jaagl.GL2ES2;
 import com.jogamp.opengl.util.glsl.ShaderUtil;
 
 
@@ -66,7 +65,7 @@ public final class ShaderLoader {
      * @return True if shader was compiled without errors
      */
     private static boolean isShaderCompiled(/*@Nonnull*/ final GL2ES2 gl, final int shader) {
-        return ShaderUtil.isShaderStatusValid(gl, shader, GL2ES2.GL_COMPILE_STATUS, null);
+        return ShaderUtil.isShaderStatusValid(gl, shader, gl.GL_COMPILE_STATUS(), null);
     }
 
     /**
@@ -77,7 +76,7 @@ public final class ShaderLoader {
      * @return True if program was linked successfully
      */
     private static boolean isProgramLinked(/*@Nonnull*/ final GL2ES2 gl, final int program) {
-        return ShaderUtil.isProgramStatusValid(gl, program, GL2ES2.GL_LINK_STATUS);
+        return ShaderUtil.isProgramStatusValid(gl, program, gl.GL_LINK_STATUS());
     }
 
     /**
@@ -88,7 +87,7 @@ public final class ShaderLoader {
      * @return True if program was validated successfully
      */
     private static boolean isProgramValidated(/*@Nonnull*/ final GL2ES2 gl, final int program) {
-        return ShaderUtil.isProgramStatusValid(gl, program, GL2ES2.GL_VALIDATE_STATUS);
+        return ShaderUtil.isProgramStatusValid(gl, program, gl.GL_VALIDATE_STATUS());
     }
 
     /**
@@ -114,8 +113,8 @@ public final class ShaderLoader {
         Check.argument(!fss.isEmpty(), "Fragment shader source cannot be empty");
 
         // Create the shaders
-        final int vs = loadShader(gl, vss, GL2ES2.GL_VERTEX_SHADER);
-        final int fs = loadShader(gl, fss, GL2ES2.GL_FRAGMENT_SHADER);
+        final int vs = loadShader(gl, vss, gl.GL_VERTEX_SHADER());
+        final int fs = loadShader(gl, fss, gl.GL_FRAGMENT_SHADER());
 
         // Create a program and attach the shaders
         final int program = gl.glCreateProgram();
@@ -127,7 +126,7 @@ public final class ShaderLoader {
         gl.glValidateProgram(program);
         if ((!isProgramLinked(gl, program)) || (!isProgramValidated(gl, program))) {
             final String log = ShaderUtil.getProgramInfoLog(gl, program);
-            throw new GLException(log);
+            throw gl.newGLException(log);
         }
 
         // Clean up the shaders
@@ -163,7 +162,7 @@ public final class ShaderLoader {
         gl.glCompileShader(shader);
         if (!isShaderCompiled(gl, shader)) {
             final String log = ShaderUtil.getShaderInfoLog(gl, shader);
-            throw new GLException(log);
+            throw gl.newGLException(log);
         }
 
         return shader;

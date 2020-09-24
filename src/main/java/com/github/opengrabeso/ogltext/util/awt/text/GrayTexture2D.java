@@ -27,9 +27,9 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GL3;
+import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL2;
+import com.github.opengrabeso.jaagl.GL3;
 
 
 /**
@@ -59,12 +59,12 @@ final class GrayTexture2D extends Texture2D {
     @Override
     protected int getFormat(/*@Nonnull*/ final GL gl) {
         Check.notNull(gl, "GL cannot be null");
-        return gl.getGLProfile().isGL2() ? GL2.GL_LUMINANCE : GL3.GL_RED;
+        return gl.getGLProfile().isGL2() ? gl.gl2().GL_LUMINANCE() : gl.gl3().GL_RED();
     }
 
     @Override
     protected int getInternalFormat(/*@Nonnull*/ final GL gl) {
         Check.notNull(gl, "GL cannot be null");
-        return gl.getGLProfile().isGL2() ? GL2.GL_INTENSITY : GL3.GL_RED;
+        return gl.getGLProfile().isGL2() ? gl.gl2().GL_INTENSITY() : gl.gl3().GL_RED();
     }
 }

@@ -27,12 +27,12 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GL3;
-import com.jogamp.opengl.GLProfile;
+import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL2;
+import com.github.opengrabeso.jaagl.GL3;
+import com.github.opengrabeso.jaagl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
-import com.jogamp.opengl.util.texture.TextureCoords;
+import com.github.opengrabeso.ogltext.util.texture.TextureCoords;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -128,7 +128,7 @@ public class TestGlyphRendererAWT {
 
                 // View
                 gl.glClearColor(0, 1, 1, 1);
-                gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+                gl.glClear(gl.GL_COLOR_BUFFER_BIT());
 
                 // Draw glyph
                 final TextureCoords coordinates = new TextureCoords(0, 1, 1, 0);
@@ -201,7 +201,7 @@ public class TestGlyphRendererAWT {
 
                 // Clear
                 gl.glClearColor(0, 1, 1, 1);
-                gl.glClear(GL3.GL_COLOR_BUFFER_BIT);
+                gl.glClear(gl.GL_COLOR_BUFFER_BIT());
 
                 // Draw glyph
                 final TextureCoords coordinates = new TextureCoords(0, 1, 1, 0);
@@ -267,8 +267,8 @@ public class TestGlyphRendererAWT {
         }
 
         void bind(final GL gl) {
-            gl.glActiveTexture(GL.GL_TEXTURE0);
-            gl.glBindTexture(GL.GL_TEXTURE_2D, handle);
+            gl.glActiveTexture(gl.GL_TEXTURE0());
+            gl.glBindTexture(gl.GL_TEXTURE_2D(), handle);
         }
 
         void upload(final GL gl) {
@@ -283,18 +283,18 @@ public class TestGlyphRendererAWT {
 
             // Upload it to the texture
             final GLProfile profile = gl.getGLProfile();
-            gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
+            gl.glPixelStorei(gl.GL_UNPACK_ALIGNMENT(), 1);
             gl.glTexImage2D(
-                    GL.GL_TEXTURE_2D,
+                    gl.GL_TEXTURE_2D(),
                     0,
-                    profile.isGL3() ? GL3.GL_RED : GL2.GL_INTENSITY,
+                    profile.isGL3() ? gl.gl3().GL_RED() : gl.gl2().GL_INTENSITY(),
                     SIZE, SIZE,
                     0,
-                    profile.isGL3() ? GL3.GL_RED : GL2.GL_LUMINANCE,
-                    GL.GL_UNSIGNED_BYTE,
+                    profile.isGL3() ? gl.gl3().GL_RED() : gl.gl2().GL_LUMINANCE(),
+                    gl.GL_UNSIGNED_BYTE(),
                     buffer);
-            setParameter(gl, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-            setParameter(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+            setParameter(gl, gl.GL_TEXTURE_MAG_FILTER(), gl.GL_LINEAR());
+            setParameter(gl, gl.GL_TEXTURE_MIN_FILTER(), gl.GL_LINEAR());
         }
 
         private static BufferedImage createBufferedImage() {
@@ -315,7 +315,7 @@ public class TestGlyphRendererAWT {
         }
 
         private static void setParameter(final GL gl, final int name, final int value) {
-            gl.glTexParameteri(GL.GL_TEXTURE_2D, name, value);
+            gl.glTexParameteri(gl.GL_TEXTURE_2D(), name, value);
         }
     }
 }

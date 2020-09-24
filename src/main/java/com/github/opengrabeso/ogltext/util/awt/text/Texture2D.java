@@ -27,8 +27,8 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
+import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL2;
 
 import java.awt.Rectangle;
 import java.nio.ByteBuffer;
@@ -64,7 +64,7 @@ abstract class Texture2D extends Texture {
               final boolean smooth,
               final boolean mipmap) {
 
-        super(gl, GL.GL_TEXTURE_2D, mipmap);
+        super(gl, gl.GL_TEXTURE_2D(), mipmap);
 
         Check.argument(width >= 0, "Width cannot be negative");
         Check.argument(height >= 0, "Height cannot be negative");
@@ -74,7 +74,7 @@ abstract class Texture2D extends Texture {
         this.height = height;
 
         // Set up
-        bind(gl, GL.GL_TEXTURE0);
+        bind(gl, gl.GL_TEXTURE0());
         allocate(gl);
         setFiltering(gl, smooth);
     }
@@ -83,19 +83,17 @@ abstract class Texture2D extends Texture {
      * Allocates a 2D texture for use with a backing store.
      *
      * @param gl Current OpenGL context, assumed not null
-     * @param width Width of texture, assumed not negative
-     * @param height Height of texture, assumed not negative
      */
     private void allocate(/*@Nonnull*/ final GL gl) {
         gl.glTexImage2D(
-                GL.GL_TEXTURE_2D,          // target
+                gl.GL_TEXTURE_2D(),          // target
                 0,                         // level
                 getInternalFormat(gl),     // internal format
                 width,                     // width
                 height,                    // height
                 0,                         // border
-                GL.GL_RGB,                 // format (unused)
-                GL.GL_UNSIGNED_BYTE,       // type (unused)
+                gl.GL_RGB(),                 // format (unused)
+                gl.GL_UNSIGNED_BYTE(),       // type (unused)
                 null);                     // pixels
     }
 
@@ -138,18 +136,19 @@ abstract class Texture2D extends Texture {
         Check.notNull(area, "Area cannot be null");
 
         final int parameters[] = new int[4];
+        final GL2 gl2 = gl.getGL2();
 
         // Store unpack parameters
-        gl.glGetIntegerv(GL.GL_UNPACK_ALIGNMENT, parameters, 0);
-        gl.glGetIntegerv(GL2.GL_UNPACK_SKIP_ROWS, parameters, 1);
-        gl.glGetIntegerv(GL2.GL_UNPACK_SKIP_PIXELS, parameters, 2);
-        gl.glGetIntegerv(GL2.GL_UNPACK_ROW_LENGTH, parameters, 3);
+        gl.glGetIntegerv(gl.GL_UNPACK_ALIGNMENT(), parameters, 0);
+        gl.glGetIntegerv(gl2.GL_UNPACK_SKIP_ROWS(), parameters, 1);
+        gl.glGetIntegerv(gl2.GL_UNPACK_SKIP_PIXELS(), parameters, 2);
+        gl.glGetIntegerv(gl2.GL_UNPACK_ROW_LENGTH(), parameters, 3);
 
         // Change unpack parameters
-        gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
-        gl.glPixelStorei(GL2.GL_UNPACK_SKIP_ROWS, area.y);
-        gl.glPixelStorei(GL2.GL_UNPACK_SKIP_PIXELS, area.x);
-        gl.glPixelStorei(GL2.GL_UNPACK_ROW_LENGTH, width);
+        gl.glPixelStorei(gl.GL_UNPACK_ALIGNMENT(), 1);
+        gl.glPixelStorei(gl2.GL_UNPACK_SKIP_ROWS(), area.y);
+        gl.glPixelStorei(gl2.GL_UNPACK_SKIP_PIXELS(), area.x);
+        gl.glPixelStorei(gl2.GL_UNPACK_ROW_LENGTH(), width);
 
         // fonts look better when SRGB conversion is done on the textures
         // this could be done in a shader for GL3, but not for GL2
@@ -162,25 +161,25 @@ abstract class Texture2D extends Texture {
         }
         // Update the texture
         gl.glTexSubImage2D(
-                GL.GL_TEXTURE_2D,     // target
+                gl.GL_TEXTURE_2D(),     // target
                 0,                    // mipmap level
                 area.x,               // x offset
                 area.y,               // y offset
                 area.width,           // width
                 area.height,          // height
                 getFormat(gl),        // format
-                GL.GL_UNSIGNED_BYTE,  // type
+                gl.GL_UNSIGNED_BYTE(),  // type
                 ByteBuffer.wrap(adjustedPixels));              // pixels
 
         // Reset unpack parameters
-        gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, parameters[0]);
-        gl.glPixelStorei(GL2.GL_UNPACK_SKIP_ROWS, parameters[1]);
-        gl.glPixelStorei(GL2.GL_UNPACK_SKIP_PIXELS, parameters[2]);
-        gl.glPixelStorei(GL2.GL_UNPACK_ROW_LENGTH, parameters[3]);
+        gl.glPixelStorei(gl.GL_UNPACK_ALIGNMENT(), parameters[0]);
+        gl.glPixelStorei(gl2.GL_UNPACK_SKIP_ROWS(), parameters[1]);
+        gl.glPixelStorei(gl2.GL_UNPACK_SKIP_PIXELS(), parameters[2]);
+        gl.glPixelStorei(gl2.GL_UNPACK_ROW_LENGTH(), parameters[3]);
 
         // Generate mipmaps
         if (mipmap) {
-            gl.glGenerateMipmap(GL.GL_TEXTURE_2D);
+            gl.glGenerateMipmap(gl.GL_TEXTURE_2D());
         }
     }
 }
