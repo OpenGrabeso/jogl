@@ -28,6 +28,7 @@
 package com.github.opengrabeso.ogltext.util.awt.text;
 
 import com.github.opengrabeso.jaagl.GL3;
+import com.github.opengrabeso.jaagl.jogl.JoGL;
 import com.jogamp.opengl.GLAutoDrawable;
 
 
@@ -43,7 +44,7 @@ abstract class AbstractGL3EventAdapter extends GLEventAdapter {
      */
     @Override
     public final void display(final GLAutoDrawable drawable) {
-        final com.jogamp.opengl.GL3 gl = drawable.getGL().getGL3();
+        final GL3 gl = JoGL.wrap(drawable.getGL().getGL3());
         doDisplay(gl);
     }
 
@@ -54,7 +55,7 @@ abstract class AbstractGL3EventAdapter extends GLEventAdapter {
      */
     @Override
     public final void dispose(final GLAutoDrawable drawable) {
-        final com.jogamp.opengl.GL3 gl = drawable.getGL().getGL3();
+        final GL3 gl = JoGL.wrap(drawable.getGL().getGL3());
         doDispose(gl);
     }
 
@@ -67,7 +68,7 @@ abstract class AbstractGL3EventAdapter extends GLEventAdapter {
     public final void reshape(final GLAutoDrawable drawable,
                               final int x, final int y,
                               final int width, final int height) {
-        final com.jogamp.opengl.GL3 gl = drawable.getGL().getGL3();
+        final GL3 gl = JoGL.wrap(drawable.getGL().getGL3());
         doReshape(gl, x, y, width, height);
     }
 
@@ -81,7 +82,7 @@ abstract class AbstractGL3EventAdapter extends GLEventAdapter {
      * @param gl OpenGL context from drawable
      * @throws NullPointerException if context is <tt>null</tt>
      */
-    protected void doInit(com.jogamp.opengl.GL3 gl) {
+    protected void doInit(GL3 gl) {
         // pass
     }
 
@@ -91,7 +92,7 @@ abstract class AbstractGL3EventAdapter extends GLEventAdapter {
      * @param gl OpenGL context from drawable
      * @throws NullPointerException if context is <tt>null</tt>
      */
-    protected void doDisplay(com.jogamp.opengl.GL3 gl) {
+    protected void doDisplay(GL3 gl) {
         // pass
     }
 
@@ -101,7 +102,7 @@ abstract class AbstractGL3EventAdapter extends GLEventAdapter {
      * @param gl OpenGL context from drawable
      * @throws NullPointerException if context is <tt>null</tt>
      */
-    protected void doDispose(com.jogamp.opengl.GL3 gl) {
+    protected void doDispose(GL3 gl) {
         // pass
     }
 
@@ -115,7 +116,7 @@ abstract class AbstractGL3EventAdapter extends GLEventAdapter {
      * @param height Height of viewport
      * @throws NullPointerException if context is <tt>null</tt>
      */
-    protected void doReshape(com.jogamp.opengl.GL3 gl, int x, int y, int width, int height) {
+    protected void doReshape(GL3 gl, int x, int y, int width, int height) {
         // pass
     }
 }

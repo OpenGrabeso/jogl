@@ -27,8 +27,8 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
+import com.github.opengrabeso.jaagl.jogl.JoGL;
 import com.jogamp.opengl.DebugGL2;
-import com.github.opengrabeso.jaagl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 
@@ -48,6 +48,6 @@ abstract class DebugGL2EventAdapter extends AbstractGL2EventAdapter {
         final com.jogamp.opengl.GL2 gl = drawable.getGL().getGL2();
         final DebugGL2 dgl = new DebugGL2(gl);
         drawable.setGL(dgl);
-        doInit(dgl);
+        doInit(JoGL.wrap(gl));
     }
 }

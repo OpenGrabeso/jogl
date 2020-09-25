@@ -59,12 +59,12 @@ final class GrayTexture2D extends Texture2D {
     @Override
     protected int getFormat(/*@Nonnull*/ final GL gl) {
         Check.notNull(gl, "GL cannot be null");
-        return gl.getGLProfile().isGL2() ? gl.gl2().GL_LUMINANCE() : gl.gl3().GL_RED();
+        return gl.gl2().GL_LUMINANCE();
     }
 
     @Override
     protected int getInternalFormat(/*@Nonnull*/ final GL gl) {
         Check.notNull(gl, "GL cannot be null");
-        return gl.getGLProfile().isGL2() ? gl.gl2().GL_INTENSITY() : gl.gl3().GL_RED();
+        return gl.gl2().GL_INTENSITY();
     }
 }

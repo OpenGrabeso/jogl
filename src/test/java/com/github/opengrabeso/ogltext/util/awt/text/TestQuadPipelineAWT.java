@@ -110,16 +110,14 @@ public class TestQuadPipelineAWT {
         canvas.addGLEventListener(new DebugGL2EventAdapter() {
 
             @Override
-            public void doInit(final com.jogamp.opengl.GL2 jgl) {
-                GL2 gl = JoGL.wrap(jgl);
+            public void doInit(final GL2 gl) {
 
                 pipeline = new QuadPipelineGL15(gl);
                 quad = createQuad();
             }
 
             @Override
-            public void doDisplay(final com.jogamp.opengl.GL2 jgl) {
-                GL2 gl = JoGL.wrap(jgl);
+            public void doDisplay(final GL2 gl) {
 
                 // View
                 gl.glViewport(0, 0, 512, 512);
@@ -163,16 +161,14 @@ public class TestQuadPipelineAWT {
         canvas.addGLEventListener(new DebugGL3EventAdapter() {
 
             @Override
-            public void doInit(final com.jogamp.opengl.GL3 jgl) {
-                GL3 gl = JoGL.wrap(jgl);
+            public void doInit(final GL3 gl) {
                 program = createProgram(gl);
                 pipeline = new QuadPipelineGL30(gl, program);
                 quad = createQuad();
             }
 
             @Override
-            public void doDisplay(final com.jogamp.opengl.GL3 jgl) {
-                GL3 gl = JoGL.wrap(jgl);
+            public void doDisplay(final GL3 gl) {
 
                 // View
                 gl.glViewport(0, 0, 512, 512);

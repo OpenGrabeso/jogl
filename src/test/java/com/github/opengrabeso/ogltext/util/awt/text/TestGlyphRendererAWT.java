@@ -30,8 +30,6 @@ package com.github.opengrabeso.ogltext.util.awt.text;
 import com.github.opengrabeso.jaagl.GL;
 import com.github.opengrabeso.jaagl.GL2;
 import com.github.opengrabeso.jaagl.GL3;
-import com.github.opengrabeso.jaagl.GLProfile;
-import com.github.opengrabeso.jaagl.jogl.JoGL;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.github.opengrabeso.ogltext.util.texture.TextureCoords;
 
@@ -105,8 +103,7 @@ public class TestGlyphRendererAWT {
         canvas.addGLEventListener(new DebugGL2EventAdapter() {
 
             @Override
-            public void doInit(final com.jogamp.opengl.GL2 jgl) {
-                GL gl = JoGL.wrap(jgl);
+            public void doInit(final GL2 gl) {
 
                 // Set up glyph renderer
                 glyphRenderer = new GlyphRendererGL2();
@@ -126,8 +123,7 @@ public class TestGlyphRendererAWT {
             }
 
             @Override
-            public void doDisplay(final com.jogamp.opengl.GL2 jgl) {
-                GL gl = JoGL.wrap(jgl);
+            public void doDisplay(final GL2 gl) {
 
                 // View
                 gl.glClearColor(0, 1, 1, 1);
@@ -136,9 +132,9 @@ public class TestGlyphRendererAWT {
                 // Draw glyph
                 final TextureCoords coordinates = new TextureCoords(0, 1, 1, 0);
                 glyphRenderer.beginRendering(gl, true, 512, 512, true, false);
-                glyphRenderer.setColor(1, 0, 1, 1); // magenta
+                glyphRenderer.setColor(gl, 1, 0, 1, 1); // magenta
                 glyphRenderer.drawGlyph(gl, glyph, 40, 80, 0, 1.0f, false, coordinates);
-                glyphRenderer.setColor(1, 1, 0, 1); // yellow
+                glyphRenderer.setColor(gl, 1, 1, 0, 1); // yellow
                 glyphRenderer.drawGlyph(gl, glyph, 260, 80, 0, 1.0f, false, coordinates);
                 glyphRenderer.endRendering(gl);
             }
@@ -181,8 +177,7 @@ public class TestGlyphRendererAWT {
         canvas.addGLEventListener(new DebugGL3EventAdapter() {
 
             @Override
-            public void doInit(final com.jogamp.opengl.GL3 jgl) {
-                GL3 gl = JoGL.wrap(jgl);
+            public void doInit(final GL3 gl) {
 
                 // Set up glyph renderer
                 glyphRenderer = new GlyphRendererGL3(gl);
@@ -201,8 +196,7 @@ public class TestGlyphRendererAWT {
             }
 
             @Override
-            public void doDisplay(final com.jogamp.opengl.GL3 jgl) {
-                GL3 gl = JoGL.wrap(jgl);
+            public void doDisplay(final GL3 gl) {
 
                 // Clear
                 gl.glClearColor(0, 1, 1, 1);
@@ -211,9 +205,9 @@ public class TestGlyphRendererAWT {
                 // Draw glyph
                 final TextureCoords coordinates = new TextureCoords(0, 1, 1, 0);
                 glyphRenderer.beginRendering(gl, true, 512, 512, true, true);
-                glyphRenderer.setColor(1, 0, 1, 1); // magenta
+                glyphRenderer.setColor(gl, 1, 0, 1, 1); // magenta
                 glyphRenderer.drawGlyph(gl, glyph, 40, 80, 0, 1.0f, false, coordinates);
-                glyphRenderer.setColor(1, 1, 0, 1); // yellow
+                glyphRenderer.setColor(gl, 1, 1, 0, 1); // yellow
                 glyphRenderer.drawGlyph(gl, glyph, 260, 80, 0, 1.0f, false, coordinates);
                 glyphRenderer.endRendering(gl);
             }
@@ -287,15 +281,14 @@ public class TestGlyphRendererAWT {
             graphics.drawString("G", 0.09f * SIZE, 0.80f * SIZE);
 
             // Upload it to the texture
-            final GLProfile profile = gl.getGLProfile();
             gl.glPixelStorei(gl.GL_UNPACK_ALIGNMENT(), 1);
             gl.glTexImage2D(
                     gl.GL_TEXTURE_2D(),
                     0,
-                    profile.isGL3() ? gl.gl3().GL_RED() : gl.gl2().GL_INTENSITY(),
+                    gl.isGL3() ? gl.gl3().GL_RED() : gl.gl2().GL_INTENSITY(),
                     SIZE, SIZE,
                     0,
-                    profile.isGL3() ? gl.gl3().GL_RED() : gl.gl2().GL_LUMINANCE(),
+                    gl.isGL3() ? gl.gl3().GL_RED() : gl.gl2().GL_LUMINANCE(),
                     gl.GL_UNSIGNED_BYTE(),
                     buffer);
             setParameter(gl, gl.GL_TEXTURE_MAG_FILTER(), gl.GL_LINEAR());

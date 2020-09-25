@@ -52,9 +52,6 @@ public interface GlyphRenderer {
      * @param width Width of current OpenGL viewport
      * @param height Height of current OpenGL viewport
      * @param disableDepthTest True if should ignore depth values
-     * @throws NullPointerException if context is null
-     * @throws IllegalArgumentException if width or height is negative
-     * @throws GLException if context is unexpected version
      */
     void beginRendering(/*@Nonnull*/ GL gl,
                         boolean ortho,
@@ -66,8 +63,6 @@ public interface GlyphRenderer {
      * Frees resources used by this {@link GlyphRenderer}.
      *
      * @param gl Current OpenGL context
-     * @throws NullPointerException if context is null
-     * @throws GLException if context is unexpected version
      */
     void dispose(/*@Nonnull*/ GL gl);
 
@@ -81,9 +76,6 @@ public interface GlyphRenderer {
      * @param z Position to draw on Z axis, which may be negative
      * @param scale Relative size of glyph, which may be negative
      * @param coords Texture coordinates of glyph
-     * @return Distance to next character, which may be negative
-     * @throws NullPointerException if context, glyph, or texture coordinate is null
-     * @throws GLException if context is unexpected version
      */
     /*@CheckForSigned*/
     float drawGlyph(/*@Nonnull*/ GL gl,
@@ -99,8 +91,6 @@ public interface GlyphRenderer {
      * Finishes a render cycle with this {@link GlyphRenderer}.
      *
      * @param gl Current OpenGL context
-     * @throws NullPointerException if context is null
-     * @throws GLException if context is unexpected version
      */
     void endRendering(/*@Nonnull*/ GL gl);
 
@@ -108,9 +98,6 @@ public interface GlyphRenderer {
      * Forces all stored text to be rendered.
      *
      * @param gl Current OpenGL context
-     * @throws NullPointerException if context is <tt>null</tt>
-     * @throws GLException if context is unexpected version
-     * @throws IllegalStateException if not in a render cycle
      */
     void flush(/*@Nonnull*/ GL gl);
 
@@ -129,7 +116,7 @@ public interface GlyphRenderer {
      * @param b Blue component of color
      * @param a Alpha component of color
      */
-    void setColor(float r, float g, float b, float a);
+    void setColor(final GL gl, float r, float g, float b, float a);
 
     /**
      * Changes the transformation matrix for drawing in 3D.
@@ -140,7 +127,7 @@ public interface GlyphRenderer {
      * @throws IndexOutOfBoundsException if value's length is less than sixteen
      * @throws IllegalStateException if in orthographic mode
      */
-    void setTransform(/*@Nonnull*/ float[] value, boolean transpose);
+    void setTransform(final GL gl, /*@Nonnull*/ float[] value, boolean transpose);
 
     /**
      * Changes whether vertex arrays are in use.

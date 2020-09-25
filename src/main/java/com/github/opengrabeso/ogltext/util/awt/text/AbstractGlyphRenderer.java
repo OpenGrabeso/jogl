@@ -28,7 +28,6 @@
 package com.github.opengrabeso.ogltext.util.awt.text;
 
 import com.github.opengrabeso.jaagl.GL;
-import com.github.opengrabeso.jaagl.GLContext;
 import com.github.opengrabeso.ogltext.util.texture.TextureCoords;
 
 import java.util.ArrayList;
@@ -200,9 +199,6 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
      * @param width Width of current OpenGL viewport
      * @param height Height of current OpenGL viewport
      * @param disableDepthTest True if should ignore depth values
-     * @throws NullPointerException if context is null
-     * @throws IllegalArgumentException if width or height is negative
-     * @throws GLException if context is unexpected version
      */
     protected abstract void doBeginRendering(/*@Nonnull*/ final GL gl,
                                              final boolean ortho,
@@ -215,8 +211,6 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
      *
      * @param gl Current OpenGL context
      * @return Quad pipeline to render quads with
-     * @throws NullPointerException if context is null
-     * @throws GLException if context is unexpected version
      */
     protected abstract QuadPipeline doCreateQuadPipeline(/*@Nonnull*/ final GL gl);
 
@@ -224,8 +218,6 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
      * Actually frees resources used by the renderer.
      *
      * @param gl Current OpenGL context
-     * @throws NullPointerException if context is null
-     * @throws GLException if context is unexpected version
      */
     protected abstract void doDispose(/*@Nonnull*/ final GL gl);
 
@@ -233,8 +225,6 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
      * Actually finishes a render cycle.
      *
      * @param gl Current OpenGL context
-     * @throws NullPointerException if context is null
-     * @throws GLException if context is unexpected version
      */
     protected abstract void doEndRendering(/*@Nonnull*/ final GL gl);
 
@@ -246,8 +236,6 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
      * @param g Green component of color
      * @param b Blue component of color
      * @param a Alpha component of color
-     * @throws NullPointerException if context is null
-     * @throws GLException if context is unexpected version
      */
     protected abstract void doSetColor(/*@Nonnull*/ final GL gl,
                                        float r,
@@ -261,9 +249,6 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
      * @param gl Current OpenGL context
      * @param value Matrix as float array
      * @param transpose True if in row-major order
-     * @throws NullPointerException if context is null
-     * @throws GLException if context is unexpected version
-     * @throws IndexOutOfBoundsException if length of value is less than sixteen
      */
     protected abstract void doSetTransform3d(/*@Nonnull*/ GL gl,
                                              /*@Nonnull*/ float[] value,
@@ -275,9 +260,6 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
      * @param gl Current OpenGL context
      * @param width Width of viewport
      * @param height Height of viewport
-     * @throws NullPointerException if context is null
-     * @throws GLException if context is unexpected version
-     * @throws IllegalArgumentException if width or height is negative
      */
     protected abstract void doSetTransformOrtho(/*@Nonnull*/ GL gl,
                                                 /*@Nonnegative*/ int width,
@@ -391,7 +373,7 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
     }
 
     @Override
-    public final void setColor(final float r, final float g, final float b, final float a) {
+    public final void setColor(final GL gl, final float r, final float g, final float b, final float a) {
 
         // Check if already has the color
         if (hasColor(r, g, b, a)) {
@@ -401,7 +383,6 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
         // Render any outstanding quads first
         if (pipeline != null && !pipeline.isEmpty()) {
             fireEvent(EventType.AUTOMATIC_FLUSH);
-            final GL gl = GLContext.getCurrentGL();
             flush(gl);
         }
 
@@ -413,7 +394,6 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
 
         // Change the color
         if (inRenderCycle) {
-            final GL gl = GLContext.getCurrentGL();
             doSetColor(gl, r, g, b, a);
         } else {
             colorDirty = true;
@@ -449,7 +429,7 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
     }
 
     @Override
-    public final void setTransform(/*@Nonnull*/ final float[] value, final boolean transpose) {
+    public final void setTransform(final GL gl, /*@Nonnull*/ final float[] value, final boolean transpose) {
 
         Check.notNull(value, "Transform value cannot be null");
         Check.state(!orthoMode, "Must be in 3D mode");
@@ -457,7 +437,6 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
         // Render any outstanding quads first
         if (pipeline != null && !pipeline.isEmpty()) {
             fireEvent(EventType.AUTOMATIC_FLUSH);
-            final GL gl = GLContext.getCurrentGL();
             flush(gl);
         }
 
@@ -467,7 +446,6 @@ abstract class AbstractGlyphRenderer implements GlyphRenderer, QuadPipeline.Even
 
         // Change the transform
         if (inRenderCycle) {
-            final GL gl = GLContext.getCurrentGL();
             doSetTransform3d(gl, value, transpose);
         } else {
             transformDirty = true;

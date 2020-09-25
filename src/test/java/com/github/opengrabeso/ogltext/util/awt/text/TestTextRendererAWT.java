@@ -90,13 +90,12 @@ public class TestTextRendererAWT {
         canvas.addGLEventListener(new DebugGL2EventAdapter() {
 
             @Override
-            public void doInit(final com.jogamp.opengl.GL2 gl) {
-                textRenderer = new TextRenderer(FONT);
+            public void doInit(final GL2 gl) {
+                textRenderer = new TextRenderer(FONT, gl);
             }
 
             @Override
-            public void doDisplay(final com.jogamp.opengl.GL2 jgl) {
-                GL gl = JoGL.wrap(jgl);
+            public void doDisplay(final GL2 gl) {
 
                 // Clear
                 gl.glClearColor(0.85f, 0.85f, 0.85f, 1);
@@ -114,7 +113,7 @@ public class TestTextRendererAWT {
             }
 
             @Override
-            public void doDispose(final com.jogamp.opengl.GL2 gl) {
+            public void doDispose(final GL2 gl) {
                 textRenderer.dispose();
             }
         });
@@ -145,13 +144,12 @@ public class TestTextRendererAWT {
         canvas.addGLEventListener(new DebugGL3EventAdapter() {
 
             @Override
-            public void doInit(final com.jogamp.opengl.GL3 gl) {
-                textRenderer = TextRenderer.createTextRendererGL3(FONT);
+            public void doInit(final GL3 gl) {
+                textRenderer = new TextRenderer(FONT, gl);
             }
 
             @Override
-            public void doDisplay(final com.jogamp.opengl.GL3 jgl) {
-                GL3 gl = JoGL.wrap(jgl);
+            public void doDisplay(final GL3 gl) {
 
                 // Clear
                 gl.glClearColor(0.85f, 0.85f, 0.85f, 1);
@@ -169,7 +167,7 @@ public class TestTextRendererAWT {
             }
 
             @Override
-            public void doDispose(final com.jogamp.opengl.GL3 gl) {
+            public void doDispose(final GL3 gl) {
                 textRenderer.dispose();
             }
         });
@@ -191,15 +189,15 @@ public class TestTextRendererAWT {
         canvas.addGLEventListener(new DebugGL2EventAdapter() {
 
             @Override
-            public void doInit(final com.jogamp.opengl.GL2 gl) {
-                textRenderer = new TextRenderer(FONT);
+            public void doInit(final GL2 gl) {
+                textRenderer = new TextRenderer(FONT, gl);
                 Assert.assertTrue(textRenderer.getUseVertexArrays());
                 textRenderer.setUseVertexArrays(false);
                 Assert.assertFalse(textRenderer.getUseVertexArrays());
             }
 
             @Override
-            public void doDisplay(final com.jogamp.opengl.GL2 gl) {
+            public void doDisplay(final GL2 gl) {
                 final int width = canvas.getWidth();
                 final int height = canvas.getHeight();
                 textRenderer.beginRendering(width, height);
@@ -208,7 +206,7 @@ public class TestTextRendererAWT {
             }
 
             @Override
-            public void doDispose(final com.jogamp.opengl.GL2 gl) {
+            public void doDispose(final GL2 gl) {
                 textRenderer.dispose();
             }
         });

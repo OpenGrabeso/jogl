@@ -30,8 +30,6 @@ package com.github.opengrabeso.ogltext.util.awt.text;
 import com.github.opengrabeso.jaagl.GL;
 import com.github.opengrabeso.jaagl.GL2;
 import com.github.opengrabeso.jaagl.GL3;
-import com.github.opengrabeso.jaagl.GLExtensions;
-import com.github.opengrabeso.jaagl.GLProfile;
 
 
 /**
@@ -64,16 +62,12 @@ public final class QuadPipelines {
         Check.notNull(gl, "Context cannot be null");
         Check.argument(program >= 0, "Program cannot be negative");
 
-        final GLProfile profile = gl.getGLProfile();
-
-        if (profile.isGL3()) {
+        if (gl.isGL3()) {
             final GL3 gl3 = gl.getGL3();
             return new QuadPipelineGL30(gl3, program);
-        } else if (profile.isGL2()) {
+        } else {
             final GL2 gl2 = gl.getGL2();
             return new QuadPipelineGL15(gl2);
-        } else {
-            throw new UnsupportedOperationException("Profile currently unsupported");
         }
     }
 }

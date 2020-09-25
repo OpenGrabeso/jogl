@@ -71,7 +71,9 @@ public class TextRendererGLEventListener01 implements GLEventListener {
     }
 
     public void init(final GLAutoDrawable drawable) {
-        renderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 36));
+        GL2 gl = JoGL.wrap(drawable.getGL().getGL2());
+
+        renderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 36), gl);
         renderer.setUseVertexArrays(false);
         Assert.assertNotNull(renderer);
         Assert.assertFalse(renderer.getUseVertexArrays());
@@ -83,8 +85,7 @@ public class TextRendererGLEventListener01 implements GLEventListener {
     }
 
     public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width, final int height) {
-        final com.jogamp.opengl.GL2 jgl = drawable.getGL().getGL2();
-        GL2 gl = JoGL.wrap(jgl);
+        GL2 gl = JoGL.wrap(drawable.getGL().getGL2());
 
         gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
         gl.glLoadIdentity();
