@@ -172,6 +172,14 @@ public final class TextRenderer {
         this(font, false, false, null, false, null, gl, true);
     }
 
+    public TextRenderer(/*@Nonnull*/ final Font font, final boolean antialias, final boolean subpixel, GL2 gl) {
+        this(font, antialias, subpixel, null, false, null, gl, false);
+    }
+
+    public TextRenderer(/*@Nonnull*/ final Font font, final boolean antialias, final boolean subpixel, GL3 gl) {
+        this(font, antialias, subpixel, null, false, null, gl, true);
+    }
+
     /**
      * Constructs a {@link TextRenderer} with optional text properties, a render delegate,
      * mipmapping, and a range of characters.
