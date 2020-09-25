@@ -29,7 +29,6 @@ package com.github.opengrabeso.ogltext.util.awt.text;
 
 import com.github.opengrabeso.jaagl.GL;
 import com.github.opengrabeso.jaagl.GL2;
-import com.github.opengrabeso.jaagl.GLExtensions;
 
 
 /**
