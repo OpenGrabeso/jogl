@@ -572,20 +572,6 @@ public final class GlyphCache implements TextureBackingStore.EventListener {
         return getBackingStore().getWidth();
     }
 
-    /**
-     * Checks if Non-Power-Of-Two textures are available.
-     *
-     * @param gl Current OpenGL context
-     * @return True if NPOT textures are available
-     * @throws NullPointerException if context is null
-     */
-    static boolean isNpotTextureAvailable(/*@Nonnull*/ final GL gl) {
-
-        Check.notNull(gl, "GL cannot be null");
-
-        return gl.isExtensionAvailable("GL_ARB_texture_non_power_of_two");
-    }
-
     private static void log(/*@Nonnull*/ final String message) {
         if (DEBUG) {
             System.err.println(message);

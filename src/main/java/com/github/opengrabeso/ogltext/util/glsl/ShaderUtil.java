@@ -43,32 +43,12 @@ import com.jogamp.common.nio.Buffers;
 public class ShaderUtil {
     public static String getShaderInfoLog(final GL _gl, final int shaderObj) {
         final GL2GL3 gl = _gl.getGL2GL3();
-        final int[] infoLogLength=new int[1];
-        gl.glGetShaderiv(shaderObj, gl.GL_INFO_LOG_LENGTH(), infoLogLength, 0);
-
-        if(infoLogLength[0]==0) {
-            return "(no info log)";
-        }
-        final int[] charsWritten=new int[1];
-        final byte[] infoLogBytes = new byte[infoLogLength[0]];
-        gl.glGetShaderInfoLog(shaderObj, infoLogLength[0], charsWritten, 0, infoLogBytes, 0);
-
-        return new String(infoLogBytes, 0, charsWritten[0]);
+        return gl.glGetShaderInfoLog(shaderObj);
     }
 
     public static String getProgramInfoLog(final GL _gl, final int programObj) {
         final GL2GL3 gl = _gl.getGL2GL3();
-        final int[] infoLogLength=new int[1];
-        gl.glGetProgramiv(programObj, gl.GL_INFO_LOG_LENGTH(), infoLogLength, 0);
-
-        if(infoLogLength[0]==0) {
-            return "(no info log)";
-        }
-        final int[] charsWritten=new int[1];
-        final byte[] infoLogBytes = new byte[infoLogLength[0]];
-        gl.glGetProgramInfoLog(programObj, infoLogLength[0], charsWritten, 0, infoLogBytes, 0);
-
-        return new String(infoLogBytes, 0, charsWritten[0]);
+        return gl.glGetProgramInfoLog(programObj);
     }
 
     public static boolean isShaderStatusValid(final GL _gl, final int shaderObj, final int name, final PrintStream verboseOut) {
