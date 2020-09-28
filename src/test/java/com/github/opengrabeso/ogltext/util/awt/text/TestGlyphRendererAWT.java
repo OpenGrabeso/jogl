@@ -308,7 +308,7 @@ public class TestGlyphRendererAWT {
 
         private static int createHandle(final GL gl) {
             final int[] handles = new int[1];
-            gl.glGenTextures(1, handles, 0);
+            gl.glGenTextures(handles);
             return handles[0];
         }
 

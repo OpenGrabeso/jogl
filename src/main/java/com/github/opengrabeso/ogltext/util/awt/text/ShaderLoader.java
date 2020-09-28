@@ -37,8 +37,7 @@ import com.github.opengrabeso.ogltext.util.glsl.ShaderUtil;
  * <p>
  * {@code ShaderLoader} is a simple utility for loading shaders.  It takes shaders directly as
  * strings.  It will create and compile the shaders, and link them together into a program.  Both
- * compiling and linking are verified.  If a problem occurs a {@link GLException} is thrown with
- * the appropriate log attached.
+ * compiling and linking are verified.
  *
  * <p>
  * Note it is highly recommended that if the developer passes the strings directly to {@code
@@ -99,7 +98,6 @@ public final class ShaderLoader {
      * @return OpenGL handle to the shader program, not negative
      * @throws NullPointerException if context or either source is null
      * @throws IllegalArgumentException if either source is empty
-     * @throws GLException if program did not compile, link, or validate successfully
      */
     /*@Nonnegative*/
     public static int loadProgram(/*@Nonnull*/ final GL2ES2 gl,
@@ -143,7 +141,6 @@ public final class ShaderLoader {
      * @param source Source code of the shader as one long string, assumed not null or empty
      * @param type Type of shader, assumed valid
      * @return OpenGL handle to the shader, not negative
-     * @throws GLException if a GLSL-capable context is not active or could not compile shader
      */
     /*@Nonnegative*/
     private static int loadShader(/*@Nonnull*/ final GL2ES2 gl,
@@ -152,11 +149,7 @@ public final class ShaderLoader {
 
         // Create and read source
         final int shader = gl.glCreateShader(type);
-        gl.glShaderSource(
-                shader,                    // shader handle
-                1,                         // number of strings
-                new String[] { source },   // array of strings
-                null);                     // lengths of strings
+        gl.glShaderSource(shader, source);
 
         // Compile
         gl.glCompileShader(shader);

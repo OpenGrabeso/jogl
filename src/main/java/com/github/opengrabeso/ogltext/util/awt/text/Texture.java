@@ -99,7 +99,7 @@ abstract class Texture {
         Check.notNull(gl, "GL cannot be null");
 
         final int[] handles = new int[] { handle };
-        gl.glDeleteTextures(1, handles, 0);
+        gl.glDeleteTextures(handles);
     }
 
     /**
@@ -110,7 +110,7 @@ abstract class Texture {
      */
     private static int generate(/*@Nonnull*/ final GL gl) {
         final int[] handles = new int[1];
-        gl.glGenTextures(1, handles, 0);
+        gl.glGenTextures(handles);
         return handles[0];
     }
 
