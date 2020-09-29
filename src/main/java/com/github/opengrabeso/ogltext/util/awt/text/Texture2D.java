@@ -134,13 +134,14 @@ abstract class Texture2D extends Texture {
         Check.notNull(pixels, "Pixels cannot be null");
         Check.notNull(area, "Area cannot be null");
 
-        final int parameters[] = new int[4];
 
         // Store unpack parameters
-        gl.glGetIntegerv(gl.GL_UNPACK_ALIGNMENT(), parameters, 0);
-        gl.glGetIntegerv(gl.GL_UNPACK_SKIP_ROWS(), parameters, 1);
-        gl.glGetIntegerv(gl.GL_UNPACK_SKIP_PIXELS(), parameters, 2);
-        gl.glGetIntegerv(gl.GL_UNPACK_ROW_LENGTH(), parameters, 3);
+        final int[] parameters = new int[] {
+            gl.glGetInteger(gl.GL_UNPACK_ALIGNMENT()),
+            gl.glGetInteger(gl.GL_UNPACK_SKIP_ROWS()),
+            gl.glGetInteger(gl.GL_UNPACK_SKIP_PIXELS()),
+            gl.glGetInteger(gl.GL_UNPACK_ROW_LENGTH())
+        };
 
         // Change unpack parameters
         gl.glPixelStorei(gl.GL_UNPACK_ALIGNMENT(), 1);

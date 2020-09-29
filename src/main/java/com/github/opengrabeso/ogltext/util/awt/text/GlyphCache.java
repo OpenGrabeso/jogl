@@ -457,9 +457,7 @@ public final class GlyphCache implements TextureBackingStore.EventListener {
      * @return Maximum texture size
      */
     private static int findMaxSize(/*@Nonnull*/ final GL gl) {
-        final int[] size = new int[1];
-        gl.glGetIntegerv(gl.GL_MAX_TEXTURE_SIZE(), size, 0);
-        return size[0];
+        return gl.glGetInteger(gl.GL_MAX_TEXTURE_SIZE());
     }
 
     /**
