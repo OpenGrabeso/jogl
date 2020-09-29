@@ -132,7 +132,7 @@ public final class QuadPipelineGL30 extends AbstractQuadPipeline {
 
         // Generate
         final int[] handles = new int[1];
-        gl.glGenVertexArrays(1, handles, 0);
+        gl.glGenVertexArrays(handles);
         final int vao = handles[0];
 
         // Bind
@@ -184,9 +184,9 @@ public final class QuadPipelineGL30 extends AbstractQuadPipeline {
         // Delete VBO and VAO
         final int[] handles = new int[1];
         handles[0] = vbo;
-        gl3.glDeleteBuffers(1, handles, 0);
+        gl3.glDeleteBuffers(handles);
         handles[0] = vao;
-        gl3.glDeleteVertexArrays(1, handles, 0);
+        gl3.glDeleteVertexArrays(handles);
     }
 
     @Override

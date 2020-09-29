@@ -277,7 +277,7 @@ abstract class AbstractQuadPipeline implements QuadPipeline {
 
         // Generate
         final int[] handles = new int[1];
-        gl.glGenBuffers(1, handles, 0);
+        gl.glGenBuffers(handles);
         final int vbo = handles[0];
 
         // Allocate

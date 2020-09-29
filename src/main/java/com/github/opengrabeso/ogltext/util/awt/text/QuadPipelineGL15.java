@@ -110,7 +110,7 @@ public final class QuadPipelineGL15 extends AbstractQuadPipeline {
 
         // Delete the vertex buffer object
         final int[] handles = new int[] { vbo };
-        gl2.glDeleteBuffers(1, handles, 0);
+        gl2.glDeleteBuffers(handles);
     }
 
     @Override
