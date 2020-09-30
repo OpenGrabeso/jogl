@@ -214,8 +214,8 @@ public final class QuadPipelineGL30 extends AbstractQuadPipeline {
 
         // Upload data
         rewind();
-        gl3.glBufferSubData(
-                gl3.GL_ARRAY_BUFFER(), // target
+        gl.glBufferSubData(
+                gl.GL_ARRAY_BUFFER(), // target
                 0,                   // offset
                 getSizeInBytes(),    // size
                 getData());          // data
