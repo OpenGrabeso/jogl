@@ -28,7 +28,6 @@
 package com.github.opengrabeso.ogltext.util.awt.text;
 
 import com.jogamp.common.nio.Buffers;
-import com.github.opengrabeso.jaagl.GL;
 import com.github.opengrabeso.jaagl.GL2GL3;
 
 import java.nio.FloatBuffer;
@@ -234,7 +233,7 @@ abstract class AbstractQuadPipeline implements QuadPipeline {
     }
 
     @Override
-    public final void addQuad(/*@Nonnull*/ final GL gl, /*@Nonnull*/ final Quad quad) {
+    public final void addQuad(/*@Nonnull*/ final GL2GL3 gl, /*@Nonnull*/ final Quad quad) {
 
         Check.notNull(gl, "Context cannot be null");
         Check.notNull(quad, "Quad cannot be null");
@@ -247,7 +246,7 @@ abstract class AbstractQuadPipeline implements QuadPipeline {
     }
 
     @Override
-    public void beginRendering(/*@Nonnull*/ final GL gl) {
+    public void beginRendering(/*@Nonnull*/ final GL2GL3 gl) {
         Check.notNull(gl, "GL cannot be null");
     }
 
@@ -293,7 +292,7 @@ abstract class AbstractQuadPipeline implements QuadPipeline {
     }
 
     @Override
-    public void dispose(/*@Nonnull*/ final GL gl) {
+    public void dispose(/*@Nonnull*/ final GL2GL3 gl) {
 
         Check.notNull(gl, "GL cannot be null");
 
@@ -324,13 +323,11 @@ abstract class AbstractQuadPipeline implements QuadPipeline {
      * Actually draws everything in the pipeline.
      *
      * @param gl Current OpenGL context
-     * @throws NullPointerException if context is null
-     * @throws GLException if context is unexpected version
      */
-    protected abstract void doFlush(/*@Nonnull*/ final GL gl);
+    protected abstract void doFlush(/*@Nonnull*/ final GL2GL3 gl);
 
     @Override
-    public void endRendering(/*@Nonnull*/ final GL gl) {
+    public void endRendering(/*@Nonnull*/ final GL2GL3 gl) {
 
         Check.notNull(gl, "GL cannot be null");
 
@@ -341,7 +338,6 @@ abstract class AbstractQuadPipeline implements QuadPipeline {
      * Fires an event to all observers.
      *
      * @param type Type of event to send to observers
-     * @throws NullPointerException if type is null
      */
     protected final void fireEvent(/*@Nonnull*/ final EventType type) {
 
@@ -354,7 +350,7 @@ abstract class AbstractQuadPipeline implements QuadPipeline {
     }
 
     @Override
-    public final void flush(/*@Nonnull*/ final GL gl) {
+    public final void flush(/*@Nonnull*/ final GL2GL3 gl) {
 
         Check.notNull(gl, "GL cannot be null");
 

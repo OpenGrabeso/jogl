@@ -27,8 +27,8 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.github.opengrabeso.jaagl.GL;
 import com.github.opengrabeso.jaagl.GL2;
+import com.github.opengrabeso.jaagl.GL2GL3;
 
 
 /**
@@ -52,7 +52,7 @@ public final class GlyphRendererGL2 extends AbstractGlyphRenderer {
     }
 
     @Override
-    protected void doBeginRendering(/*@Nonnull*/ final GL gl,
+    protected void doBeginRendering(/*@Nonnull*/ final GL2GL3 gl,
                                     final boolean ortho,
                                     /*@Nonnegative*/ final int width,
                                     /*@Nonnegative*/ final int height,
@@ -93,7 +93,7 @@ public final class GlyphRendererGL2 extends AbstractGlyphRenderer {
     }
 
     /*@Nonnull*/
-    protected QuadPipeline doCreateQuadPipeline(/*@Nonnull*/ final GL gl) {
+    protected QuadPipeline doCreateQuadPipeline(/*@Nonnull*/ final GL2GL3 gl) {
 
         Check.notNull(gl, "GL cannot be null");
 
@@ -102,12 +102,12 @@ public final class GlyphRendererGL2 extends AbstractGlyphRenderer {
         return new QuadPipelineGL15(gl2);
     }
 
-    protected void doDispose(/*@Nonnull*/ final GL gl) {
+    protected void doDispose(/*@Nonnull*/ final GL2GL3 gl) {
         Check.notNull(gl, "GL cannot be null");
     }
 
     @Override
-    protected void doEndRendering(/*@Nonnull*/ final GL gl) {
+    protected void doEndRendering(/*@Nonnull*/ final GL2GL3 gl) {
 
         Check.notNull(gl, "GL cannot be null");
 
@@ -128,7 +128,7 @@ public final class GlyphRendererGL2 extends AbstractGlyphRenderer {
     }
 
     @Override
-    protected void doSetColor(/*@Nonnull*/ final GL gl,
+    protected void doSetColor(/*@Nonnull*/ final GL2GL3 gl,
                               final float r,
                               final float g,
                               final float b,
@@ -142,7 +142,7 @@ public final class GlyphRendererGL2 extends AbstractGlyphRenderer {
     }
 
     @Override
-    protected void doSetTransform3d(/*@Nonnull*/ final GL gl,
+    protected void doSetTransform3d(/*@Nonnull*/ final GL2GL3 gl,
                                     /*@Nonnull*/ final float[] value,
                                     final boolean transpose) {
 
@@ -154,7 +154,7 @@ public final class GlyphRendererGL2 extends AbstractGlyphRenderer {
     }
 
     @Override
-    protected void doSetTransformOrtho(/*@Nonnull*/ final GL gl,
+    protected void doSetTransformOrtho(/*@Nonnull*/ final GL2GL3 gl,
                                        /*@Nonnegative*/ final int width,
                                        /*@Nonnegative*/ final int height) {
 

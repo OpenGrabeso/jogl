@@ -28,6 +28,7 @@
 package com.github.opengrabeso.ogltext.util.awt.text;
 
 import com.github.opengrabeso.jaagl.GL2ES2;
+import com.github.opengrabeso.jaagl.GL2GL3;
 import com.github.opengrabeso.ogltext.util.glsl.ShaderUtil;
 
 
@@ -63,7 +64,7 @@ public final class ShaderLoader {
      * @param shader OpenGL handle to a shader
      * @return True if shader was compiled without errors
      */
-    private static boolean isShaderCompiled(/*@Nonnull*/ final GL2ES2 gl, final int shader) {
+    private static boolean isShaderCompiled(/*@Nonnull*/ final GL2GL3 gl, final int shader) {
         return ShaderUtil.isShaderStatusValid(gl, shader, gl.GL_COMPILE_STATUS(), null);
     }
 
@@ -74,7 +75,7 @@ public final class ShaderLoader {
      * @param program OpenGL handle to a shader program
      * @return True if program was linked successfully
      */
-    private static boolean isProgramLinked(/*@Nonnull*/ final GL2ES2 gl, final int program) {
+    private static boolean isProgramLinked(/*@Nonnull*/ final GL2GL3 gl, final int program) {
         return ShaderUtil.isProgramStatusValid(gl, program, gl.GL_LINK_STATUS());
     }
 
@@ -85,7 +86,7 @@ public final class ShaderLoader {
      * @param program OpenGL handle to a shader program
      * @return True if program was validated successfully
      */
-    private static boolean isProgramValidated(/*@Nonnull*/ final GL2ES2 gl, final int program) {
+    private static boolean isProgramValidated(/*@Nonnull*/ final GL2GL3 gl, final int program) {
         return ShaderUtil.isProgramStatusValid(gl, program, gl.GL_VALIDATE_STATUS());
     }
 
@@ -100,7 +101,7 @@ public final class ShaderLoader {
      * @throws IllegalArgumentException if either source is empty
      */
     /*@Nonnegative*/
-    public static int loadProgram(/*@Nonnull*/ final GL2ES2 gl,
+    public static int loadProgram(/*@Nonnull*/ final GL2GL3 gl,
                                   /*@Nonnull*/ final String vss,
                                   /*@Nonnull*/ final String fss) {
 
@@ -143,7 +144,7 @@ public final class ShaderLoader {
      * @return OpenGL handle to the shader, not negative
      */
     /*@Nonnegative*/
-    private static int loadShader(/*@Nonnull*/ final GL2ES2 gl,
+    private static int loadShader(/*@Nonnull*/ final GL2GL3 gl,
                                   /*@Nonnull*/ final String source,
                                   final int type) {
 

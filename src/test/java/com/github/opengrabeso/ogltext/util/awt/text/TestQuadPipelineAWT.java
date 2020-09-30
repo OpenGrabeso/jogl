@@ -29,11 +29,7 @@ package com.github.opengrabeso.ogltext.util.awt.text;
 
 import static org.junit.Assert.*;
 
-import com.github.opengrabeso.jaagl.GL;
-import com.github.opengrabeso.jaagl.GL2;
-import com.github.opengrabeso.jaagl.GL2ES2;
-import com.github.opengrabeso.jaagl.GL3;
-import com.github.opengrabeso.jaagl.jogl.JoGL;
+import com.github.opengrabeso.jaagl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 
 import javax.swing.JFrame;
@@ -161,14 +157,14 @@ public class TestQuadPipelineAWT {
         canvas.addGLEventListener(new DebugGL3EventAdapter() {
 
             @Override
-            public void doInit(final GL3 gl) {
+            public void doInit(final GL2GL3 gl) {
                 program = createProgram(gl);
                 pipeline = new QuadPipelineGL30(gl, program);
                 quad = createQuad();
             }
 
             @Override
-            public void doDisplay(final GL3 gl) {
+            public void doDisplay(final GL2GL3 gl) {
 
                 // View
                 gl.glViewport(0, 0, 512, 512);
@@ -192,7 +188,7 @@ public class TestQuadPipelineAWT {
     /**
      * Returns a shader program for use with pipeline.
      */
-    private static int createProgram(final GL2ES2 gl) {
+    private static int createProgram(final GL2GL3 gl) {
         int program = -1;
         try {
             program = ShaderLoader.loadProgram(gl, VERT_SOURCE, FRAG_SOURCE);

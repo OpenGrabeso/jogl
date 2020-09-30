@@ -27,8 +27,8 @@
  */
 package com.github.opengrabeso.ogltext.util.awt;
 
-import com.github.opengrabeso.jaagl.GL;
 import com.github.opengrabeso.jaagl.GL2;
+import com.github.opengrabeso.jaagl.GL2GL3;
 import com.github.opengrabeso.jaagl.GL3;
 import com.github.opengrabeso.ogltext.util.texture.TextureCoords;
 
@@ -144,7 +144,7 @@ public final class TextRenderer {
     /**
      * GL interface
      * */
-    private GL gl;
+    private GL2GL3 gl;
 
     private boolean gl3;
 
@@ -168,7 +168,7 @@ public final class TextRenderer {
         this(font, false, false, null, false, null, gl, false);
     }
 
-    public TextRenderer(/*@Nonnull*/ final Font font, GL3 gl) {
+    public TextRenderer(/*@Nonnull*/ final Font font, GL2GL3 gl) {
         this(font, false, false, null, false, null, gl, true);
     }
 
@@ -176,7 +176,7 @@ public final class TextRenderer {
         this(font, antialias, subpixel, null, false, null, gl, false);
     }
 
-    public TextRenderer(/*@Nonnull*/ final Font font, final boolean antialias, final boolean subpixel, GL3 gl) {
+    public TextRenderer(/*@Nonnull*/ final Font font, final boolean antialias, final boolean subpixel, GL2GL3 gl) {
         this(font, antialias, subpixel, null, false, null, gl, true);
     }
 
@@ -205,7 +205,7 @@ public final class TextRenderer {
                         /*@CheckForNull*/ RenderDelegate rd,
                         final boolean mipmap,
                         /*@CheckForNull*/ final UnicodeBlock ub,
-                        final GL gl, boolean gl3) {
+                        final GL2GL3 gl, boolean gl3) {
 
         Check.notNull(font, "Font cannot be null");
         if (rd == null) {
@@ -581,7 +581,7 @@ public final class TextRenderer {
      *
      * @param matrix Transformation matrix in column-major order
      */
-    public void setTransform(final GL gl, /*@Nonnull*/ final float matrix[]) {
+    public void setTransform(final GL2GL3 gl, /*@Nonnull*/ final float matrix[]) {
         Check.notNull(matrix, "Matrix cannot be null");
         glyphRenderer.setTransform(gl, matrix, false);
     }
@@ -894,7 +894,7 @@ public final class TextRenderer {
         }
 
         @Override
-        public void beginRendering(/*@Nonnull*/ final GL gl,
+        public void beginRendering(/*@Nonnull*/ final GL2GL3 gl,
                                    final boolean ortho,
                                    /*@Nonnegative*/ final int width,
                                    /*@Nonnegative*/ final int height,
@@ -931,7 +931,7 @@ public final class TextRenderer {
         }
 
         @Override
-        public void dispose(/*@Nonnull*/ final GL gl) {
+        public void dispose(/*@Nonnull*/ final GL2GL3 gl) {
 
             Check.notNull(gl, "GL cannot be null");
 
@@ -941,7 +941,7 @@ public final class TextRenderer {
         }
 
         @Override
-        public float drawGlyph(/*@Nonnull*/ final GL gl,
+        public float drawGlyph(/*@Nonnull*/ final GL2GL3 gl,
                                /*@Nonnull*/ final Glyph glyph,
                                /*@CheckForSigned*/ final float x,
                                /*@CheckForSigned*/ final float y,
@@ -962,7 +962,7 @@ public final class TextRenderer {
         }
 
         @Override
-        public void endRendering(/*@Nonnull*/ final GL gl) {
+        public void endRendering(/*@Nonnull*/ final GL2GL3 gl) {
 
             Check.notNull(gl, "GL cannot be null");
 
@@ -974,7 +974,7 @@ public final class TextRenderer {
         }
 
         @Override
-        public void flush(/*@Nonnull*/ final GL gl) {
+        public void flush(/*@Nonnull*/ final GL2GL3 gl) {
 
             Check.notNull(gl, "GL cannot be null");
 
@@ -995,7 +995,7 @@ public final class TextRenderer {
         }
 
         @Override
-        public void setColor(final GL gl,
+        public void setColor(final GL2GL3 gl,
                              /*@CheckForSigned*/ final float r,
                              /*@CheckForSigned*/ final float g,
                              /*@CheckForSigned*/ final float b,
@@ -1011,7 +1011,7 @@ public final class TextRenderer {
         }
 
         @Override
-        public void setTransform(final GL gl, /*@Nonnull*/ final float[] value, final boolean transpose) {
+        public void setTransform(final GL2GL3 gl, /*@Nonnull*/ final float[] value, final boolean transpose) {
 
             Check.notNull(value, "Value cannot be null");
 

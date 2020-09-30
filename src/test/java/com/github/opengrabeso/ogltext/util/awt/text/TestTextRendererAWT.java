@@ -29,6 +29,7 @@ package com.github.opengrabeso.ogltext.util.awt.text;
 
 import com.github.opengrabeso.jaagl.GL;
 import com.github.opengrabeso.jaagl.GL2;
+import com.github.opengrabeso.jaagl.GL2GL3;
 import com.github.opengrabeso.jaagl.GL3;
 import com.github.opengrabeso.jaagl.jogl.JoGL;
 import com.jogamp.opengl.awt.GLCanvas;
@@ -144,12 +145,12 @@ public class TestTextRendererAWT {
         canvas.addGLEventListener(new DebugGL3EventAdapter() {
 
             @Override
-            public void doInit(final GL3 gl) {
+            public void doInit(final GL2GL3 gl) {
                 textRenderer = new TextRenderer(FONT, gl);
             }
 
             @Override
-            public void doDisplay(final GL3 gl) {
+            public void doDisplay(final GL2GL3 gl) {
 
                 // Clear
                 gl.glClearColor(0.85f, 0.85f, 0.85f, 1);
@@ -167,7 +168,7 @@ public class TestTextRendererAWT {
             }
 
             @Override
-            public void doDispose(final GL3 gl) {
+            public void doDispose(final GL2GL3 gl) {
                 textRenderer.dispose();
             }
         });

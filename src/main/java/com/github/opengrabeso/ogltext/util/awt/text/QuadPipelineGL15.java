@@ -27,7 +27,7 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL2GL3;
 import com.github.opengrabeso.jaagl.GL2;
 
 
@@ -74,7 +74,7 @@ public final class QuadPipelineGL15 extends AbstractQuadPipeline {
     }
 
     @Override
-    public void beginRendering(/*@Nonnull*/ final GL gl) {
+    public void beginRendering(/*@Nonnull*/ final GL2GL3 gl) {
 
         super.beginRendering(gl);
 
@@ -102,7 +102,7 @@ public final class QuadPipelineGL15 extends AbstractQuadPipeline {
     }
 
     @Override
-    public void dispose(/*@Nonnull*/ final GL gl) {
+    public void dispose(/*@Nonnull*/ final GL2GL3 gl) {
 
         super.dispose(gl);
 
@@ -114,7 +114,7 @@ public final class QuadPipelineGL15 extends AbstractQuadPipeline {
     }
 
     @Override
-    protected void doFlush(/*@Nonnull*/ final GL gl) {
+    protected void doFlush(/*@Nonnull*/ final GL2GL3 gl) {
 
         Check.notNull(gl, "GL cannot be null");
 
@@ -138,7 +138,7 @@ public final class QuadPipelineGL15 extends AbstractQuadPipeline {
     }
 
     @Override
-    public void endRendering(/*@Nonnull*/ final GL gl) {
+    public void endRendering(/*@Nonnull*/ final GL2GL3 gl) {
 
         super.endRendering(gl);
 

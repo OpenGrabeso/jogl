@@ -27,7 +27,7 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL2GL3;
 import com.github.opengrabeso.jaagl.GL3;
 
 
@@ -94,7 +94,7 @@ public final class QuadPipelineGL30 extends AbstractQuadPipeline {
      * @throws IllegalArgumentException if shader program is less than one
      */
     /*@VisibleForTesting*/
-    public QuadPipelineGL30(/*@Nonnull*/ final GL3 gl, /*@Nonnegative*/ final int shaderProgram) {
+    public QuadPipelineGL30(/*@Nonnull*/ final GL2GL3 gl, /*@Nonnegative*/ final int shaderProgram) {
 
         super(VERTS_PER_PRIM, PRIMS_PER_QUAD);
 
@@ -106,15 +106,13 @@ public final class QuadPipelineGL30 extends AbstractQuadPipeline {
     }
 
     @Override
-    public void beginRendering(/*@Nonnull*/ final GL gl) {
+    public void beginRendering(/*@Nonnull*/ final GL2GL3 gl) {
 
         super.beginRendering(gl);
 
-        final GL3 gl3 = gl.getGL3();
-
         // Bind the VBO and VAO
-        gl3.glBindBuffer(gl3.GL_ARRAY_BUFFER(), vbo);
-        gl3.glBindVertexArray(vao);
+        gl.glBindBuffer(gl.GL_ARRAY_BUFFER(), vbo);
+        gl.glBindVertexArray(vao);
     }
 
     /**
@@ -126,7 +124,7 @@ public final class QuadPipelineGL30 extends AbstractQuadPipeline {
      * @return OpenGL handle to resulting VAO
      */
     /*@Nonnegative*/
-    private static int createVertexArrayObject(/*@Nonnull*/ final GL3 gl,
+    private static int createVertexArrayObject(/*@Nonnull*/ final GL2GL3 gl,
                                                /*@Nonnegative*/ final int program,
                                                /*@Nonnegative*/ final int vbo) {
 
@@ -175,18 +173,16 @@ public final class QuadPipelineGL30 extends AbstractQuadPipeline {
     }
 
     @Override
-    public void dispose(/*@Nonnull*/ final GL gl) {
+    public void dispose(/*@Nonnull*/ final GL2GL3 gl) {
 
         super.dispose(gl);
-
-        final GL3 gl3 = gl.getGL3();
 
         // Delete VBO and VAO
         final int[] handles = new int[1];
         handles[0] = vbo;
-        gl3.glDeleteBuffers(handles);
+        gl.glDeleteBuffers(handles);
         handles[0] = vao;
-        gl3.glDeleteVertexArrays(handles);
+        gl.glDeleteVertexArrays(handles);
     }
 
     @Override
@@ -212,11 +208,9 @@ public final class QuadPipelineGL30 extends AbstractQuadPipeline {
     }
 
     @Override
-    protected void doFlush(/*@Nonnull*/ final GL gl) {
+    protected void doFlush(/*@Nonnull*/ final GL2GL3 gl) {
 
         Check.notNull(gl, "GL cannot be null");
-
-        final GL3 gl3 = gl.getGL3();
 
         // Upload data
         rewind();
@@ -227,22 +221,20 @@ public final class QuadPipelineGL30 extends AbstractQuadPipeline {
                 getData());          // data
 
         // Draw
-        gl3.glDrawArrays(
-                gl3.GL_TRIANGLES(),     // mode
+        gl.glDrawArrays(
+                gl.GL_TRIANGLES(),     // mode
                 0,                    // first
                 getSizeInVertices()); // count
         clear();
     }
 
     @Override
-    public void endRendering(/*@Nonnull*/ final GL gl) {
+    public void endRendering(/*@Nonnull*/ final GL2GL3 gl) {
 
         super.endRendering(gl);
 
-        final GL3 gl3 = gl.getGL3();
-
         // Unbind the VBO and VAO
-        gl3.glBindBuffer(gl3.GL_ARRAY_BUFFER(), 0);
-        gl3.glBindVertexArray(0);
+        gl.glBindBuffer(gl.GL_ARRAY_BUFFER(), 0);
+        gl.glBindVertexArray(0);
     }
 }

@@ -29,6 +29,7 @@ package com.github.opengrabeso.ogltext.util.awt.text;
 
 import com.github.opengrabeso.jaagl.GL;
 import com.github.opengrabeso.jaagl.GL2;
+import com.github.opengrabeso.jaagl.GL2GL3;
 import com.github.opengrabeso.jaagl.GL3;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.github.opengrabeso.ogltext.util.texture.TextureCoords;
@@ -177,7 +178,7 @@ public class TestGlyphRendererAWT {
         canvas.addGLEventListener(new DebugGL3EventAdapter() {
 
             @Override
-            public void doInit(final GL3 gl) {
+            public void doInit(final GL2GL3 gl) {
 
                 // Set up glyph renderer
                 glyphRenderer = new GlyphRendererGL3(gl);
@@ -196,7 +197,7 @@ public class TestGlyphRendererAWT {
             }
 
             @Override
-            public void doDisplay(final GL3 gl) {
+            public void doDisplay(final GL2GL3 gl) {
 
                 // Clear
                 gl.glClearColor(0, 1, 1, 1);

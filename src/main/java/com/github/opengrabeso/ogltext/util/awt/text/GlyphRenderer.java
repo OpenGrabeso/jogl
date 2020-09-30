@@ -27,7 +27,7 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL2GL3;
 import com.github.opengrabeso.ogltext.util.texture.TextureCoords;
 
 
@@ -53,7 +53,7 @@ public interface GlyphRenderer {
      * @param height Height of current OpenGL viewport
      * @param disableDepthTest True if should ignore depth values
      */
-    void beginRendering(/*@Nonnull*/ GL gl,
+    void beginRendering(/*@Nonnull*/ GL2GL3 gl,
                         boolean ortho,
                         /*@Nonnegative*/ int width,
                         /*@Nonnegative*/ int height,
@@ -64,7 +64,7 @@ public interface GlyphRenderer {
      *
      * @param gl Current OpenGL context
      */
-    void dispose(/*@Nonnull*/ GL gl);
+    void dispose(/*@Nonnull*/ GL2GL3 gl);
 
     /**
      * Draws a glyph with this {@link GlyphRenderer}.
@@ -78,7 +78,7 @@ public interface GlyphRenderer {
      * @param coords Texture coordinates of glyph
      */
     /*@CheckForSigned*/
-    float drawGlyph(/*@Nonnull*/ GL gl,
+    float drawGlyph(/*@Nonnull*/ GL2GL3 gl,
                     /*@Nonnull*/ Glyph glyph,
                     /*@CheckForSigned*/ float x,
                     /*@CheckForSigned*/ float y,
@@ -92,14 +92,14 @@ public interface GlyphRenderer {
      *
      * @param gl Current OpenGL context
      */
-    void endRendering(/*@Nonnull*/ GL gl);
+    void endRendering(/*@Nonnull*/ GL2GL3 gl);
 
     /**
      * Forces all stored text to be rendered.
      *
      * @param gl Current OpenGL context
      */
-    void flush(/*@Nonnull*/ GL gl);
+    void flush(/*@Nonnull*/ GL2GL3 gl);
 
     /**
      * Checks if this {@link GlyphRenderer} is using vertex arrays.
@@ -116,7 +116,7 @@ public interface GlyphRenderer {
      * @param b Blue component of color
      * @param a Alpha component of color
      */
-    void setColor(final GL gl, float r, float g, float b, float a);
+    void setColor(final GL2GL3 gl, float r, float g, float b, float a);
 
     /**
      * Changes the transformation matrix for drawing in 3D.
@@ -127,7 +127,7 @@ public interface GlyphRenderer {
      * @throws IndexOutOfBoundsException if value's length is less than sixteen
      * @throws IllegalStateException if in orthographic mode
      */
-    void setTransform(final GL gl, /*@Nonnull*/ float[] value, boolean transpose);
+    void setTransform(final GL2GL3 gl, /*@Nonnull*/ float[] value, boolean transpose);
 
     /**
      * Changes whether vertex arrays are in use.

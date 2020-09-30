@@ -27,7 +27,7 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL2GL3;
 
 
 /**
@@ -52,7 +52,7 @@ public interface QuadPipeline {
      * @throws NullPointerException if context or quad is null
      * @throws GLException if context is unexpected version
      */
-    void addQuad(/*@Nonnull*/ GL gl, /*@Nonnull*/ Quad quad);
+    void addQuad(/*@Nonnull*/ GL2GL3 gl, /*@Nonnull*/ Quad quad);
 
     /**
      * Starts a render cycle with this {@link QuadPipeline}.
@@ -61,7 +61,7 @@ public interface QuadPipeline {
      * @throws NullPointerException if context is null
      * @throws GLException if context is unexpected version
      */
-    void beginRendering(/*@Nonnull*/ GL gl);
+    void beginRendering(/*@Nonnull*/ GL2GL3 gl);
 
     /**
      * Frees resources used by this {@link QuadPipeline}.
@@ -70,7 +70,7 @@ public interface QuadPipeline {
      * @throws NullPointerException if context is null
      * @throws GLException if context is unexpected version
      */
-    void dispose(/*@Nonnull*/ GL gl);
+    void dispose(/*@Nonnull*/ GL2GL3 gl);
 
     /**
      * Finishes a render cycle with this {@link QuadPipeline}.
@@ -79,7 +79,7 @@ public interface QuadPipeline {
      * @throws NullPointerException if context is null
      * @throws GLException if context is unexpected version
      */
-    void endRendering(/*@Nonnull*/ GL gl);
+    void endRendering(/*@Nonnull*/ GL2GL3 gl);
 
     /**
      * Draws all vertices in this {@link QuadPipeline}.
@@ -88,7 +88,7 @@ public interface QuadPipeline {
      * @throws NullPointerException if context is null
      * @throws GLException if context is unexpected version
      */
-    void flush(/*@Nonnull*/ GL gl);
+    void flush(/*@Nonnull*/ GL2GL3 gl);
 
     // TODO: Rename to `size`?
     /**
