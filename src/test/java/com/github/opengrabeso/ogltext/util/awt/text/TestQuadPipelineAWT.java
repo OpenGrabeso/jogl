@@ -70,18 +70,18 @@ public class TestQuadPipelineAWT {
      */
     static {
         VERT_SOURCE =
-            "#version 140\n" +
+            "#version 100\n" +
             "uniform mat4 MVPMatrix=mat4(1);\n" +
-            "in vec4 MCVertex;\n" +
+            "attribute vec4 MCVertex;\n" +
             "void main() {\n" +
             "   gl_Position = MVPMatrix * MCVertex;\n" +
             "}\n";
         FRAG_SOURCE =
-            "#version 140\n" +
+            "#version 100\n" +
+            "precision mediump float;\n" +
             "uniform vec4 Color=vec4(1,1,1,1);\n" +
-            "out vec4 FragColor;\n" +
             "void main() {\n" +
-            "   FragColor = Color;\n" +
+            "   gl_FragColor = Color;\n" +
             "}\n";
     }
 
