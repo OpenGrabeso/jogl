@@ -27,13 +27,13 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
+import com.github.opengrabeso.jaagl.GL;
 import com.github.opengrabeso.ogltext.util.awt.TextRenderer.RenderDelegate;
-import com.jogamp.opengl.util.packrect.BackingStoreManager;
-import com.jogamp.opengl.util.packrect.Rect;
-import com.jogamp.opengl.util.packrect.RectVisitor;
-import com.jogamp.opengl.util.packrect.RectanglePacker;
-import com.jogamp.opengl.util.texture.TextureCoords;
+import com.github.opengrabeso.ogltext.util.packrect.BackingStoreManager;
+import com.github.opengrabeso.ogltext.util.packrect.Rect;
+import com.github.opengrabeso.ogltext.util.packrect.RectVisitor;
+import com.github.opengrabeso.ogltext.util.packrect.RectanglePacker;
+import com.github.opengrabeso.ogltext.util.texture.TextureCoords;
 
 import java.awt.Font;
 import java.awt.font.FontRenderContext;
@@ -200,7 +200,7 @@ public final class GlyphCache implements TextureBackingStore.EventListener {
 
         // Bind the backing store
         final TextureBackingStore bs = getBackingStore();
-        bs.bind(gl, GL.GL_TEXTURE0);
+        bs.bind(gl, gl.GL_TEXTURE0());
     }
 
     /**
@@ -457,9 +457,7 @@ public final class GlyphCache implements TextureBackingStore.EventListener {
      * @return Maximum texture size
      */
     private static int findMaxSize(/*@Nonnull*/ final GL gl) {
-        final int[] size = new int[1];
-        gl.glGetIntegerv(GL.GL_MAX_TEXTURE_SIZE, size, 0);
-        return size[0];
+        return gl.glGetInteger(gl.GL_MAX_TEXTURE_SIZE());
     }
 
     /**
@@ -570,20 +568,6 @@ public final class GlyphCache implements TextureBackingStore.EventListener {
     /*@Nonnegative*/
     int getWidth() {
         return getBackingStore().getWidth();
-    }
-
-    /**
-     * Checks if Non-Power-Of-Two textures are available.
-     *
-     * @param gl Current OpenGL context
-     * @return True if NPOT textures are available
-     * @throws NullPointerException if context is null
-     */
-    static boolean isNpotTextureAvailable(/*@Nonnull*/ final GL gl) {
-
-        Check.notNull(gl, "GL cannot be null");
-
-        return gl.isExtensionAvailable("GL_ARB_texture_non_power_of_two");
     }
 
     private static void log(/*@Nonnull*/ final String message) {

@@ -27,7 +27,7 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL2GL3;
+import com.github.opengrabeso.jaagl.GL2GL3;
 
 
 /**
@@ -45,7 +45,7 @@ final class Vec4Uniform extends Uniform {
     /**
      * Constructs a uniform vector.
      *
-     * @param gl2gl3 Current OpenGL context
+     * @param gl Current OpenGL context
      * @param program OpenGL handle to shader program
      * @param name Name of the uniform in shader source code
      * @throws NullPointerException if context is null

@@ -27,8 +27,8 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL3;
+import com.github.opengrabeso.jaagl.GL2GL3;
+import com.github.opengrabeso.jaagl.GL3;
 
 
 /**
@@ -118,7 +118,7 @@ public final class GlyphRendererGL3 extends AbstractGlyphRenderer {
      * @throws NullPointerException if context is null
      */
     /*@VisibleForTesting*/
-    public GlyphRendererGL3(/*@Nonnull*/ final GL3 gl) {
+    public GlyphRendererGL3(/*@Nonnull*/ final GL2GL3 gl) {
 
         Check.notNull(gl, "GL cannot be null");
 
@@ -128,7 +128,7 @@ public final class GlyphRendererGL3 extends AbstractGlyphRenderer {
     }
 
     @Override
-    protected void doBeginRendering(/*@Nonnull*/ final GL gl,
+    protected void doBeginRendering(/*@Nonnull*/ final GL2GL3 gl,
                                     final boolean ortho,
                                     /*@Nonnegative*/ final int width,
                                     /*@Nonnegative*/ final int height,
@@ -138,26 +138,24 @@ public final class GlyphRendererGL3 extends AbstractGlyphRenderer {
         Check.argument(width >= 0, "Width cannot be negative");
         Check.argument(height >= 0, "Height cannot be negative");
 
-        final GL3 gl3 = gl.getGL3();
-
         // Activate program
-        gl3.glUseProgram(program);
+        gl.glUseProgram(program);
 
         // Check blending and depth test
         restoreBlending = false;
-        if (!gl3.glIsEnabled(GL.GL_BLEND)) {
-            gl3.glEnable(GL.GL_BLEND);
-            gl3.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
+        if (!gl.glIsEnabled(gl.GL_BLEND())) {
+            gl.glEnable(gl.GL_BLEND());
+            gl.glBlendFunc(gl.GL_ONE(), gl.GL_ONE_MINUS_SRC_ALPHA());
             restoreBlending = true;
         }
         restoreDepthTest = false;
-        if (disableDepthTest && gl3.glIsEnabled(GL.GL_DEPTH_TEST)) {
-            gl3.glDisable(GL.GL_DEPTH_TEST);
+        if (disableDepthTest && gl.glIsEnabled(gl.GL_DEPTH_TEST())) {
+            gl.glDisable(gl.GL_DEPTH_TEST());
             restoreDepthTest = true;
         }
         restoreScissor = false;
-        if (gl3.glIsEnabled(GL.GL_SCISSOR_TEST)) {
-            gl3.glDisable(GL.GL_SCISSOR_TEST);
+        if (gl.glIsEnabled(gl.GL_SCISSOR_TEST())) {
+            gl.glDisable(gl.GL_SCISSOR_TEST());
             restoreScissor = true;
         }
 
@@ -168,48 +166,43 @@ public final class GlyphRendererGL3 extends AbstractGlyphRenderer {
     }
 
     @Override
-    protected QuadPipeline doCreateQuadPipeline(/*@Nonnull*/ final GL gl) {
+    protected QuadPipeline doCreateQuadPipeline(/*@Nonnull*/ final GL2GL3 gl) {
 
         Check.notNull(gl, "GL cannot be null");
 
-        final GL3 gl3 = gl.getGL3();
-        return new QuadPipelineGL30(gl3, program);
+        return new QuadPipelineGL30(gl, program);
     }
 
-    protected void doDispose(/*@Nonnull*/ final GL gl) {
+    protected void doDispose(/*@Nonnull*/ final GL2GL3 gl) {
 
         Check.notNull(gl, "GL cannot be null");
 
-        final GL3 gl3 = gl.getGL3();
-
-        gl3.glUseProgram(0);
-        gl3.glDeleteProgram(program);
+        gl.glUseProgram(0);
+        gl.glDeleteProgram(program);
     }
 
     @Override
-    protected void doEndRendering(/*@Nonnull*/ final GL gl) {
+    protected void doEndRendering(/*@Nonnull*/ final GL2GL3 gl) {
 
         Check.notNull(gl, "GL cannot be null");
 
-        final GL3 gl3 = gl.getGL3();
-
         // Deactivate program
-        gl3.glUseProgram(0);
+        gl.glUseProgram(0);
 
         // Check blending and depth test
         if (restoreBlending) {
-            gl3.glDisable(GL.GL_BLEND);
+            gl.glDisable(gl.GL_BLEND());
         }
         if (restoreScissor) {
-            gl3.glEnable(GL.GL_SCISSOR_TEST);
+            gl.glEnable(gl.GL_SCISSOR_TEST());
         }
         if (restoreDepthTest) {
-            gl3.glEnable(GL.GL_DEPTH_TEST);
+            gl.glEnable(gl.GL_DEPTH_TEST());
         }
     }
 
     @Override
-    protected void doSetColor(/*@Nonnull*/ final GL gl,
+    protected void doSetColor(/*@Nonnull*/ final GL2GL3 gl,
                               final float r,
                               final float g,
                               final float b,
@@ -217,41 +210,35 @@ public final class GlyphRendererGL3 extends AbstractGlyphRenderer {
 
         Check.notNull(gl, "GL cannot be null");
 
-        final GL3 gl3 = gl.getGL3();
-
         color.value[0] = r;
         color.value[1] = g;
         color.value[2] = b;
         color.value[3] = a;
-        color.update(gl3);
+        color.update(gl);
     }
 
     @Override
-    protected void doSetTransform3d(/*@Nonnull*/ final GL gl,
+    protected void doSetTransform3d(/*@Nonnull*/ final GL2GL3 gl,
                                     /*@Nonnull*/ final float[] value,
                                     final boolean transpose) {
 
         Check.notNull(gl, "GL cannot be null");
         Check.notNull(value, "Value cannot be null");
 
-        final GL3 gl3 = gl.getGL3();
-
         if (transform.location >= 0) {
-            gl3.glUniformMatrix4fv(transform.location, 1, transpose, value, 0);
+            gl.glUniformMatrix4fv(transform.location, 1, transpose, value, 0);
         }
         transform.dirty = true;
     }
 
     @Override
-    protected void doSetTransformOrtho(/*@Nonnull*/ final GL gl,
+    protected void doSetTransformOrtho(/*@Nonnull*/ final GL2GL3 gl,
                                        /*@Nonnegative*/ final int width,
                                        /*@Nonnegative*/ final int height) {
 
         Check.notNull(gl, "GL cannot be null");
         Check.argument(width >= 0, "Width cannot be negative");
         Check.argument(height >= 0, "Height cannot be negative");
-
-        final GL3 gl3 = gl.getGL3();
 
         // Recompute if width and height changed
         if (width != lastWidth || height != lastHeight) {
@@ -264,7 +251,7 @@ public final class GlyphRendererGL3 extends AbstractGlyphRenderer {
 
         // Upload if made dirty anywhere
         if (transform.dirty) {
-            transform.update(gl3);
+            transform.update(gl);
             transform.dirty = false;
         }
     }

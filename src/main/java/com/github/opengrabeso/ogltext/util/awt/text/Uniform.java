@@ -27,7 +27,7 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL2GL3;
+import com.github.opengrabeso.jaagl.GL2GL3;
 
 
 /**

@@ -27,12 +27,12 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GL3;
-import com.jogamp.opengl.GLProfile;
+import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL2;
+import com.github.opengrabeso.jaagl.GL2GL3;
+import com.github.opengrabeso.jaagl.GL3;
 import com.jogamp.opengl.awt.GLCanvas;
-import com.jogamp.opengl.util.texture.TextureCoords;
+import com.github.opengrabeso.ogltext.util.texture.TextureCoords;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -128,14 +128,14 @@ public class TestGlyphRendererAWT {
 
                 // View
                 gl.glClearColor(0, 1, 1, 1);
-                gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+                gl.glClear(gl.GL_COLOR_BUFFER_BIT());
 
                 // Draw glyph
                 final TextureCoords coordinates = new TextureCoords(0, 1, 1, 0);
                 glyphRenderer.beginRendering(gl, true, 512, 512, true, false);
-                glyphRenderer.setColor(1, 0, 1, 1); // magenta
+                glyphRenderer.setColor(gl, 1, 0, 1, 1); // magenta
                 glyphRenderer.drawGlyph(gl, glyph, 40, 80, 0, 1.0f, false, coordinates);
-                glyphRenderer.setColor(1, 1, 0, 1); // yellow
+                glyphRenderer.setColor(gl, 1, 1, 0, 1); // yellow
                 glyphRenderer.drawGlyph(gl, glyph, 260, 80, 0, 1.0f, false, coordinates);
                 glyphRenderer.endRendering(gl);
             }
@@ -178,7 +178,7 @@ public class TestGlyphRendererAWT {
         canvas.addGLEventListener(new DebugGL3EventAdapter() {
 
             @Override
-            public void doInit(final GL3 gl) {
+            public void doInit(final GL2GL3 gl) {
 
                 // Set up glyph renderer
                 glyphRenderer = new GlyphRendererGL3(gl);
@@ -197,18 +197,18 @@ public class TestGlyphRendererAWT {
             }
 
             @Override
-            public void doDisplay(final GL3 gl) {
+            public void doDisplay(final GL2GL3 gl) {
 
                 // Clear
                 gl.glClearColor(0, 1, 1, 1);
-                gl.glClear(GL3.GL_COLOR_BUFFER_BIT);
+                gl.glClear(gl.GL_COLOR_BUFFER_BIT());
 
                 // Draw glyph
                 final TextureCoords coordinates = new TextureCoords(0, 1, 1, 0);
                 glyphRenderer.beginRendering(gl, true, 512, 512, true, true);
-                glyphRenderer.setColor(1, 0, 1, 1); // magenta
+                glyphRenderer.setColor(gl, 1, 0, 1, 1); // magenta
                 glyphRenderer.drawGlyph(gl, glyph, 40, 80, 0, 1.0f, false, coordinates);
-                glyphRenderer.setColor(1, 1, 0, 1); // yellow
+                glyphRenderer.setColor(gl, 1, 1, 0, 1); // yellow
                 glyphRenderer.drawGlyph(gl, glyph, 260, 80, 0, 1.0f, false, coordinates);
                 glyphRenderer.endRendering(gl);
             }
@@ -267,8 +267,8 @@ public class TestGlyphRendererAWT {
         }
 
         void bind(final GL gl) {
-            gl.glActiveTexture(GL.GL_TEXTURE0);
-            gl.glBindTexture(GL.GL_TEXTURE_2D, handle);
+            gl.glActiveTexture(gl.GL_TEXTURE0());
+            gl.glBindTexture(gl.GL_TEXTURE_2D(), handle);
         }
 
         void upload(final GL gl) {
@@ -282,19 +282,18 @@ public class TestGlyphRendererAWT {
             graphics.drawString("G", 0.09f * SIZE, 0.80f * SIZE);
 
             // Upload it to the texture
-            final GLProfile profile = gl.getGLProfile();
-            gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
+            gl.glPixelStorei(gl.GL_UNPACK_ALIGNMENT(), 1);
             gl.glTexImage2D(
-                    GL.GL_TEXTURE_2D,
+                    gl.GL_TEXTURE_2D(),
                     0,
-                    profile.isGL3() ? GL3.GL_RED : GL2.GL_INTENSITY,
+                    gl.isGL3() ? gl.gl3().GL_RED() : gl.gl2().GL_INTENSITY(),
                     SIZE, SIZE,
                     0,
-                    profile.isGL3() ? GL3.GL_RED : GL2.GL_LUMINANCE,
-                    GL.GL_UNSIGNED_BYTE,
+                    gl.isGL3() ? gl.gl3().GL_RED() : gl.gl2().GL_LUMINANCE(),
+                    gl.GL_UNSIGNED_BYTE(),
                     buffer);
-            setParameter(gl, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-            setParameter(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+            setParameter(gl, gl.GL_TEXTURE_MAG_FILTER(), gl.GL_LINEAR());
+            setParameter(gl, gl.GL_TEXTURE_MIN_FILTER(), gl.GL_LINEAR());
         }
 
         private static BufferedImage createBufferedImage() {
@@ -310,12 +309,12 @@ public class TestGlyphRendererAWT {
 
         private static int createHandle(final GL gl) {
             final int[] handles = new int[1];
-            gl.glGenTextures(1, handles, 0);
+            gl.glGenTextures(handles);
             return handles[0];
         }
 
         private static void setParameter(final GL gl, final int name, final int value) {
-            gl.glTexParameteri(GL.GL_TEXTURE_2D, name, value);
+            gl.glTexParameteri(gl.GL_TEXTURE_2D(), name, value);
         }
     }
 }

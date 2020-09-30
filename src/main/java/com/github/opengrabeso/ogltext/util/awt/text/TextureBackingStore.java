@@ -27,7 +27,7 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
+import com.github.opengrabeso.jaagl.GL;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -174,7 +174,7 @@ final class TextureBackingStore {
     void bind(/*@Nonnull*/ final GL gl, final int unit) {
 
         Check.notNull(gl, "GL cannot be null");
-        Check.argument(unit >= GL.GL_TEXTURE0, "Unit is invalid");
+        Check.argument(unit >= gl.GL_TEXTURE0(), "Unit is invalid");
 
         ensureTexture(gl);
         texture.bind(gl, unit);

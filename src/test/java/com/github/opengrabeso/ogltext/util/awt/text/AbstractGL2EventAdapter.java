@@ -27,8 +27,11 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL2;
+import com.github.opengrabeso.jaagl.GL2;
+import com.github.opengrabeso.jaagl.GL3;
+import com.github.opengrabeso.jaagl.jogl.JoGL;
 import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLEventListener;
 
 
 /**
@@ -43,7 +46,7 @@ abstract class AbstractGL2EventAdapter extends GLEventAdapter {
      */
     @Override
     public final void display(final GLAutoDrawable drawable) {
-        final GL2 gl = drawable.getGL().getGL2();
+        final GL2 gl = JoGL.wrap(drawable.getGL().getGL2());
         doDisplay(gl);
     }
 
@@ -54,7 +57,7 @@ abstract class AbstractGL2EventAdapter extends GLEventAdapter {
      */
     @Override
     public final void dispose(final GLAutoDrawable drawable) {
-        final GL2 gl = drawable.getGL().getGL2();
+        final GL2 gl = JoGL.wrap(drawable.getGL().getGL2());
         doDispose(gl);
     }
 
@@ -67,7 +70,7 @@ abstract class AbstractGL2EventAdapter extends GLEventAdapter {
     public final void reshape(final GLAutoDrawable drawable,
                               final int x, final int y,
                               final int width, final int height) {
-        final GL2 gl = drawable.getGL().getGL2();
+        final GL2 gl = JoGL.wrap(drawable.getGL().getGL2());
         doReshape(gl, x, y, width, height);
     }
 

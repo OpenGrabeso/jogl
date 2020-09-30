@@ -33,7 +33,7 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import com.jogamp.opengl.GL2;
+import com.github.opengrabeso.jaagl.GL2;
 import com.jogamp.opengl.TraceGL2;
 
 import com.jogamp.common.nio.Buffers;
@@ -66,7 +66,7 @@ public class TextRendererTraceGL2Mock01 extends TraceGL2 {
 
     TextRendererGLEventListener01 listener;
 
-    public TextRendererTraceGL2Mock01(final GL2 downstreamGL2, final PrintStream stream, final TextRendererGLEventListener01 listener) {
+    public TextRendererTraceGL2Mock01(final com.jogamp.opengl.GL2 downstreamGL2, final PrintStream stream, final TextRendererGLEventListener01 listener) {
         super(downstreamGL2, stream);
         this.listener = listener;
     }

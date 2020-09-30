@@ -32,9 +32,10 @@ import java.awt.Font;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import com.github.opengrabeso.jaagl.jogl.JoGL;
 import com.github.opengrabeso.ogltext.util.awt.TextRenderer;
 
-import com.jogamp.opengl.GL2;
+import com.github.opengrabeso.jaagl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
@@ -70,7 +71,9 @@ public class TextRendererGLEventListener01 implements GLEventListener {
     }
 
     public void init(final GLAutoDrawable drawable) {
-        renderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 36));
+        GL2 gl = JoGL.wrap(drawable.getGL().getGL2());
+
+        renderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 36), gl);
         renderer.setUseVertexArrays(false);
         Assert.assertNotNull(renderer);
         Assert.assertFalse(renderer.getUseVertexArrays());
@@ -82,7 +85,8 @@ public class TextRendererGLEventListener01 implements GLEventListener {
     }
 
     public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width, final int height) {
-        final GL2 gl = drawable.getGL().getGL2();
+        GL2 gl = JoGL.wrap(drawable.getGL().getGL2());
+
         gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
         gl.glLoadIdentity();
         glu.gluOrtho2D(0, 1, 0, 1);

@@ -29,9 +29,7 @@ package com.github.opengrabeso.ogltext.util.awt.text;
 
 import static org.junit.Assert.*;
 
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GL2ES2;
-import com.jogamp.opengl.GL3;
+import com.github.opengrabeso.jaagl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 
 import javax.swing.JFrame;
@@ -68,113 +66,19 @@ public class TestQuadPipelineAWT {
      */
     static {
         VERT_SOURCE =
-            "#version 140\n" +
+            "#version 100\n" +
             "uniform mat4 MVPMatrix=mat4(1);\n" +
-            "in vec4 MCVertex;\n" +
+            "attribute vec4 MCVertex;\n" +
             "void main() {\n" +
             "   gl_Position = MVPMatrix * MCVertex;\n" +
             "}\n";
         FRAG_SOURCE =
-            "#version 140\n" +
+            "#version 100\n" +
+            "precision mediump float;\n" +
             "uniform vec4 Color=vec4(1,1,1,1);\n" +
-            "out vec4 FragColor;\n" +
             "void main() {\n" +
-            "   FragColor = Color;\n" +
+            "   gl_FragColor = Color;\n" +
             "}\n";
-    }
-
-    /**
-     * Test case for {@link QuadPipelineGL10}.
-     *
-     * <p><em>Performs the following:</em>
-     * <ul>
-     *   <li>Creates a pipeline
-     *   <li>Adds a unit square to the pipeline
-     *   <li>Flushes the pipeline
-     * </ul>
-     *
-     * <p><em>Results:</em>
-     * <ul>
-     *   <li>White square is drawn on a cyan background
-     * </ul>
-     */
-    @Test
-    public void testQuadPipelineGL10() throws Exception {
-
-        final JFrame frame = new JFrame("testQuadPipelineGL10");
-        final GLCanvas canvas = canvasFactory.createGLCanvas("GL2");
-
-        frame.add(canvas);
-        canvas.addGLEventListener(new GL2EventAdapter() {
-
-            @Override
-            public void doInit(final GL2 gl) {
-                pipeline = new QuadPipelineGL10();
-                quad = createQuad();
-            }
-
-            @Override
-            public void doDisplay(final GL2 gl) {
-
-                // View
-                gl.glViewport(0, 0, 512, 512);
-                gl.glClearColor(0, 1, 1, 1);
-                gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
-
-                // Create geometry
-                pipeline.beginRendering(gl);
-                pipeline.addQuad(gl, quad);
-                pipeline.endRendering(gl);
-            }
-        });
-        TestRunner.run(frame, WAIT_TIME);
-    }
-
-    /**
-     * Test case for {@link QuadPipelineGL11}.
-     *
-     * <p><em>Performs the following:</em>
-     * <ul>
-     *   <li>Creates a pipeline
-     *   <li>Adds a unit square to the pipeline
-     *   <li>Flushes the pipeline
-     * </ul>
-     *
-     * <p><em>Results:</em>
-     * <ul>
-     *   <li>White square is drawn on a cyan background
-     * </ul>
-     */
-    @Test
-    public void testQuadPipelineGL11() throws Exception {
-
-        final JFrame frame = new JFrame("testQuadPipelineGL11");
-        final GLCanvas canvas = canvasFactory.createGLCanvas("GL2");
-
-        frame.add(canvas);
-        canvas.addGLEventListener(new DebugGL2EventAdapter() {
-
-            @Override
-            public void doInit(final GL2 gl) {
-                pipeline = new QuadPipelineGL11();
-                quad = createQuad();
-            }
-
-            @Override
-            public void doDisplay(final GL2 gl) {
-
-                // View
-                gl.glViewport(0, 0, 512, 512);
-                gl.glClearColor(0, 1, 1, 1);
-                gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
-
-                // Create geometry
-                pipeline.beginRendering(gl);
-                pipeline.addQuad(gl, quad);
-                pipeline.endRendering(gl);
-            }
-        });
-        TestRunner.run(frame, WAIT_TIME);
     }
 
     /**
@@ -203,6 +107,7 @@ public class TestQuadPipelineAWT {
 
             @Override
             public void doInit(final GL2 gl) {
+
                 pipeline = new QuadPipelineGL15(gl);
                 quad = createQuad();
             }
@@ -213,7 +118,7 @@ public class TestQuadPipelineAWT {
                 // View
                 gl.glViewport(0, 0, 512, 512);
                 gl.glClearColor(0, 1, 1, 1);
-                gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+                gl.glClear(gl.GL_COLOR_BUFFER_BIT());
 
                 // Create geometry
                 pipeline.beginRendering(gl);
@@ -252,19 +157,19 @@ public class TestQuadPipelineAWT {
         canvas.addGLEventListener(new DebugGL3EventAdapter() {
 
             @Override
-            public void doInit(final GL3 gl) {
+            public void doInit(final GL2GL3 gl) {
                 program = createProgram(gl);
                 pipeline = new QuadPipelineGL30(gl, program);
                 quad = createQuad();
             }
 
             @Override
-            public void doDisplay(final GL3 gl) {
+            public void doDisplay(final GL2GL3 gl) {
 
                 // View
                 gl.glViewport(0, 0, 512, 512);
                 gl.glClearColor(0, 1, 1, 1);
-                gl.glClear(GL3.GL_COLOR_BUFFER_BIT);
+                gl.glClear(gl.GL_COLOR_BUFFER_BIT());
 
                 // Create geometry
                 gl.glUseProgram(program);
@@ -283,7 +188,7 @@ public class TestQuadPipelineAWT {
     /**
      * Returns a shader program for use with pipeline.
      */
-    private static int createProgram(final GL2ES2 gl) {
+    private static int createProgram(final GL2GL3 gl) {
         int program = -1;
         try {
             program = ShaderLoader.loadProgram(gl, VERT_SOURCE, FRAG_SOURCE);

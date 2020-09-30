@@ -27,8 +27,8 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.util.packrect.Rect;
-import com.jogamp.opengl.util.texture.TextureCoords;
+import com.github.opengrabeso.ogltext.util.packrect.Rect;
+import com.github.opengrabeso.ogltext.util.texture.TextureCoords;
 
 import java.awt.font.GlyphVector;
 import java.awt.geom.Rectangle2D;

@@ -27,8 +27,8 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL3;
+import com.github.opengrabeso.jaagl.GL;
+import com.github.opengrabeso.jaagl.GL3;
 
 
 /**
@@ -64,7 +64,7 @@ abstract class Texture {
     Texture(/*@Nonnull*/ final GL gl, final int type, final boolean mipmap) {
 
         Check.notNull(gl, "GL cannot be null");
-        Check.argument(isValidTextureType(type), "Texture type is invalid");
+        Check.argument(isValidTextureType(gl, type), "Texture type is invalid");
 
         this.handle = generate(gl);
         this.type = type;
@@ -82,7 +82,7 @@ abstract class Texture {
     void bind(/*@Nonnull*/ final GL gl, final int unit) {
 
         Check.notNull(gl, "GL cannot be null");
-        Check.argument(isValidTextureUnit(unit), "Texture unit is invalid");
+        Check.argument(isValidTextureUnit(gl, unit), "Texture unit is invalid");
 
         gl.glActiveTexture(unit);
         gl.glBindTexture(type, handle);
@@ -99,7 +99,7 @@ abstract class Texture {
         Check.notNull(gl, "GL cannot be null");
 
         final int[] handles = new int[] { handle };
-        gl.glDeleteTextures(1, handles, 0);
+        gl.glDeleteTextures(handles);
     }
 
     /**
@@ -110,7 +110,7 @@ abstract class Texture {
      */
     private static int generate(/*@Nonnull*/ final GL gl) {
         final int[] handles = new int[1];
-        gl.glGenTextures(1, handles, 0);
+        gl.glGenTextures(handles);
         return handles[0];
     }
 
@@ -120,15 +120,12 @@ abstract class Texture {
      * @param type Integer to check
      * @return True if type is valid
      */
-    private static boolean isValidTextureType(final int type) {
-        switch (type) {
-        case GL3.GL_TEXTURE_1D:
-        case GL3.GL_TEXTURE_2D:
-        case GL3.GL_TEXTURE_3D:
-            return true;
-        default:
-            return false;
-        }
+    private static boolean isValidTextureType(final GL gl, final int type) {
+        return (
+            type == gl.GL_TEXTURE_1D() ||
+            type == gl.GL_TEXTURE_2D() ||
+            type == gl.GL_TEXTURE_3D()
+        );
     }
 
     /**
@@ -137,8 +134,8 @@ abstract class Texture {
      * @param unit Integer to check
      * @return True if unit is valid
      */
-    private static boolean isValidTextureUnit(final int unit) {
-        return (unit >= GL.GL_TEXTURE0) && (unit <= GL.GL_TEXTURE31);
+    private static boolean isValidTextureUnit(final GL gl, final int unit) {
+        return (unit >= gl.GL_TEXTURE0()) && (unit <= gl.GL_TEXTURE31());
     }
 
     /**
@@ -155,15 +152,15 @@ abstract class Texture {
         final int mag;
         final int min;
         if (smooth) {
-            mag = GL.GL_LINEAR;
-            min = mipmap ? GL.GL_LINEAR_MIPMAP_NEAREST : GL.GL_LINEAR;
+            mag = gl.GL_LINEAR();
+            min = mipmap ? gl.GL_LINEAR_MIPMAP_NEAREST() : gl.GL_LINEAR();
         } else {
-            mag = GL.GL_NEAREST;
-            min = mipmap ? GL.GL_NEAREST_MIPMAP_NEAREST : GL.GL_NEAREST;
+            mag = gl.GL_NEAREST();
+            min = mipmap ? gl.GL_NEAREST_MIPMAP_NEAREST() : gl.GL_NEAREST();
         }
 
-        setParameter(gl, GL.GL_TEXTURE_MAG_FILTER, mag);
-        setParameter(gl, GL.GL_TEXTURE_MIN_FILTER, min);
+        setParameter(gl, gl.GL_TEXTURE_MAG_FILTER(), mag);
+        setParameter(gl, gl.GL_TEXTURE_MIN_FILTER(), min);
     }
 
     /**

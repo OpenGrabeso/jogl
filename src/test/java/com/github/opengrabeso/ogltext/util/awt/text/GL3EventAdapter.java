@@ -27,7 +27,8 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL3;
+import com.github.opengrabeso.jaagl.GL3;
+import com.github.opengrabeso.jaagl.jogl.JoGL;
 import com.jogamp.opengl.GLAutoDrawable;
 
 
@@ -43,7 +44,7 @@ abstract class GL3EventAdapter extends AbstractGL3EventAdapter {
      */
     @Override
     public final void init(final GLAutoDrawable drawable) {
-        final GL3 gl = drawable.getGL().getGL3();
+        final GL3 gl = JoGL.wrap(drawable.getGL().getGL3());
         doInit(gl);
     }
 }

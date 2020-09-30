@@ -27,8 +27,7 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GLProfile;
+import com.github.opengrabeso.jaagl.GL;
 
 
 /**
@@ -56,8 +55,6 @@ public final class GlyphRenderers {
     public static GlyphRenderer get(/*@Nonnull*/ final GL gl, final boolean gl3) {
 
         Check.notNull(gl, "GL cannot be null");
-
-        final GLProfile profile = gl.getGLProfile();
 
         if (gl3) {
             return new GlyphRendererGL3(gl.getGL3());

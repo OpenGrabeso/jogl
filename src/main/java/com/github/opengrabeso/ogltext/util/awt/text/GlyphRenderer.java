@@ -27,8 +27,8 @@
  */
 package com.github.opengrabeso.ogltext.util.awt.text;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.util.texture.TextureCoords;
+import com.github.opengrabeso.jaagl.GL2GL3;
+import com.github.opengrabeso.ogltext.util.texture.TextureCoords;
 
 
 /**
@@ -52,11 +52,8 @@ public interface GlyphRenderer {
      * @param width Width of current OpenGL viewport
      * @param height Height of current OpenGL viewport
      * @param disableDepthTest True if should ignore depth values
-     * @throws NullPointerException if context is null
-     * @throws IllegalArgumentException if width or height is negative
-     * @throws GLException if context is unexpected version
      */
-    void beginRendering(/*@Nonnull*/ GL gl,
+    void beginRendering(/*@Nonnull*/ GL2GL3 gl,
                         boolean ortho,
                         /*@Nonnegative*/ int width,
                         /*@Nonnegative*/ int height,
@@ -66,10 +63,8 @@ public interface GlyphRenderer {
      * Frees resources used by this {@link GlyphRenderer}.
      *
      * @param gl Current OpenGL context
-     * @throws NullPointerException if context is null
-     * @throws GLException if context is unexpected version
      */
-    void dispose(/*@Nonnull*/ GL gl);
+    void dispose(/*@Nonnull*/ GL2GL3 gl);
 
     /**
      * Draws a glyph with this {@link GlyphRenderer}.
@@ -81,12 +76,9 @@ public interface GlyphRenderer {
      * @param z Position to draw on Z axis, which may be negative
      * @param scale Relative size of glyph, which may be negative
      * @param coords Texture coordinates of glyph
-     * @return Distance to next character, which may be negative
-     * @throws NullPointerException if context, glyph, or texture coordinate is null
-     * @throws GLException if context is unexpected version
      */
     /*@CheckForSigned*/
-    float drawGlyph(/*@Nonnull*/ GL gl,
+    float drawGlyph(/*@Nonnull*/ GL2GL3 gl,
                     /*@Nonnull*/ Glyph glyph,
                     /*@CheckForSigned*/ float x,
                     /*@CheckForSigned*/ float y,
@@ -99,20 +91,15 @@ public interface GlyphRenderer {
      * Finishes a render cycle with this {@link GlyphRenderer}.
      *
      * @param gl Current OpenGL context
-     * @throws NullPointerException if context is null
-     * @throws GLException if context is unexpected version
      */
-    void endRendering(/*@Nonnull*/ GL gl);
+    void endRendering(/*@Nonnull*/ GL2GL3 gl);
 
     /**
      * Forces all stored text to be rendered.
      *
      * @param gl Current OpenGL context
-     * @throws NullPointerException if context is <tt>null</tt>
-     * @throws GLException if context is unexpected version
-     * @throws IllegalStateException if not in a render cycle
      */
-    void flush(/*@Nonnull*/ GL gl);
+    void flush(/*@Nonnull*/ GL2GL3 gl);
 
     /**
      * Checks if this {@link GlyphRenderer} is using vertex arrays.
@@ -129,7 +116,7 @@ public interface GlyphRenderer {
      * @param b Blue component of color
      * @param a Alpha component of color
      */
-    void setColor(float r, float g, float b, float a);
+    void setColor(final GL2GL3 gl, float r, float g, float b, float a);
 
     /**
      * Changes the transformation matrix for drawing in 3D.
@@ -140,7 +127,7 @@ public interface GlyphRenderer {
      * @throws IndexOutOfBoundsException if value's length is less than sixteen
      * @throws IllegalStateException if in orthographic mode
      */
-    void setTransform(/*@Nonnull*/ float[] value, boolean transpose);
+    void setTransform(final GL2GL3 gl, /*@Nonnull*/ float[] value, boolean transpose);
 
     /**
      * Changes whether vertex arrays are in use.
