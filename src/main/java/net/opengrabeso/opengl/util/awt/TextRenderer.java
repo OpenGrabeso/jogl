@@ -351,8 +351,8 @@ public class TextRenderer {
 
 
     */
-    public void begin3DRendering(final GL2 gl) {
-        beginRendering(gl,false, 0, 0, false);
+    public void begin3DRendering() {
+        beginRendering(false, 0, 0, false);
     }
 
     /** Changes the current color of this TextRenderer to the supplied
@@ -582,7 +582,7 @@ public class TextRenderer {
         return cachedGraphics;
     }
 
-    private void beginRendering(final GL2 gl, final boolean ortho, final int width, final int height,
+    private void beginRendering(final boolean ortho, final int width, final int height,
                                 final boolean disableDepthTestForOrtho) {
 
         assert !ortho;

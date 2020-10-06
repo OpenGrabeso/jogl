@@ -97,7 +97,7 @@ public abstract class Issue344Base implements GLEventListener
                       0, 0, 0,
                       0, 1, 0);
 
-        renderer.begin3DRendering(gl);
+        renderer.begin3DRendering();
         final Rectangle2D bounds = renderer.getBounds(getText());
         final float w = (float) bounds.getWidth();
         final float h = (float) bounds.getHeight();
