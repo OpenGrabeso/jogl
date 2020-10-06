@@ -42,7 +42,7 @@ import java.nio.Buffer;
 import com.jogamp.opengl.GLProfile;
 
 import com.jogamp.common.nio.Buffers;
-import net.opengrabeso.opengl.util.GLPixelBuffer.GLPixelAttributes;
+import net.opengrabeso.opengl.util.GLPixelAttributes;
 
 /**
  * Represents the data for an OpenGL texture. This is separated from

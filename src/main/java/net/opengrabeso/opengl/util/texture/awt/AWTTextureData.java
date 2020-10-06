@@ -66,7 +66,7 @@ import com.jogamp.opengl.GL2GL3;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.GLProfile;
 
-import net.opengrabeso.opengl.util.GLPixelBuffer.GLPixelAttributes;
+import net.opengrabeso.opengl.util.GLPixelAttributes;
 import net.opengrabeso.opengl.util.texture.TextureData;
 
 public class AWTTextureData extends TextureData {
