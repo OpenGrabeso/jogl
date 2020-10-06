@@ -95,8 +95,6 @@ public class AWTTextureData extends TextureData {
      * TextureData, that modification will be visible in the resulting
      * Texture.
      *
-     * @param glp      the OpenGL Profile this texture data should be
-     *                       created for.
      * @param internalFormat the OpenGL internal format for the
      *                       resulting texture; may be 0, in which case
      *                       it is inferred from the image's type
@@ -109,18 +107,17 @@ public class AWTTextureData extends TextureData {
      *                       texture
      * @param image          the image containing the texture data
      */
-    public AWTTextureData(final GLProfile glp,
-                          final int internalFormat,
+    public AWTTextureData(final int internalFormat,
                           final int pixelFormat,
                           final boolean mipmap,
                           final BufferedImage image) {
-        super(glp);
+        super();
         if (internalFormat == 0) {
             this.internalFormat = image.getColorModel().hasAlpha() ? GL.GL_RGBA : GL.GL_RGB;
         } else {
             this.internalFormat = internalFormat;
         }
-        createFromImage(glp, image);
+        createFromImage(image);
         this.mipmap = mipmap;
         if (buffer != null) {
             estimatedMemorySize = estimatedMemorySize(buffer);
@@ -172,7 +169,7 @@ public class AWTTextureData extends TextureData {
         return buffer;
     }
 
-    private void createFromImage(final GLProfile glp, final BufferedImage image) {
+    private void createFromImage(final BufferedImage image) {
         pixelAttributes = GLPixelAttributes.UNDEF; // Determine from image
         mustFlipVertically = true;
 
@@ -200,179 +197,102 @@ public class AWTTextureData extends TextureData {
         width = image.getWidth();
         height = image.getHeight();
 
-        if (glp.isGL2GL3()) {
-            switch (image.getType()) {
-                case BufferedImage.TYPE_INT_RGB:
-                    pixelAttributes = new GLPixelAttributes(GL.GL_BGRA, GL2GL3.GL_UNSIGNED_INT_8_8_8_8_REV);
-                    rowLength = scanlineStride;
-                    alignment = 4;
-                    expectingGL12 = true;
-                    setupLazyCustomConversion(image);
-                    break;
-                case BufferedImage.TYPE_INT_ARGB_PRE:
-                    pixelAttributes = new GLPixelAttributes(GL.GL_BGRA, GL2GL3.GL_UNSIGNED_INT_8_8_8_8_REV);
-                    rowLength = scanlineStride;
-                    alignment = 4;
-                    expectingGL12 = true;
-                    setupLazyCustomConversion(image);
-                    break;
-                case BufferedImage.TYPE_INT_BGR:
-                    pixelAttributes = new GLPixelAttributes(GL.GL_RGBA, GL2GL3.GL_UNSIGNED_INT_8_8_8_8_REV);
-                    rowLength = scanlineStride;
-                    alignment = 4;
-                    expectingGL12 = true;
-                    setupLazyCustomConversion(image);
-                    break;
-                case BufferedImage.TYPE_3BYTE_BGR:
-                    {
-                        // we can pass the image data directly to OpenGL only if
-                        // we have an integral number of pixels in each scanline
-                        if ((scanlineStride % 3) == 0) {
-                            pixelAttributes = new GLPixelAttributes(GL.GL_BGR, GL.GL_UNSIGNED_BYTE);
-                            rowLength = scanlineStride / 3;
-                            alignment = 1;
-                        } else {
-                            setupLazyCustomConversion(image);
-                            return;
-                        }
-                    }
-                    break;
-                case BufferedImage.TYPE_4BYTE_ABGR_PRE:
-                    {
-                        // we can pass the image data directly to OpenGL only if
-                        // we have an integral number of pixels in each scanline
-                        // and only if the GL_EXT_abgr extension is present
-
-                        // NOTE: disabling this code path for now as it appears it's
-                        // buggy at least on some NVidia drivers and doesn't perform
-                        // the necessary byte swapping (FIXME: needs more
-                        // investigation)
-                        if ((scanlineStride % 4) == 0 && glp.isGL2() && false) {
-                            pixelAttributes = new GLPixelAttributes(GL2.GL_ABGR_EXT, GL.GL_UNSIGNED_BYTE);
-                            rowLength = scanlineStride / 4;
-                            alignment = 4;
-
-                            // Store a reference to the original image for later in
-                            // case it turns out that we don't have GL_EXT_abgr at the
-                            // time we're going to do the texture upload to OpenGL
-                            setupLazyCustomConversion(image);
-                            expectingEXTABGR = true;
-                            break;
-                        } else {
-                            setupLazyCustomConversion(image);
-                            return;
-                        }
-                    }
-                case BufferedImage.TYPE_USHORT_565_RGB:
-                    pixelAttributes = new GLPixelAttributes(GL.GL_RGB, GL.GL_UNSIGNED_SHORT_5_6_5);
-                    rowLength = scanlineStride;
-                    alignment = 2;
-                    expectingGL12 = true;
-                    setupLazyCustomConversion(image);
-                    break;
-                case BufferedImage.TYPE_USHORT_555_RGB:
-                    pixelAttributes = new GLPixelAttributes(GL.GL_BGRA, GL2GL3.GL_UNSIGNED_SHORT_1_5_5_5_REV);
-                    rowLength = scanlineStride;
-                    alignment = 2;
-                    expectingGL12 = true;
-                    setupLazyCustomConversion(image);
-                    break;
-                case BufferedImage.TYPE_BYTE_GRAY:
-                    pixelAttributes = new GLPixelAttributes(GL.GL_LUMINANCE, GL.GL_UNSIGNED_BYTE);
-                    rowLength = scanlineStride;
-                    alignment = 1;
-                    break;
-                case BufferedImage.TYPE_USHORT_GRAY:
-                    pixelAttributes = new GLPixelAttributes(GL.GL_LUMINANCE, GL.GL_UNSIGNED_SHORT);
-                    rowLength = scanlineStride;
-                    alignment = 2;
-                    break;
-                    // Note: TYPE_INT_ARGB and TYPE_4BYTE_ABGR images go down the
-                    // custom code path to satisfy the invariant that images with an
-                    // alpha channel always go down with premultiplied alpha.
-                case BufferedImage.TYPE_INT_ARGB:
-                case BufferedImage.TYPE_4BYTE_ABGR:
-                case BufferedImage.TYPE_BYTE_BINARY:
-                case BufferedImage.TYPE_BYTE_INDEXED:
-                case BufferedImage.TYPE_CUSTOM:
-                default:
-                    final java.awt.image.ColorModel cm = image.getColorModel();
-                    if (cm.equals(rgbColorModel)) {
-                        pixelAttributes = new GLPixelAttributes(GL.GL_RGB, GL.GL_UNSIGNED_BYTE);
+        switch (image.getType()) {
+            case BufferedImage.TYPE_INT_RGB:
+                pixelAttributes = new GLPixelAttributes(GL.GL_BGRA, GL2GL3.GL_UNSIGNED_INT_8_8_8_8_REV);
+                rowLength = scanlineStride;
+                alignment = 4;
+                expectingGL12 = true;
+                setupLazyCustomConversion(image);
+                break;
+            case BufferedImage.TYPE_INT_ARGB_PRE:
+                pixelAttributes = new GLPixelAttributes(GL.GL_BGRA, GL2GL3.GL_UNSIGNED_INT_8_8_8_8_REV);
+                rowLength = scanlineStride;
+                alignment = 4;
+                expectingGL12 = true;
+                setupLazyCustomConversion(image);
+                break;
+            case BufferedImage.TYPE_INT_BGR:
+                pixelAttributes = new GLPixelAttributes(GL.GL_RGBA, GL2GL3.GL_UNSIGNED_INT_8_8_8_8_REV);
+                rowLength = scanlineStride;
+                alignment = 4;
+                expectingGL12 = true;
+                setupLazyCustomConversion(image);
+                break;
+            case BufferedImage.TYPE_3BYTE_BGR:
+                {
+                    // we can pass the image data directly to OpenGL only if
+                    // we have an integral number of pixels in each scanline
+                    if ((scanlineStride % 3) == 0) {
+                        pixelAttributes = new GLPixelAttributes(GL.GL_BGR, GL.GL_UNSIGNED_BYTE);
                         rowLength = scanlineStride / 3;
                         alignment = 1;
-                    } else if (cm.equals(rgbaColorModel)) {
-                        pixelAttributes = new GLPixelAttributes(GL.GL_RGBA, GL.GL_UNSIGNED_BYTE);
-                        rowLength = scanlineStride / 4; // FIXME: correct?
-                        alignment = 4;
                     } else {
                         setupLazyCustomConversion(image);
                         return;
                     }
-                    break;
-            }
-        } else {
-            switch (image.getType()) {
-                case BufferedImage.TYPE_INT_RGB:
+                }
+                break;
+            case BufferedImage.TYPE_4BYTE_ABGR_PRE:
+                {
+                    // we can pass the image data directly to OpenGL only if
+                    // we have an integral number of pixels in each scanline
+                    // and only if the GL_EXT_abgr extension is present
+
+                    // NOTE: disabling this code path for now as it appears it's
+                    // buggy at least on some NVidia drivers and doesn't perform
+                    // the necessary byte swapping (FIXME: needs more
+                    // investigation)
+                    setupLazyCustomConversion(image);
+                    return;
+                }
+            case BufferedImage.TYPE_USHORT_565_RGB:
+                pixelAttributes = new GLPixelAttributes(GL.GL_RGB, GL.GL_UNSIGNED_SHORT_5_6_5);
+                rowLength = scanlineStride;
+                alignment = 2;
+                expectingGL12 = true;
+                setupLazyCustomConversion(image);
+                break;
+            case BufferedImage.TYPE_USHORT_555_RGB:
+                pixelAttributes = new GLPixelAttributes(GL.GL_BGRA, GL2GL3.GL_UNSIGNED_SHORT_1_5_5_5_REV);
+                rowLength = scanlineStride;
+                alignment = 2;
+                expectingGL12 = true;
+                setupLazyCustomConversion(image);
+                break;
+            case BufferedImage.TYPE_BYTE_GRAY:
+                pixelAttributes = new GLPixelAttributes(GL.GL_LUMINANCE, GL.GL_UNSIGNED_BYTE);
+                rowLength = scanlineStride;
+                alignment = 1;
+                break;
+            case BufferedImage.TYPE_USHORT_GRAY:
+                pixelAttributes = new GLPixelAttributes(GL.GL_LUMINANCE, GL.GL_UNSIGNED_SHORT);
+                rowLength = scanlineStride;
+                alignment = 2;
+                break;
+                // Note: TYPE_INT_ARGB and TYPE_4BYTE_ABGR images go down the
+                // custom code path to satisfy the invariant that images with an
+                // alpha channel always go down with premultiplied alpha.
+            case BufferedImage.TYPE_INT_ARGB:
+            case BufferedImage.TYPE_4BYTE_ABGR:
+            case BufferedImage.TYPE_BYTE_BINARY:
+            case BufferedImage.TYPE_BYTE_INDEXED:
+            case BufferedImage.TYPE_CUSTOM:
+            default:
+                final java.awt.image.ColorModel cm = image.getColorModel();
+                if (cm.equals(rgbColorModel)) {
                     pixelAttributes = new GLPixelAttributes(GL.GL_RGB, GL.GL_UNSIGNED_BYTE);
-                    rowLength = scanlineStride;
-                    alignment = 3;
-                    expectingGL12 = true;
-                    setupLazyCustomConversion(image);
-                    break;
-                case BufferedImage.TYPE_INT_ARGB_PRE:
-                    throw new GLException("INT_ARGB_PRE n.a.");
-                case BufferedImage.TYPE_INT_BGR:
-                    throw new GLException("INT_BGR n.a.");
-                case BufferedImage.TYPE_3BYTE_BGR:
-                    throw new GLException("INT_BGR n.a.");
-                case BufferedImage.TYPE_4BYTE_ABGR_PRE:
-                    throw new GLException("INT_BGR n.a.");
-                case BufferedImage.TYPE_USHORT_565_RGB:
-                    pixelAttributes = new GLPixelAttributes(GL.GL_RGB, GL.GL_UNSIGNED_SHORT_5_6_5);
-                    rowLength = scanlineStride;
-                    alignment = 2;
-                    expectingGL12 = true;
-                    setupLazyCustomConversion(image);
-                    break;
-                case BufferedImage.TYPE_USHORT_555_RGB:
-                    pixelAttributes = new GLPixelAttributes(GL.GL_RGBA, GL.GL_UNSIGNED_SHORT_5_5_5_1);
-                    rowLength = scanlineStride;
-                    alignment = 2;
-                    expectingGL12 = true;
-                    setupLazyCustomConversion(image);
-                    break;
-                case BufferedImage.TYPE_BYTE_GRAY:
-                    pixelAttributes = new GLPixelAttributes(GL.GL_LUMINANCE, GL.GL_UNSIGNED_BYTE);
-                    rowLength = scanlineStride;
+                    rowLength = scanlineStride / 3;
                     alignment = 1;
-                    break;
-                case BufferedImage.TYPE_USHORT_GRAY:
-                    throw new GLException("USHORT_GRAY n.a.");
-                    // Note: TYPE_INT_ARGB and TYPE_4BYTE_ABGR images go down the
-                    // custom code path to satisfy the invariant that images with an
-                    // alpha channel always go down with premultiplied alpha.
-                case BufferedImage.TYPE_INT_ARGB:
-                case BufferedImage.TYPE_4BYTE_ABGR:
-                case BufferedImage.TYPE_BYTE_BINARY:
-                case BufferedImage.TYPE_BYTE_INDEXED:
-                case BufferedImage.TYPE_CUSTOM:
-                default:
-                    final java.awt.image.ColorModel cm = image.getColorModel();
-                    if (cm.equals(rgbColorModel)) {
-                        pixelAttributes = new GLPixelAttributes(GL.GL_RGB, GL.GL_UNSIGNED_BYTE);
-                        rowLength = scanlineStride / 3;
-                        alignment = 1;
-                    } else if (cm.equals(rgbaColorModel)) {
-                        pixelAttributes = new GLPixelAttributes(GL.GL_RGBA, GL.GL_UNSIGNED_BYTE);
-                        rowLength = scanlineStride / 4; // FIXME: correct?
-                        alignment = 4;
-                    } else {
-                        setupLazyCustomConversion(image);
-                        return;
-                    }
-                    break;
-            }
+                } else if (cm.equals(rgbaColorModel)) {
+                    pixelAttributes = new GLPixelAttributes(GL.GL_RGBA, GL.GL_UNSIGNED_BYTE);
+                    rowLength = scanlineStride / 4; // FIXME: correct?
+                    alignment = 4;
+                } else {
+                    setupLazyCustomConversion(image);
+                    return;
+                }
+                break;
         }
 
         createNIOBufferFromImage(image);

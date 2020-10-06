@@ -39,6 +39,7 @@
  */
 package net.opengrabeso.opengl.util.awt;
 
+import com.github.opengrabeso.jaagl.GL2;
 import com.jogamp.common.nio.Buffers;
 import net.opengrabeso.opengl.util.packrect.*;
 import net.opengrabeso.opengl.util.texture.*;
@@ -57,9 +58,6 @@ import java.awt.geom.*;
 import java.nio.*;
 import java.text.*;
 import java.util.*;
-
-import com.jogamp.opengl.*;
-import com.jogamp.opengl.fixedfunc.GLPointerFunc;
 
 
 /** Renders bitmapped Java 2D text into an OpenGL window with high
@@ -119,7 +117,6 @@ public class TextRenderer {
 
     // These are occasionally useful for more in-depth debugging
     private static final boolean DISABLE_GLYPH_CACHE = false;
-    private static final boolean DRAW_BBOXES = false;
 
     static final int kSize = 256;
 
@@ -144,6 +141,7 @@ public class TextRenderer {
     private final Font font;
     private final boolean antialiased;
     private final boolean useFractionalMetrics;
+    private final GL2 gl;
 
     // Whether we're attempting to use automatic mipmap generation support
     private boolean mipmap;
@@ -162,10 +160,6 @@ public class TextRenderer {
     // endRendering() cycle so we can re-enter the exact same state if
     // we have to reallocate the backing store
     private boolean inBeginEndPair;
-    private boolean isOrthoMode;
-    private int beginRenderingWidth;
-    private int beginRenderingHeight;
-    private boolean beginRenderingDepthTestDisabled;
 
     // For resetting the color after disposal of the old backing store
     private boolean haveCachedColor;
@@ -183,13 +177,6 @@ public class TextRenderer {
     private boolean debugged;
     Pipelined_QuadRenderer mPipelinedQuadRenderer;
 
-    //emzic: added boolean flag
-    private boolean useVertexArrays = true;
-
-    //emzic: added boolean flag
-    private boolean isExtensionAvailable_GL_VERSION_1_5;
-    private boolean checkFor_isExtensionAvailable_GL_VERSION_1_5;
-
     // Whether GL_LINEAR filtering is enabled for the backing store
     private boolean smoothing = true;
 
@@ -200,8 +187,8 @@ public class TextRenderer {
 
         @param font the font to render with
     */
-    public TextRenderer(final Font font) {
-        this(font, false, false, null, false);
+    public TextRenderer(final GL2 gl, final Font font) {
+        this(gl, font, false, false, null, false);
     }
 
     /** Creates a new TextRenderer with the given font, using no
@@ -214,8 +201,8 @@ public class TextRenderer {
         @param font the font to render with
         @param mipmap whether to attempt use of automatic mipmap generation
     */
-    public TextRenderer(final Font font, final boolean mipmap) {
-        this(font, false, false, null, mipmap);
+    public TextRenderer(final GL2 gl, final Font font, final boolean mipmap) {
+        this(gl, font, false, false, null, mipmap);
     }
 
     /** Creates a new TextRenderer with the given Font, specified font
@@ -231,9 +218,9 @@ public class TextRenderer {
         @param useFractionalMetrics whether to use fractional font
         metrics at the Java 2D level
     */
-    public TextRenderer(final Font font, final boolean antialiased,
+    public TextRenderer(final GL2 gl, final Font font, final boolean antialiased,
                         final boolean useFractionalMetrics) {
-        this(font, antialiased, useFractionalMetrics, null, false);
+        this(gl, font, antialiased, useFractionalMetrics, null, false);
     }
 
     /** Creates a new TextRenderer with the given Font, specified font
@@ -250,9 +237,9 @@ public class TextRenderer {
         @param renderDelegate the render delegate to use to draw the
         text's bitmap, or null to use the default one
     */
-    public TextRenderer(final Font font, final boolean antialiased,
+    public TextRenderer(final GL2 gl, final Font font, final boolean antialiased,
                         final boolean useFractionalMetrics, final RenderDelegate renderDelegate) {
-        this(font, antialiased, useFractionalMetrics, renderDelegate, false);
+        this(gl, font, antialiased, useFractionalMetrics, renderDelegate, false);
     }
 
     /** Creates a new TextRenderer with the given Font, specified font
@@ -272,9 +259,10 @@ public class TextRenderer {
         text's bitmap, or null to use the default one
         @param mipmap whether to attempt use of automatic mipmap generation
     */
-    public TextRenderer(final Font font, final boolean antialiased,
+    public TextRenderer(final GL2 gl, final Font font, final boolean antialiased,
                         final boolean useFractionalMetrics, RenderDelegate renderDelegate,
                         final boolean mipmap) {
+        this.gl = gl;
         this.font = font;
         this.antialiased = antialiased;
         this.useFractionalMetrics = useFractionalMetrics;
@@ -351,47 +339,6 @@ public class TextRenderer {
         return cachedFontRenderContext;
     }
 
-    /** Begins rendering with this {@link TextRenderer TextRenderer}
-        into the current OpenGL drawable, pushing the projection and
-        modelview matrices and some state bits and setting up a
-        two-dimensional orthographic projection with (0, 0) as the
-        lower-left coordinate and (width, height) as the upper-right
-        coordinate. Binds and enables the internal OpenGL texture
-        object, sets the texture environment mode to GL_MODULATE, and
-        changes the current color to the last color set with this
-        TextRenderer via {@link #setColor setColor}. This method
-        disables the depth test and is equivalent to
-        beginRendering(width, height, true).
-
-        @param width the width of the current on-screen OpenGL drawable
-        @param height the height of the current on-screen OpenGL drawable
-        @throws com.jogamp.opengl.GLException If an OpenGL context is not current when this method is called
-    */
-    public void beginRendering(final int width, final int height) {
-        beginRendering(width, height, true);
-    }
-
-    /** Begins rendering with this {@link TextRenderer TextRenderer}
-        into the current OpenGL drawable, pushing the projection and
-        modelview matrices and some state bits and setting up a
-        two-dimensional orthographic projection with (0, 0) as the
-        lower-left coordinate and (width, height) as the upper-right
-        coordinate. Binds and enables the internal OpenGL texture
-        object, sets the texture environment mode to GL_MODULATE, and
-        changes the current color to the last color set with this
-        TextRenderer via {@link #setColor setColor}. Disables the depth
-        test if the disableDepthTest argument is true.
-
-        @param width the width of the current on-screen OpenGL drawable
-        @param height the height of the current on-screen OpenGL drawable
-        @param disableDepthTest whether to disable the depth test
-
-    */
-    public void beginRendering(final int width, final int height, final boolean disableDepthTest)
-        {
-        beginRendering(true, width, height, disableDepthTest);
-    }
-
     /** Begins rendering of 2D text in 3D with this {@link TextRenderer
         TextRenderer} into the current OpenGL drawable. Assumes the end
         user is responsible for setting up the modelview and projection
@@ -404,8 +351,8 @@ public class TextRenderer {
 
 
     */
-    public void begin3DRendering() {
-        beginRendering(false, 0, 0, false);
+    public void begin3DRendering(final GL2 gl) {
+        beginRendering(gl,false, 0, 0, false);
     }
 
     /** Changes the current color of this TextRenderer to the supplied
@@ -635,31 +582,23 @@ public class TextRenderer {
         return cachedGraphics;
     }
 
-    private void beginRendering(final boolean ortho, final int width, final int height,
+    private void beginRendering(final GL2 gl, final boolean ortho, final int width, final int height,
                                 final boolean disableDepthTestForOrtho) {
-        final GL2 gl = GLContext.getCurrentGL().getGL2();
+
+        assert !ortho;
 
         inBeginEndPair = true;
-        isOrthoMode = ortho;
-        beginRenderingWidth = width;
-        beginRenderingHeight = height;
-        beginRenderingDepthTestDisabled = disableDepthTestForOrtho;
 
-        if (ortho) {
-            getBackingStore().beginOrthoRendering(width, height,
-                                                  disableDepthTestForOrtho);
-        } else {
-            getBackingStore().begin3DRendering();
-        }
+        getBackingStore().begin3DRendering();
 
         // Push client attrib bits used by the pipelined quad renderer
-        gl.glPushClientAttrib((int) GL2.GL_ALL_CLIENT_ATTRIB_BITS);
+        gl.glPushClientAttrib((int) gl.GL_ALL_CLIENT_ATTRIB_BITS());
 
         if (!haveMaxSize) {
             // Query OpenGL for the maximum texture size and set it in the
             // RectanglePacker to keep it from expanding too large
             final int[] sz = new int[1];
-            gl.glGetIntegerv(GL.GL_MAX_TEXTURE_SIZE, sz, 0);
+            gl.glGetIntegerv(gl.GL_MAX_TEXTURE_SIZE(), sz);
             packer.setMaxSize(sz[0], sz[0]);
             haveMaxSize = true;
         }
@@ -689,11 +628,11 @@ public class TextRenderer {
 
      */
     private void endRendering(final boolean ortho) {
+        assert !ortho;
+
         flushGlyphPipeline();
 
         inBeginEndPair = false;
-
-        final GL2 gl = GLContext.getCurrentGL().getGL2();
 
         // Pop client attrib bits used by the pipelined quad renderer
         gl.glPopClientAttrib();
@@ -701,19 +640,9 @@ public class TextRenderer {
         // The OpenGL spec is unclear about whether this changes the
         // buffer bindings, so preemptively zero out the GL_ARRAY_BUFFER
         // binding
-        if (getUseVertexArrays() && is15Available(gl)) {
-            try {
-                gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-            } catch (final Exception e) {
-                isExtensionAvailable_GL_VERSION_1_5 = false;
-            }
-        }
+        gl.glBindBuffer(gl.GL_ARRAY_BUFFER(), 0);
 
-        if (ortho) {
-            getBackingStore().endOrthoRendering();
-        } else {
-            getBackingStore().end3DRendering();
-        }
+        getBackingStore().end3DRendering();
 
         if (++numRenderCycles >= CYCLES_PER_FLUSH) {
             numRenderCycles = 0;
@@ -818,19 +747,6 @@ public class TextRenderer {
 
             // Draw the string
             renderDelegate.draw(g, curStr, strx, stry);
-
-            if (DRAW_BBOXES) {
-                final TextData data = (TextData) rect.getUserData();
-                // Draw a bounding box on the backing store
-                g.drawRect(strx - data.origOriginX(),
-                           stry - data.origOriginY(),
-                           (int) data.origRect().getWidth(),
-                           (int) data.origRect().getHeight());
-                g.drawRect(strx - data.origin().x,
-                           stry - data.origin().y,
-                           rect.w(),
-                           rect.h());
-            }
 
             // Mark this region of the TextureRenderer as dirty
             getBackingStore().markDirty(rect.x(), rect.y(), rect.w(),
@@ -1088,9 +1004,9 @@ public class TextRenderer {
             TextureRenderer renderer;
 
             if (renderDelegate.intensityOnly()) {
-                renderer = TextureRenderer.createAlphaOnlyRenderer(w, h, mipmap);
+                renderer = TextureRenderer.createAlphaOnlyRenderer(gl, w, h, mipmap);
             } else {
-                renderer = new TextureRenderer(w, h, true, mipmap);
+                renderer = new TextureRenderer(gl, w, h, true, mipmap);
             }
             renderer.setSmoothing(smoothing);
 
@@ -1158,27 +1074,15 @@ public class TextRenderer {
                 // Draw any outstanding glyphs
                 flush();
 
-                final GL2 gl = GLContext.getCurrentGL().getGL2();
-
                 // Pop client attrib bits used by the pipelined quad renderer
                 gl.glPopClientAttrib();
 
                 // The OpenGL spec is unclear about whether this changes the
                 // buffer bindings, so preemptively zero out the GL_ARRAY_BUFFER
                 // binding
-                if (getUseVertexArrays() && is15Available(gl)) {
-                    try {
-                        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-                    } catch (final Exception e) {
-                        isExtensionAvailable_GL_VERSION_1_5 = false;
-                    }
-                }
+                gl.glBindBuffer(gl.GL_ARRAY_BUFFER(), 0);
 
-                if (isOrthoMode) {
-                    ((TextureRenderer) oldBackingStore).endOrthoRendering();
-                } else {
-                    ((TextureRenderer) oldBackingStore).end3DRendering();
-                }
+                ((TextureRenderer) oldBackingStore).end3DRendering();
             }
 
             final TextureRenderer newRenderer = (TextureRenderer) newBackingStore;
@@ -1218,16 +1122,10 @@ public class TextRenderer {
 
             // Re-enter the begin / end pair if necessary
             if (inBeginEndPair) {
-                if (isOrthoMode) {
-                    ((TextureRenderer) newBackingStore).beginOrthoRendering(beginRenderingWidth,
-                                                                            beginRenderingHeight, beginRenderingDepthTestDisabled);
-                } else {
-                    ((TextureRenderer) newBackingStore).begin3DRendering();
-                }
+                ((TextureRenderer) newBackingStore).begin3DRendering();
 
                 // Push client attrib bits used by the pipelined quad renderer
-                final GL2 gl = GLContext.getCurrentGL().getGL2();
-                gl.glPushClientAttrib((int) GL2.GL_ALL_CLIENT_ATTRIB_BITS);
+                gl.glPushClientAttrib((int)gl.GL_ALL_CLIENT_ATTRIB_BITS());
 
                 if (haveCachedColor) {
                     if (cachedColor == null) {
@@ -1461,7 +1359,7 @@ public class TextRenderer {
             // Draw the string
             renderDelegate.drawGlyphVector(g, gv, strx, stry);
 
-            if (DRAW_BBOXES) {
+            if (false) {
                 final TextData data = (TextData) rect.getUserData();
                 // Draw a bounding box on the backing store
                 g.drawRect(strx - data.origOriginX(),
@@ -1677,39 +1575,28 @@ public class TextRenderer {
         int mOutstandingGlyphsVerticesPipeline = 0;
         FloatBuffer mTexCoords;
         FloatBuffer mVertCoords;
-        boolean usingVBOs;
         int mVBO_For_ResuableTileVertices;
         int mVBO_For_ResuableTileTexCoords;
 
         Pipelined_QuadRenderer() {
-            final GL2 gl = GLContext.getCurrentGL().getGL2();
             mVertCoords = Buffers.newDirectFloatBuffer(kTotalBufferSizeCoordsVerts);
             mTexCoords = Buffers.newDirectFloatBuffer(kTotalBufferSizeCoordsTex);
 
-            usingVBOs = getUseVertexArrays() && is15Available(gl);
+            final int[] vbos = new int[2];
+            gl.glGenBuffers(vbos);
 
-            if (usingVBOs) {
-                try {
-                    final int[] vbos = new int[2];
-                    gl.glGenBuffers(2, IntBuffer.wrap(vbos));
+            mVBO_For_ResuableTileVertices = vbos[0];
+            mVBO_For_ResuableTileTexCoords = vbos[1];
 
-                    mVBO_For_ResuableTileVertices = vbos[0];
-                    mVBO_For_ResuableTileTexCoords = vbos[1];
+            gl.glBindBuffer(gl.GL_ARRAY_BUFFER(),
+                            mVBO_For_ResuableTileVertices);
+            gl.glBufferData(gl.GL_ARRAY_BUFFER(), kTotalBufferSizeBytesVerts,
+                            null, gl.GL_STREAM_DRAW()); // stream draw because this is a single quad use pipeline
 
-                    gl.glBindBuffer(GL.GL_ARRAY_BUFFER,
-                                    mVBO_For_ResuableTileVertices);
-                    gl.glBufferData(GL.GL_ARRAY_BUFFER, kTotalBufferSizeBytesVerts,
-                                    null, GL2ES2.GL_STREAM_DRAW); // stream draw because this is a single quad use pipeline
-
-                    gl.glBindBuffer(GL.GL_ARRAY_BUFFER,
-                                    mVBO_For_ResuableTileTexCoords);
-                    gl.glBufferData(GL.GL_ARRAY_BUFFER, kTotalBufferSizeBytesTex,
-                                    null, GL2ES2.GL_STREAM_DRAW); // stream draw because this is a single quad use pipeline
-                } catch (final Exception e) {
-                    isExtensionAvailable_GL_VERSION_1_5 = false;
-                    usingVBOs = false;
-                }
-            }
+            gl.glBindBuffer(gl.GL_ARRAY_BUFFER(),
+                            mVBO_For_ResuableTileTexCoords);
+            gl.glBufferData(gl.GL_ARRAY_BUFFER(), kTotalBufferSizeBytesTex,
+                            null, gl.GL_STREAM_DRAW()); // stream draw because this is a single quad use pipeline
         }
 
         public void glTexCoord2f(final float v, final float v1) {
@@ -1730,50 +1617,36 @@ public class TextRenderer {
         }
 
         private void draw() {
-            if (useVertexArrays) {
-                drawVertexArrays();
-            } else {
-                drawIMMEDIATE();
-            }
+            drawVertexArrays();
         }
 
         private void drawVertexArrays() {
             if (mOutstandingGlyphsVerticesPipeline > 0) {
-                final GL2 gl = GLContext.getCurrentGL().getGL2();
-
                 final TextureRenderer renderer = getBackingStore();
                 renderer.getTexture(); // triggers texture uploads.  Maybe this should be more obvious?
 
                 mVertCoords.rewind();
                 mTexCoords.rewind();
 
-                gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+                gl.glEnableClientState(gl.GL_VERTEX_ARRAY());
 
-                if (usingVBOs) {
-                    gl.glBindBuffer(GL.GL_ARRAY_BUFFER,
-                                    mVBO_For_ResuableTileVertices);
-                    gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0,
-                                       mOutstandingGlyphsVerticesPipeline * kSizeInBytes_OneVertices_VertexData,
-                                       mVertCoords); // upload only the new stuff
-                    gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
-                } else {
-                    gl.glVertexPointer(3, GL.GL_FLOAT, 0, mVertCoords);
-                }
+                gl.glBindBuffer(gl.GL_ARRAY_BUFFER(),
+                                mVBO_For_ResuableTileVertices);
+                gl.glBufferSubData(gl.GL_ARRAY_BUFFER(), 0,
+                                   mOutstandingGlyphsVerticesPipeline * kSizeInBytes_OneVertices_VertexData,
+                                   mVertCoords); // upload only the new stuff
+                gl.glVertexPointer(3, gl.GL_FLOAT(), 0, 0);
 
-                gl.glEnableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
+                gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY());
 
-                if (usingVBOs) {
-                    gl.glBindBuffer(GL.GL_ARRAY_BUFFER,
-                                    mVBO_For_ResuableTileTexCoords);
-                    gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0,
-                                       mOutstandingGlyphsVerticesPipeline * kSizeInBytes_OneVertices_TexData,
-                                       mTexCoords); // upload only the new stuff
-                    gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0);
-                } else {
-                    gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, mTexCoords);
-                }
+                gl.glBindBuffer(gl.GL_ARRAY_BUFFER(),
+                                mVBO_For_ResuableTileTexCoords);
+                gl.glBufferSubData(gl.GL_ARRAY_BUFFER(), 0,
+                                   mOutstandingGlyphsVerticesPipeline * kSizeInBytes_OneVertices_TexData,
+                                   mTexCoords); // upload only the new stuff
+                gl.glTexCoordPointer(2, gl.GL_FLOAT(), 0, 0);
 
-                gl.glDrawArrays(GL2ES3.GL_QUADS, 0,
+                gl.glDrawArrays(gl.GL_QUADS(), 0,
                                 mOutstandingGlyphsVerticesPipeline);
 
                 mVertCoords.rewind();
@@ -1782,74 +1655,12 @@ public class TextRenderer {
             }
         }
 
-        private void drawIMMEDIATE() {
-            if (mOutstandingGlyphsVerticesPipeline > 0) {
-                final TextureRenderer renderer = getBackingStore();
-                renderer.getTexture(); // triggers texture uploads.  Maybe this should be more obvious?
-
-                final GL2 gl = GLContext.getCurrentGL().getGL2();
-                gl.glBegin(GL2ES3.GL_QUADS);
-
-                try {
-                    final int numberOfQuads = mOutstandingGlyphsVerticesPipeline / 4;
-                    mVertCoords.rewind();
-                    mTexCoords.rewind();
-
-                    for (int i = 0; i < numberOfQuads; i++) {
-                        gl.glTexCoord2f(mTexCoords.get(), mTexCoords.get());
-                        gl.glVertex3f(mVertCoords.get(), mVertCoords.get(),
-                                      mVertCoords.get());
-
-                        gl.glTexCoord2f(mTexCoords.get(), mTexCoords.get());
-                        gl.glVertex3f(mVertCoords.get(), mVertCoords.get(),
-                                      mVertCoords.get());
-
-                        gl.glTexCoord2f(mTexCoords.get(), mTexCoords.get());
-                        gl.glVertex3f(mVertCoords.get(), mVertCoords.get(),
-                                      mVertCoords.get());
-
-                        gl.glTexCoord2f(mTexCoords.get(), mTexCoords.get());
-                        gl.glVertex3f(mVertCoords.get(), mVertCoords.get(),
-                                      mVertCoords.get());
-                    }
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    gl.glEnd();
-                    mVertCoords.rewind();
-                    mTexCoords.rewind();
-                    mOutstandingGlyphsVerticesPipeline = 0;
-                }
-            }
-        }
-
 		public void dispose() {
-		    final GL2 gl = GLContext.getCurrentGL().getGL2();
 		    final int[] vbos = new int[2];
 		    vbos[0] = mVBO_For_ResuableTileVertices;
 		    vbos[1] = mVBO_For_ResuableTileTexCoords;
-		    gl.glDeleteBuffers(2, IntBuffer.wrap(vbos));
+		    gl.glDeleteBuffers(vbos);
 		}
-    }
-
-    /**
-     * Sets whether vertex arrays are being used internally for
-     * rendering, or whether text is rendered using the OpenGL
-     * immediate mode commands. This is provided as a concession for
-     * certain graphics cards which have poor vertex array
-     * performance. Defaults to true.
-     */
-    public void setUseVertexArrays(final boolean useVertexArrays) {
-        this.useVertexArrays = useVertexArrays;
-    }
-
-    /**
-     * Indicates whether vertex arrays are being used internally for
-     * rendering, or whether text is rendered using the OpenGL
-     * immediate mode commands. Defaults to true.
-     */
-    public final boolean getUseVertexArrays() {
-        return useVertexArrays;
     }
 
     /**
@@ -1873,11 +1684,4 @@ public class TextRenderer {
         return smoothing;
     }
 
-    private final boolean is15Available(final GL gl) {
-        if (!checkFor_isExtensionAvailable_GL_VERSION_1_5) {
-            isExtensionAvailable_GL_VERSION_1_5 = gl.isExtensionAvailable(GLExtensions.VERSION_1_5);
-            checkFor_isExtensionAvailable_GL_VERSION_1_5 = true;
-        }
-        return isExtensionAvailable_GL_VERSION_1_5;
-    }
 }

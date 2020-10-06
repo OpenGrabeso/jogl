@@ -47,11 +47,7 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.*;
 
-import com.jogamp.opengl.*;
-import com.jogamp.opengl.fixedfunc.GLLightingFunc;
-import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
-import com.jogamp.opengl.glu.gl2.*;
-
+import com.github.opengrabeso.jaagl.GL2;
 import net.opengrabeso.opengl.util.texture.*;
 import net.opengrabeso.opengl.util.texture.awt.*;
 
@@ -78,7 +74,9 @@ public class TextureRenderer {
   // Whether we're using only a GL_INTENSITY backing store
   private final boolean intensity;
 
-  // Whether we're attempting to use automatic mipmap generation support
+  private final GL2 gl;
+
+    // Whether we're attempting to use automatic mipmap generation support
   private boolean mipmap;
 
   // Whether smoothing is enabled for the OpenGL texture (switching
@@ -93,8 +91,6 @@ public class TextureRenderer {
   private AWTTextureData textureData;
   private boolean mustReallocateTexture;
   private Rectangle dirtyRegion;
-
-  private final GLUgl2 glu = new GLUgl2();
 
   // Current color
   private float r = 1.0f;
@@ -111,8 +107,8 @@ public class TextureRenderer {
       @param height the height of the texture to render into
       @param alpha whether to allocate an alpha channel for the texture
   */
-  public TextureRenderer(final int width, final int height, final boolean alpha) {
-    this(width, height, alpha, false);
+  public TextureRenderer(final GL2 gl, final int width, final int height, final boolean alpha) {
+    this(gl, width, height, alpha, false);
   }
 
   /** Creates a new renderer with backing store of the specified width
@@ -126,13 +122,14 @@ public class TextureRenderer {
       @param alpha whether to allocate an alpha channel for the texture
       @param mipmap whether to attempt use of automatic mipmap generation
   */
-  public TextureRenderer(final int width, final int height, final boolean alpha, final boolean mipmap) {
-    this(width, height, alpha, false, mipmap);
+  public TextureRenderer(final GL2 gl, final int width, final int height, final boolean alpha, final boolean mipmap) {
+    this(gl, width, height, alpha, false, mipmap);
   }
 
   // Internal constructor to avoid confusion since alpha only makes
   // sense when intensity is not set
-  private TextureRenderer(final int width, final int height, final boolean alpha, final boolean intensity, final boolean mipmap) {
+  private TextureRenderer(final GL2 gl, final int width, final int height, final boolean alpha, final boolean intensity, final boolean mipmap) {
+      this.gl = gl;
     this.alpha = alpha;
     this.intensity = intensity;
     this.mipmap = mipmap;
@@ -143,8 +140,8 @@ public class TextureRenderer {
       which acts only as an alpha channel. No mipmap support is
       requested. Internally, this associates a GL_INTENSITY OpenGL
       texture with the backing store. */
-  public static TextureRenderer createAlphaOnlyRenderer(final int width, final int height) {
-    return createAlphaOnlyRenderer(width, height, false);
+  public static TextureRenderer createAlphaOnlyRenderer(final GL2 gl, final int width, final int height) {
+    return createAlphaOnlyRenderer(gl, width, height, false);
   }
 
   /** Creates a new renderer with a special kind of backing store
@@ -153,8 +150,8 @@ public class TextureRenderer {
       better smoothing when rendering the TextureRenderer's contents
       at a distance. Internally, this associates a GL_INTENSITY OpenGL
       texture with the backing store. */
-  public static TextureRenderer createAlphaOnlyRenderer(final int width, final int height, final boolean mipmap) {
-    return new TextureRenderer(width, height, false, true, mipmap);
+  public static TextureRenderer createAlphaOnlyRenderer(final GL2 gl, final int width, final int height, final boolean mipmap) {
+    return new TextureRenderer(gl, width, height, false, true, mipmap);
   }
 
   /** Returns the width of the backing store of this renderer.
@@ -227,7 +224,7 @@ public class TextureRenderer {
       uses GL_LINEAR interpolation for the minification and
       magnification filters. Defaults to true. Changes to this setting
       will not take effect until the next call to {@link
-      #beginOrthoRendering beginOrthoRendering}.
+      #beginRendering beginRendering}.
 
       @param smoothing whether smoothing is enabled for the OpenGL texture
   */
@@ -310,7 +307,7 @@ public class TextureRenderer {
   */
   public void dispose() {
     if (texture != null) {
-      texture.destroy(GLContext.getCurrentGL());
+      texture.destroy(gl);
       texture = null;
     }
     if (image != null) {
@@ -320,53 +317,9 @@ public class TextureRenderer {
   }
 
   /** Convenience method which assists in rendering portions of the
-      OpenGL texture to the screen, if the application intends to draw
-      them as a flat overlay on to the screen. Pushes OpenGL state
-      bits (GL_ENABLE_BIT, GL_DEPTH_BUFFER_BIT and GL_TRANSFORM_BIT);
-      disables the depth test, back-face culling, and lighting;
-      enables the texture in this renderer; and sets up the viewing
-      matrices for orthographic rendering where the coordinates go
-      from (0, 0) at the lower left to (width, height) at the upper
-      right. Equivalent to beginOrthoRendering(width, height, true).
-      {@link #endOrthoRendering} must be used in conjunction with this
-      method to restore all OpenGL states.
-
-      @param width the width of the current on-screen OpenGL drawable
-      @param height the height of the current on-screen OpenGL drawable
-
-
-  */
-  public void beginOrthoRendering(final int width, final int height) {
-    beginOrthoRendering(width, height, true);
-  }
-
-  /** Convenience method which assists in rendering portions of the
-      OpenGL texture to the screen, if the application intends to draw
-      them as a flat overlay on to the screen. Pushes OpenGL state
-      bits (GL_ENABLE_BIT, GL_DEPTH_BUFFER_BIT and GL_TRANSFORM_BIT);
-      disables the depth test (if the "disableDepthTest" argument is
-      true), back-face culling, and lighting; enables the texture in
-      this renderer; and sets up the viewing matrices for orthographic
-      rendering where the coordinates go from (0, 0) at the lower left
-      to (width, height) at the upper right. {@link
-      #endOrthoRendering} must be used in conjunction with this method
-      to restore all OpenGL states.
-
-      @param width the width of the current on-screen OpenGL drawable
-      @param height the height of the current on-screen OpenGL drawable
-      @param disableDepthTest whether the depth test should be disabled
-
-
-  */
-  public void beginOrthoRendering(final int width, final int height, final boolean disableDepthTest) {
-    beginRendering(true, width, height, disableDepthTest);
-  }
-
-  /** Convenience method which assists in rendering portions of the
       OpenGL texture to the screen as 2D quads in 3D space. Pushes
       OpenGL state (GL_ENABLE_BIT); disables lighting; and enables the
-      texture in this renderer. Unlike {@link #beginOrthoRendering
-      beginOrthoRendering}, does not modify the depth test, back-face
+      texture in this renderer. Does not modify the depth test, back-face
       culling, lighting, or the modelview or projection matrices. The
       user is responsible for setting up the view matrices for correct
       results of {@link #draw3DRect draw3DRect}. {@link
@@ -376,7 +329,7 @@ public class TextureRenderer {
 
   */
   public void begin3DRendering() {
-    beginRendering(false, 0, 0, false);
+    beginRendering();
   }
 
   /** Changes the color of the polygons, and therefore the drawn
@@ -403,7 +356,6 @@ public class TextureRenderer {
 
   */
   public void setColor(final float r, final float g, final float b, final float a) {
-    final GL2 gl = GLContext.getCurrentGL().getGL2();
     this.r = r * a;
     this.g = g * a;
     this.b = b * a;
@@ -500,12 +452,12 @@ public class TextureRenderer {
                          final int texturex, final int texturey,
                          final int width, final int height,
                          final float scaleFactor) {
-    final GL2 gl = GLContext.getCurrentGL().getGL2();
+    // TODO: use VBA instead
     final Texture texture = getTexture();
     final TextureCoords coords = texture.getSubImageTexCoords(texturex, texturey,
                                                         texturex + width,
                                                         texturey + height);
-    gl.glBegin(GL2GL3.GL_QUADS);
+    gl.glBegin(gl.GL_QUADS());
     gl.glTexCoord2f(coords.left(), coords.bottom());
     gl.glVertex3f(x, y, z);
     gl.glTexCoord2f(coords.right(), coords.bottom());
@@ -515,18 +467,6 @@ public class TextureRenderer {
     gl.glTexCoord2f(coords.left(), coords.top());
     gl.glVertex3f(x, y + height * scaleFactor, z);
     gl.glEnd();
-  }
-
-  /** Convenience method which assists in rendering portions of the
-      OpenGL texture to the screen, if the application intends to draw
-      them as a flat overlay on to the screen. Must be used if {@link
-      #beginOrthoRendering} is used to set up the rendering stage for
-      this overlay.
-
-
-  */
-  public void endOrthoRendering() {
-    endRendering(true);
   }
 
   /** Convenience method which assists in rendering portions of the
@@ -553,70 +493,42 @@ public class TextureRenderer {
   // Internals only below this point
   //
 
-  private void beginRendering(final boolean ortho, final int width, final int height, final boolean disableDepthTestForOrtho) {
-    final GL2 gl = GLContext.getCurrentGL().getGL2();
-    final int attribBits =
-      GL2.GL_ENABLE_BIT | GL2.GL_TEXTURE_BIT | GL.GL_COLOR_BUFFER_BIT |
-      (ortho ? (GL.GL_DEPTH_BUFFER_BIT | GL2.GL_TRANSFORM_BIT) : 0);
+  private void beginRendering() {
+    final int attribBits = gl.GL_ENABLE_BIT() | gl.GL_TEXTURE_BIT() | gl.GL_COLOR_BUFFER_BIT();
     gl.glPushAttrib(attribBits);
-    gl.glDisable(GLLightingFunc.GL_LIGHTING);
-    if (ortho) {
-      if (disableDepthTestForOrtho) {
-        gl.glDisable(GL.GL_DEPTH_TEST);
-      }
-      gl.glDisable(GL.GL_CULL_FACE);
-      gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-      gl.glPushMatrix();
-      gl.glLoadIdentity();
-      glu.gluOrtho2D(0, width, 0, height);
-      gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-      gl.glPushMatrix();
-      gl.glLoadIdentity();
-      gl.glMatrixMode(GL.GL_TEXTURE);
-      gl.glPushMatrix();
-      gl.glLoadIdentity();
-    }
-    gl.glEnable(GL.GL_BLEND);
-    gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
+    gl.glDisable(gl.GL_LIGHTING());
+    gl.glEnable(gl.GL_BLEND());
+    gl.glBlendFunc(gl.GL_ONE(), gl.GL_ONE_MINUS_SRC_ALPHA());
     final Texture texture = getTexture();
     texture.enable(gl);
     texture.bind(gl);
-    gl.glTexEnvi(GL2ES1.GL_TEXTURE_ENV, GL2ES1.GL_TEXTURE_ENV_MODE, GL2ES1.GL_MODULATE);
+    gl.glTexEnvi(gl.GL_TEXTURE_ENV(), gl.GL_TEXTURE_ENV_MODE(), gl.GL_MODULATE());
     // Change polygon color to last saved
     gl.glColor4f(r, g, b, a);
     if (smoothingChanged) {
       smoothingChanged = false;
       if (smoothing) {
-        texture.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+        texture.setTexParameteri(gl, gl.GL_TEXTURE_MAG_FILTER(), gl.GL_LINEAR());
         if (mipmap) {
-          texture.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
+          texture.setTexParameteri(gl, gl.GL_TEXTURE_MIN_FILTER(), gl.GL_LINEAR_MIPMAP_LINEAR());
         } else {
-          texture.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+          texture.setTexParameteri(gl, gl.GL_TEXTURE_MIN_FILTER(), gl.GL_LINEAR());
         }
       } else {
-        texture.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-        texture.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+        texture.setTexParameteri(gl, gl.GL_TEXTURE_MIN_FILTER(), gl.GL_NEAREST());
+        texture.setTexParameteri(gl, gl.GL_TEXTURE_MAG_FILTER(), gl.GL_NEAREST());
       }
     }
   }
 
   private void endRendering(final boolean ortho) {
-    final GL2 gl = GLContext.getCurrentGL().getGL2();
+      assert !ortho;
     final Texture texture = getTexture();
     texture.disable(gl);
-    if (ortho) {
-      gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-      gl.glPopMatrix();
-      gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-      gl.glPopMatrix();
-      gl.glMatrixMode(GL.GL_TEXTURE);
-      gl.glPopMatrix();
-    }
-    gl.glPopAttrib();
+      gl.glPopAttrib();
   }
 
   private void init(final int width, final int height) {
-    final GL2 gl = GLContext.getCurrentGL().getGL2();
     // Discard previous BufferedImage if any
     if (image != null) {
       image.flush();
@@ -624,7 +536,7 @@ public class TextureRenderer {
     }
 
     // Infer the internal format if not an intensity texture
-    final int internalFormat = (intensity ? GL2.GL_INTENSITY : 0);
+    final int internalFormat = (intensity ? gl.GL_INTENSITY() : 0);
     final int imageType =
       (intensity ? BufferedImage.TYPE_BYTE_GRAY :
        (alpha ?  BufferedImage.TYPE_INT_ARGB_PRE : BufferedImage.TYPE_INT_RGB));
@@ -633,7 +545,7 @@ public class TextureRenderer {
     // BufferedImage; it's just a reference to the contents but we
     // need it in order to update sub-regions of the underlying
     // texture
-    textureData = new AWTTextureData(gl.getGLProfile(), internalFormat, 0, mipmap, image);
+    textureData = new AWTTextureData(internalFormat, 0, mipmap, image);
     // For now, always reallocate the underlying OpenGL texture when
     // the backing store size changes
     mustReallocateTexture = true;
@@ -664,13 +576,12 @@ public class TextureRenderer {
       // OpenGL and Java 2D actually line up correctly for
       // updateSubImage calls, so we don't need to do any argument
       // conversion here (i.e., flipping the Y coordinate).
-      texture.updateSubImage(GLContext.getCurrentGL(), textureData, 0, x, y, x, y, width, height);
+      texture.updateSubImage(gl, textureData, 0, x, y, x, y, width, height);
     }
   }
 
   // Returns true if the texture was newly allocated, false if not
   private boolean ensureTexture() {
-    final GL gl = GLContext.getCurrentGL();
     if (mustReallocateTexture) {
       if (texture != null) {
         texture.destroy(gl);
@@ -691,8 +602,8 @@ public class TextureRenderer {
 
       if (!smoothing) {
         // The TextureIO classes default to GL_LINEAR filtering
-        texture.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-        texture.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+        texture.setTexParameteri(gl, gl.GL_TEXTURE_MIN_FILTER(), gl.GL_NEAREST());
+        texture.setTexParameteri(gl, gl.GL_TEXTURE_MAG_FILTER(), gl.GL_NEAREST());
       }
       return true;
     }

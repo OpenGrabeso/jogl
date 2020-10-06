@@ -6,6 +6,7 @@ import java.awt.Frame;
 import java.awt.event.*;
 import java.awt.geom.*;
 
+import com.github.opengrabeso.jaagl.jogl.JoGL;
 import com.jogamp.common.util.InterruptSource;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -68,23 +69,27 @@ public abstract class Issue344Base implements GLEventListener
 
     public void init(final GLAutoDrawable drawable)
     {
-        final GL2 gl = drawable.getGL().getGL2();
+        final GL2 jgl = drawable.getGL().getGL2();
+
+        final com.github.opengrabeso.jaagl.GL2 gl = JoGL.wrap(jgl);
 
         gl.glEnable(GL.GL_DEPTH_TEST);
 
-        renderer = new TextRenderer(font, useMipMaps);
+        renderer = new TextRenderer(gl, font, useMipMaps);
 
         final Rectangle2D bounds = renderer.getBounds(getText());
         final float w = (float) bounds.getWidth();
         // final float h = (float) bounds.getHeight();
         textScaleFactor = 2.0f / (w * 1.1f);
-        gl.setSwapInterval(0);
+        //gl.setSwapInterval(0);
     }
 
     public void display(final GLAutoDrawable drawable)
     {
-        final GL2 gl = drawable.getGL().getGL2();
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+        final GL2 jgl = drawable.getGL().getGL2();
+
+        final com.github.opengrabeso.jaagl.GL2 gl = JoGL.wrap(jgl);
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT() | gl.GL_DEPTH_BUFFER_BIT());
 
         gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         gl.glLoadIdentity();
@@ -92,7 +97,7 @@ public abstract class Issue344Base implements GLEventListener
                       0, 0, 0,
                       0, 1, 0);
 
-        renderer.begin3DRendering();
+        renderer.begin3DRendering(gl);
         final Rectangle2D bounds = renderer.getBounds(getText());
         final float w = (float) bounds.getWidth();
         final float h = (float) bounds.getHeight();
