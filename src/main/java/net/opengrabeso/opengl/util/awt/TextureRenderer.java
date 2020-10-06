@@ -68,13 +68,7 @@ public class TextureRenderer {
   // would need to be split up into multiple callbacks run from the
   // appropriate threads, which would be somewhat unfortunate.
 
-  // Whether we have an alpha channel in the (RGB/A) backing store
-  private final boolean alpha;
-
-  // Whether we're using only a GL_INTENSITY backing store
-  private final boolean intensity;
-
-  private final GL2 gl;
+    private final GL2 gl;
 
     // Whether we're attempting to use automatic mipmap generation support
   private boolean mipmap;
@@ -130,9 +124,7 @@ public class TextureRenderer {
   // sense when intensity is not set
   private TextureRenderer(final GL2 gl, final int width, final int height, final boolean alpha, final boolean intensity, final boolean mipmap) {
       this.gl = gl;
-    this.alpha = alpha;
-    this.intensity = intensity;
-    this.mipmap = mipmap;
+      this.mipmap = mipmap;
     init(width, height);
   }
 
@@ -477,7 +469,7 @@ public class TextureRenderer {
 
   */
   public void end3DRendering() {
-    endRendering(false);
+    endRendering();
   }
 
   /** Indicates whether automatic mipmap generation is in use for this
@@ -521,8 +513,7 @@ public class TextureRenderer {
     }
   }
 
-  private void endRendering(final boolean ortho) {
-      assert !ortho;
+  private void endRendering() {
     final Texture texture = getTexture();
     texture.disable(gl);
       gl.glPopAttrib();
@@ -536,16 +527,14 @@ public class TextureRenderer {
     }
 
     // Infer the internal format if not an intensity texture
-    final int internalFormat = (intensity ? gl.GL_INTENSITY() : 0);
-    final int imageType =
-      (intensity ? BufferedImage.TYPE_BYTE_GRAY :
-       (alpha ?  BufferedImage.TYPE_INT_ARGB_PRE : BufferedImage.TYPE_INT_RGB));
+    final int internalFormat = gl.GL_INTENSITY();
+    final int imageType = BufferedImage.TYPE_BYTE_GRAY;
     image = new BufferedImage(width, height, imageType);
     // Always realllocate the TextureData associated with this
     // BufferedImage; it's just a reference to the contents but we
     // need it in order to update sub-regions of the underlying
     // texture
-    textureData = new AWTTextureData(internalFormat, 0, mipmap, image);
+    textureData = new AWTTextureData(gl, internalFormat, mipmap, image);
     // For now, always reallocate the underlying OpenGL texture when
     // the backing store size changes
     mustReallocateTexture = true;

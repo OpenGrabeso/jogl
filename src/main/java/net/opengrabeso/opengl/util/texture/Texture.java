@@ -168,18 +168,8 @@ public class Texture {
         final String targetS = target == imageTarget ? Integer.toHexString(target) : Integer.toHexString(target) + " - image "+Integer.toHexString(imageTarget);
         return "Texture[target "+targetS+", name "+texID+", "+
                 imgWidth+"/"+texWidth+" x "+imgHeight+"/"+texHeight+", y-flip "+mustFlipVertically+
-                ", "+estimatedMemorySize+" bytes]";
+                "]";
     }
-
-    /** An estimate of the amount of texture memory this texture consumes. */
-    private int estimatedMemorySize;
-
-    private static final boolean DEBUG = false;
-    private static final boolean VERBOSE = false;
-
-    // For testing alternate code paths on more capable hardware
-    private static final boolean disableNPOT    = false;
-    private static final boolean disableTexRect = false;
 
     public Texture(final GL gl, final TextureData data) {
         this.texID = 0;
@@ -570,8 +560,6 @@ public class Texture {
             this.target = texTarget;
         }
 
-        // This estimate will be wrong for cube maps
-        estimatedMemorySize = data.getEstimatedMemorySize();
     }
 
     /**
@@ -710,15 +698,6 @@ public class Texture {
      */
     public int getTextureObject() {
         return texID;
-    }
-
-    /** Returns an estimate of the amount of texture memory in bytes
-        this Texture consumes. It should only be treated as an estimate;
-        most applications should not need to query this but instead let
-        the OpenGL implementation page textures in and out as
-        necessary. */
-    public int getEstimatedMemorySize() {
-        return estimatedMemorySize;
     }
 
     /** Indicates whether this Texture is using automatic mipmap

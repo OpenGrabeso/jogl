@@ -6,7 +6,7 @@
 
   <groupId>net.opengrabeso</groupId>
   <artifactId>text-renderer</artifactId>
-  <version>0.1.13-SNAPSHOT</version>
+  <version>0.1.14-SNAPSHOT</version>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
