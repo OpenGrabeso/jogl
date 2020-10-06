@@ -37,9 +37,7 @@
 
 package net.opengrabeso.opengl.util.texture;
 
-import java.nio.Buffer;
-
-import com.jogamp.opengl.GLProfile;
+import java.nio.ByteBuffer;
 
 import com.jogamp.common.nio.Buffers;
 import net.opengrabeso.opengl.util.GLPixelAttributes;
@@ -68,8 +66,8 @@ public class TextureData {
     protected boolean mustFlipVertically; // Must flip texture coordinates
     // vertically to get OpenGL output
     // to look correct
-    protected Buffer buffer; // the actual data...
-    private Buffer[] mipmapData; // ...or a series of mipmaps
+    protected ByteBuffer buffer; // the actual data...
+    private ByteBuffer[] mipmapData; // ...or a series of mipmaps
     private Flusher flusher;
     protected int rowLength;
     protected int alignment; // 1, 2, or 4 bytes
@@ -78,8 +76,6 @@ public class TextureData {
     // These booleans are a concession to the AWTTextureData subclass
     protected boolean haveEXTABGR = true;
     protected boolean haveGL12 = true;
-    protected GLProfile glProfile;
-    protected ColorSpace pixelCS = ColorSpace.RGB;
 
     // TODO: final, and set via ctor for 2.4.X
     /* pp */ ImageType srcImageType;
@@ -131,7 +127,7 @@ public class TextureData {
                        final boolean mipmap,
                        final boolean dataIsCompressed,
                        final boolean mustFlipVertically,
-                       final Buffer buffer,
+                       final ByteBuffer buffer,
                        final Flusher flusher) throws IllegalArgumentException {
         this(internalFormat, width, height, border, new GLPixelAttributes(pixelFormat, pixelType),
              mipmap, dataIsCompressed, mustFlipVertically, buffer, flusher);
@@ -182,7 +178,7 @@ public class TextureData {
                        final boolean mipmap,
                        final boolean dataIsCompressed,
                        final boolean mustFlipVertically,
-                       final Buffer buffer,
+                       final ByteBuffer buffer,
                        final Flusher flusher) throws IllegalArgumentException {
         if (mipmap && dataIsCompressed) {
             throw new IllegalArgumentException("Can not generate mipmaps for compressed textures");
@@ -246,7 +242,7 @@ public class TextureData {
                        final int pixelType,
                        final boolean dataIsCompressed,
                        final boolean mustFlipVertically,
-                       final Buffer[] mipmapData,
+                       final ByteBuffer[] mipmapData,
                        final Flusher flusher) throws IllegalArgumentException {
         this(internalFormat, width, height, border, new GLPixelAttributes(pixelFormat, pixelType),
              dataIsCompressed, mustFlipVertically, mipmapData, flusher);
@@ -295,7 +291,7 @@ public class TextureData {
                        final GLPixelAttributes pixelAttributes,
                        final boolean dataIsCompressed,
                        final boolean mustFlipVertically,
-                       final Buffer[] mipmapData,
+                       final ByteBuffer[] mipmapData,
                        final Flusher flusher) throws IllegalArgumentException {
         this.width = width;
         this.height = height;
@@ -310,6 +306,9 @@ public class TextureData {
             estimatedMemorySize += estimatedMemorySize(mipmapData[i]);
         }
     }
+
+    /** Used only by subclasses */
+    protected TextureData() { this.pixelAttributes = GLPixelAttributes.UNDEF; }
 
     /**
      * Returns the source {@link ImageType} if applicable and known, otherwise {@code null}.
@@ -354,12 +353,12 @@ public class TextureData {
         return mustFlipVertically;
     }
     /** Returns the texture data, or null if it is specified as a set of mipmaps. */
-    public Buffer getBuffer() {
+    public ByteBuffer getBuffer() {
         return buffer;
     }
     /** Returns all mipmap levels for the texture data, or null if it is
         specified as a single image. */
-    public Buffer[] getMipmapData() {
+    public ByteBuffer[] getMipmapData() {
         return mipmapData;
     }
     /** Returns the required byte alignment for the texture data. */
@@ -414,7 +413,7 @@ public class TextureData {
         for proper display. */
     public void setMustFlipVertically(final boolean mustFlipVertically) { this.mustFlipVertically = mustFlipVertically; }
     /** Sets the texture data. */
-    public void setBuffer(final Buffer buffer) {
+    public void setBuffer(final ByteBuffer buffer) {
         this.buffer = buffer;
         estimatedMemorySize = estimatedMemorySize(buffer);
     }
@@ -470,7 +469,7 @@ public class TextureData {
     // Internals only below this point
     //
 
-    protected static int estimatedMemorySize(final Buffer buffer) {
+    protected static int estimatedMemorySize(final ByteBuffer buffer) {
         if (buffer == null) {
             return 0;
         }

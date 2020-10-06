@@ -757,7 +757,7 @@ public class Texture {
     private void updateSubImageImpl(final GL gl, final TextureData data, final int newTarget, final int mipmapLevel,
                                     int dstx, int dsty,
                                     int srcx, int srcy, int width, int height) {
-        Buffer buffer = data.getBuffer();
+        ByteBuffer buffer = data.getBuffer();
         if (buffer == null && data.getMipmapData() == null) {
             // Assume user just wanted to get the Texture object allocated
             return;

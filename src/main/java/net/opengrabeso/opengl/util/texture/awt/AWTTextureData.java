@@ -156,7 +156,7 @@ public class AWTTextureData extends TextureData {
     }
 
     @Override
-    public Buffer getBuffer() {
+    public ByteBuffer getBuffer() {
         if (imageForLazyCustomConversion != null) {
             if (!((expectingEXTABGR && haveEXTABGR) ||
                   (expectingGL12    && haveGL12))) {
@@ -396,7 +396,7 @@ public class AWTTextureData extends TextureData {
         buffer = wrapImageDataBuffer(image);
     }
 
-    private Buffer wrapImageDataBuffer(final BufferedImage image) {
+    private ByteBuffer wrapImageDataBuffer(final BufferedImage image) {
         //
         // Note: Grabbing the DataBuffer will defeat Java2D's image
         // management mechanism (as of JDK 5/6, at least).  This shouldn't
@@ -409,16 +409,6 @@ public class AWTTextureData extends TextureData {
         final DataBuffer data = image.getRaster().getDataBuffer();
         if (data instanceof DataBufferByte) {
             return ByteBuffer.wrap(((DataBufferByte) data).getData());
-        } else if (data instanceof DataBufferDouble) {
-            throw new RuntimeException("DataBufferDouble rasters not supported by OpenGL");
-        } else if (data instanceof DataBufferFloat) {
-            return FloatBuffer.wrap(((DataBufferFloat) data).getData());
-        } else if (data instanceof DataBufferInt) {
-            return IntBuffer.wrap(((DataBufferInt) data).getData());
-        } else if (data instanceof DataBufferShort) {
-            return ShortBuffer.wrap(((DataBufferShort) data).getData());
-        } else if (data instanceof DataBufferUShort) {
-            return ShortBuffer.wrap(((DataBufferUShort) data).getData());
         } else {
             throw new RuntimeException("Unexpected DataBuffer type?");
         }
