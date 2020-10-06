@@ -40,7 +40,7 @@ import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.GLProfile;
 
 import com.jogamp.common.nio.Buffers;
-import com.jogamp.opengl.util.texture.TextureData;
+import net.opengrabeso.opengl.util.texture.TextureData;
 
 /**
  * OpenGL pixel data buffer, allowing user to provide buffers via their {@link GLPixelBufferProvider} implementation.
@@ -126,7 +126,7 @@ public class GLPixelBuffer {
          * <p>
          * Returned {@link GLPixelBuffer} may be {@link GLPixelBuffer#isValid() invalid}.
          * </p>
-         * @param hostPixComp host {@link PixelFormat pixel format}, i.e. of the source or sink depending on {@code pack},
+         * @param hostPixelComp host {@link PixelFormat pixel format}, i.e. of the source or sink depending on {@code pack},
          *                    e.g. fetched via {@link #getHostPixelComp(GLProfile, int)}.
          *                    If {@code null}, {@code pixelAttributes} instance maybe used or an exception is thrown,
          *                    depending on implementation semantics.
@@ -551,7 +551,7 @@ public class GLPixelBuffer {
     /**
      * Buffer holding the pixel data. If {@link #rewind()}, it holds <code>byteSize</code> {@link Buffer#remaining()} bytes.
      * <p>
-     * By default the {@link Buffer} is a {@link ByteBuffer}, due to {@link DefProvider#allocate(GL, PixelFormat.Composition, GLPixelAttributes, boolean, int, int, int, int)}.
+     * By default the {@link Buffer} is a {@link ByteBuffer}.
      * However, other {@link GLPixelBufferProvider} may utilize different {@link Buffer} types.
      * </p>
      */
@@ -587,7 +587,6 @@ public class GLPixelBuffer {
      * @param depth in pixels
      * @param buffer the backing array
      * @param allowRowStride If <code>true</code>, allow row-stride, otherwise not. See {@link #requiresNewBuffer(GL, int, int, int)}.
-     * @param hostPixelComp the host {@link PixelFormat.Composition}
      */
     public GLPixelBuffer(final GLPixelAttributes pixelAttributes, final boolean pack, final int width, final int height, final int depth, final Buffer buffer, final boolean allowRowStride) {
         this.pixelAttributes = pixelAttributes;
