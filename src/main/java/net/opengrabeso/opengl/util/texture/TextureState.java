@@ -27,11 +27,8 @@
  */
 package net.opengrabeso.opengl.util.texture;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2ES2;
-import com.jogamp.opengl.GL2ES3;
-import com.jogamp.opengl.GL2GL3;
-import com.jogamp.opengl.GLException;
+import com.jogamp.opengl.*;
+
 
 /**
  * Preserves a [ texture-unit, texture-target ] state.
@@ -97,9 +94,9 @@ public class TextureState {
      * See {@link TextureState}.
      * @param gl current GL context's GL object
      * @param textureTarget
-     * @throws GLException if textureTarget is not supported
+
      */
-    public TextureState(final GL gl, final int textureTarget) throws GLException {
+    public TextureState(final GL gl, final int textureTarget) {
         this(gl, activeTexture(gl), textureTarget);
     }
 
@@ -109,9 +106,9 @@ public class TextureState {
      * @param gl current GL context's GL object
      * @param textureUnit  of range [ {@link GL#GL_TEXTURE0}.. ]
      * @param textureTarget
-     * @throws GLException if textureTarget is not supported
+
      */
-    public TextureState(final GL gl, final int textureUnit, final int textureTarget) throws GLException {
+    public TextureState(final GL gl, final int textureUnit, final int textureTarget) {
         target = textureTarget;
         state[0] = textureUnit;
         final int texBindQName = getTextureTargetQueryName(textureTarget);

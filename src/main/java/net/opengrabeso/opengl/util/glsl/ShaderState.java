@@ -32,13 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2ES2;
-import com.jogamp.opengl.GLArrayData;
-import com.jogamp.opengl.GLException;
-import com.jogamp.opengl.GLUniformData;
-
-import jogamp.opengl.Debug;
+import com.jogamp.opengl.*;
 
 import com.jogamp.common.ExceptionUtils;
 import com.jogamp.common.os.Platform;
@@ -94,11 +88,11 @@ public class ShaderState {
     /**
      * Turns the shader program on or off.<br>
      *
-     * @throws GLException if no program is attached
+
      *
      * @see com.jogamp.opengl.util.glsl.ShaderState#useProgram(GL2ES2, boolean)
      */
-    public synchronized void useProgram(final GL2ES2 gl, final boolean on) throws GLException {
+    public synchronized void useProgram(final GL2ES2 gl, final boolean on) {
         if(null==shaderProgram) { throw new GLException("No program is attached"); }
         if(on) {
             if(shaderProgram.linked()) {
@@ -147,9 +141,9 @@ public class ShaderState {
      *
      * @return true if shader program was attached, otherwise false (already attached)
      *
-     * @throws GLException if program was not linked and linking fails
+
      */
-    public synchronized boolean attachShaderProgram(final GL2ES2 gl, final ShaderProgram prog, final boolean enable) throws GLException {
+    public synchronized boolean attachShaderProgram(final GL2ES2 gl, final ShaderProgram prog, final boolean enable) {
         if(verbose) {
             final int curId = (null!=shaderProgram)?shaderProgram.id():-1;
             final int newId = (null!=prog)?prog.id():-1;
@@ -315,8 +309,8 @@ public class ShaderState {
      * The value will be cached and can be retrieved via {@link #getCachedAttribLocation(String)}
      * before or after linking.
      *
-     * @throws GLException if no program is attached
-     * @throws GLException if the program is already linked
+
+
      *
      * @see com.jogamp.opengl.GL2ES2#glBindAttribLocation(int, int, String)
      * @see #getAttribLocation(GL2ES2, String)
@@ -336,8 +330,8 @@ public class ShaderState {
      * and {@link #getAttribute(String)}before or after linking.
      * The {@link GLArrayData}'s location will be set as well.
      *
-     * @throws GLException if no program is attached
-     * @throws GLException if the program is already linked
+
+
      *
      * @see com.jogamp.opengl.GL2ES2#glBindAttribLocation(int, int, String)
      * @see #getAttribLocation(GL2ES2, String)
@@ -361,8 +355,8 @@ public class ShaderState {
      *
      * @return -1 if there is no such attribute available,
      *         otherwise >= 0
-     * @throws GLException if no program is attached
-     * @throws GLException if the program is not linked and no location was cached.
+
+
      *
      * @see #getCachedAttribLocation(String)
      * @see #bindAttribLocation(GL2ES2, int, GLArrayData)
@@ -400,8 +394,8 @@ public class ShaderState {
      * @return -1 if there is no such attribute available,
      *         otherwise >= 0
      *
-     * @throws GLException if no program is attached
-     * @throws GLException if the program is not linked and no location was cached.
+
+
      *
      * @see #getCachedAttribLocation(String)
      * @see #bindAttribLocation(GL2ES2, int, GLArrayData)
@@ -485,7 +479,7 @@ public class ShaderState {
      *
      * @return false, if the name is not found, otherwise true
      *
-     * @throws GLException if the program is not linked and no location was cached.
+
      */
     public boolean enableVertexAttribArray(final GL2ES2 gl, final String name) {
         return enableVertexAttribArray(gl, name, -1);
@@ -505,7 +499,7 @@ public class ShaderState {
      *
      * @return false, if the name is not found, otherwise true
      *
-     * @throws GLException if the program is not linked and no location was cached.
+
      */
     public boolean enableVertexAttribArray(final GL2ES2 gl, final GLArrayData data) {
         if(0 > data.getLocation()) {
@@ -549,8 +543,8 @@ public class ShaderState {
      *
      * @return false, if the name is not found, otherwise true
      *
-     * @throws GLException if no program is attached
-     * @throws GLException if the program is not linked and no location was cached.
+
+
      */
     public boolean disableVertexAttribArray(final GL2ES2 gl, final String name) {
         return disableVertexAttribArray(gl, name, -1);
@@ -569,8 +563,8 @@ public class ShaderState {
      *
      * @return false, if the name is not found, otherwise true
      *
-     * @throws GLException if no program is attached
-     * @throws GLException if the program is not linked and no location was cached.
+
+
      */
     public boolean disableVertexAttribArray(final GL2ES2 gl, final GLArrayData data) {
         if(0 > data.getLocation()) {
@@ -589,8 +583,8 @@ public class ShaderState {
      *
      * @return false, if the location could not be determined, otherwise true
      *
-     * @throws GLException if no program is attached
-     * @throws GLException if the program is not linked and no location was cached.
+
+
      */
     public boolean vertexAttribPointer(final GL2ES2 gl, final GLArrayData data) {
         int location = data.getLocation();
@@ -689,7 +683,7 @@ public class ShaderState {
      * if tracking am attribute/program dirty flag.
      * </p>
      *
-     * @throws GLException is the program is not linked
+
      *
      * @see #attachShaderProgram(GL2ES2, ShaderProgram)
      */
@@ -768,7 +762,7 @@ public class ShaderState {
      * @return -1 if there is no such attribute available,
      *         otherwise >= 0
 
-     * @throws GLException is the program is not linked
+
      */
     public final int getUniformLocation(final GL2ES2 gl, final String name) {
         if(!shaderProgram.inUse()) throw new GLException("Program is not in use");
@@ -801,7 +795,7 @@ public class ShaderState {
      * @return -1 if there is no such attribute available,
      *         otherwise >= 0
 
-     * @throws GLException is the program is not linked
+
      */
     public int getUniformLocation(final GL2ES2 gl, final GLUniformData data) {
         if(!shaderProgram.inUse()) throw new GLException("Program is not in use");
@@ -882,7 +876,7 @@ public class ShaderState {
      * if tracking a uniform/program dirty flag.
      * </p>
      *
-     * @throws GLException is the program is not in use
+
      *
      * @see #attachShaderProgram(GL2ES2, ShaderProgram)
      */

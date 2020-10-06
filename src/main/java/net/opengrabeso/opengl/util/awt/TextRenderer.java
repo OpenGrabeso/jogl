@@ -383,7 +383,7 @@ public class TextRenderer {
         @param height the height of the current on-screen OpenGL drawable
         @throws com.jogamp.opengl.GLException If an OpenGL context is not current when this method is called
     */
-    public void beginRendering(final int width, final int height) throws GLException {
+    public void beginRendering(final int width, final int height) {
         beginRendering(width, height, true);
     }
 
@@ -401,10 +401,10 @@ public class TextRenderer {
         @param width the width of the current on-screen OpenGL drawable
         @param height the height of the current on-screen OpenGL drawable
         @param disableDepthTest whether to disable the depth test
-        @throws GLException If an OpenGL context is not current when this method is called
+
     */
     public void beginRendering(final int width, final int height, final boolean disableDepthTest)
-        throws GLException {
+        {
         beginRendering(true, width, height, disableDepthTest);
     }
 
@@ -418,9 +418,9 @@ public class TextRenderer {
         to the last color set with this TextRenderer via {@link
         #setColor setColor}.
 
-        @throws GLException If an OpenGL context is not current when this method is called
+
     */
-    public void begin3DRendering() throws GLException {
+    public void begin3DRendering() {
         beginRendering(false, 0, 0, false);
     }
 
@@ -428,9 +428,9 @@ public class TextRenderer {
         one. The default color is opaque white.
 
         @param color the new color to use for rendering text
-        @throws GLException If an OpenGL context is not current when this method is called
+
     */
-    public void setColor(final Color color) throws GLException {
+    public void setColor(final Color color) {
         final boolean noNeedForFlush = (haveCachedColor && (cachedColor != null) &&
                                   color.equals(cachedColor));
 
@@ -456,10 +456,10 @@ public class TextRenderer {
         @param b the blue component of the new color
         @param a the alpha component of the new color, 0.0f = completely
         transparent, 1.0f = completely opaque
-        @throws GLException If an OpenGL context is not current when this method is called
+
     */
     public void setColor(final float r, final float g, final float b, final float a)
-        throws GLException {
+        {
         final boolean noNeedForFlush = (haveCachedColor && (cachedColor == null) &&
                                   (r == cachedR) && (g == cachedG) && (b == cachedB) &&
                                   (a == cachedA));
@@ -486,16 +486,16 @@ public class TextRenderer {
         @param str the string to draw
         @param x the x coordinate at which to draw
         @param y the y coordinate at which to draw
-        @throws GLException If an OpenGL context is not current when this method is called
+
     */
-    public void draw(final CharSequence str, final int x, final int y) throws GLException {
+    public void draw(final CharSequence str, final int x, final int y) {
         draw3D(str, x, y, 0, 1);
     }
 
     /** Draws the supplied String at the desired location using the
         renderer's current color. See {@link #draw(CharSequence, int,
         int) draw(CharSequence, int, int)}. */
-    public void draw(final String str, final int x, final int y) throws GLException {
+    public void draw(final String str, final int x, final int y) {
         draw3D(str, x, y, 0, 1);
     }
 
@@ -509,7 +509,7 @@ public class TextRenderer {
         @param y the y coordinate at which to draw
         @param z the z coordinate at which to draw
         @param scaleFactor a uniform scale factor applied to the width and height of the drawn rectangle
-        @throws GLException If an OpenGL context is not current when this method is called
+
     */
     public void draw3D(final CharSequence str, final float x, final float y, final float z,
                        final float scaleFactor) {
@@ -543,9 +543,9 @@ public class TextRenderer {
         several OpenGL state bits. Should be paired with {@link
         #beginRendering beginRendering}.
 
-        @throws GLException If an OpenGL context is not current when this method is called
+
     */
-    public void endRendering() throws GLException {
+    public void endRendering() {
         endRendering(true);
     }
 
@@ -553,18 +553,18 @@ public class TextRenderer {
         Restores several OpenGL state bits. Should be paired with {@link
         #begin3DRendering begin3DRendering}.
 
-        @throws GLException If an OpenGL context is not current when this method is called
+
     */
-    public void end3DRendering() throws GLException {
+    public void end3DRendering() {
         endRendering(false);
     }
 
     /** Disposes of all resources this TextRenderer is using. It is not
         valid to use the TextRenderer after this method is called.
 
-        @throws GLException If an OpenGL context is not current when this method is called
+
     */
-    public void dispose() throws GLException {
+    public void dispose() {
         if( null != mPipelinedQuadRenderer ) {
             mPipelinedQuadRenderer.dispose();
         }
@@ -706,9 +706,9 @@ public class TextRenderer {
      * this is why the ugly try-catch block has been added, which falls back to the old textrenderer
      *
      * @param ortho
-     * @throws GLException
+
      */
-    private void endRendering(final boolean ortho) throws GLException {
+    private void endRendering(final boolean ortho) {
         flushGlyphPipeline();
 
         inBeginEndPair = false;

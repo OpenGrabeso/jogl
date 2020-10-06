@@ -115,7 +115,7 @@ public class ShaderProgram {
      * <p>This command does not compile and attach the shader,
      * use {@link #add(GL2ES2, ShaderCode)} for this purpose.</p>
      */
-    public synchronized void add(final ShaderCode shaderCode) throws GLException {
+    public synchronized void add(final ShaderCode shaderCode) {
         allShaderCode.add(shaderCode);
     }
 

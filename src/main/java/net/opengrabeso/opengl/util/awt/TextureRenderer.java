@@ -206,9 +206,9 @@ public class TextureRenderer {
 
       @param width the new width of the backing store of this renderer
       @param height the new height of the backing store of this renderer
-      @throws GLException If an OpenGL context is not current when this method is called
+
   */
-  public void setSize(final int width, final int height) throws GLException {
+  public void setSize(final int width, final int height) {
     init(width, height);
   }
 
@@ -217,9 +217,9 @@ public class TextureRenderer {
       be invalidated.
 
       @param d the new size of the backing store of this renderer
-      @throws GLException If an OpenGL context is not current when this method is called
+
   */
-  public void setSize(final Dimension d) throws GLException {
+  public void setSize(final Dimension d) {
     setSize(d.width, d.height);
   }
 
@@ -291,9 +291,9 @@ public class TextureRenderer {
       this renderer, synchronizing any dirty regions of the
       TextureRenderer with the underlying OpenGL texture.
 
-      @throws GLException If an OpenGL context is not current when this method is called
+
   */
-  public Texture getTexture() throws GLException {
+  public Texture getTexture() {
     if (dirtyRegion != null) {
       sync(dirtyRegion.x, dirtyRegion.y, dirtyRegion.width, dirtyRegion.height);
       dirtyRegion = null;
@@ -306,9 +306,9 @@ public class TextureRenderer {
   /** Disposes all resources associated with this renderer. It is not
       valid to use this renderer after calling this method.
 
-      @throws GLException If an OpenGL context is not current when this method is called
+
   */
-  public void dispose() throws GLException {
+  public void dispose() {
     if (texture != null) {
       texture.destroy(GLContext.getCurrentGL());
       texture = null;
@@ -334,9 +334,9 @@ public class TextureRenderer {
       @param width the width of the current on-screen OpenGL drawable
       @param height the height of the current on-screen OpenGL drawable
 
-      @throws GLException If an OpenGL context is not current when this method is called
+
   */
-  public void beginOrthoRendering(final int width, final int height) throws GLException {
+  public void beginOrthoRendering(final int width, final int height) {
     beginOrthoRendering(width, height, true);
   }
 
@@ -356,9 +356,9 @@ public class TextureRenderer {
       @param height the height of the current on-screen OpenGL drawable
       @param disableDepthTest whether the depth test should be disabled
 
-      @throws GLException If an OpenGL context is not current when this method is called
+
   */
-  public void beginOrthoRendering(final int width, final int height, final boolean disableDepthTest) throws GLException {
+  public void beginOrthoRendering(final int width, final int height, final boolean disableDepthTest) {
     beginRendering(true, width, height, disableDepthTest);
   }
 
@@ -373,9 +373,9 @@ public class TextureRenderer {
       #end3DRendering} must be used in conjunction with this method to
       restore all OpenGL states.
 
-      @throws GLException If an OpenGL context is not current when this method is called
+
   */
-  public void begin3DRendering() throws GLException {
+  public void begin3DRendering() {
     beginRendering(false, 0, 0, false);
   }
 
@@ -400,9 +400,9 @@ public class TextureRenderer {
       @param b the blue component of the new color
       @param a the alpha component of the new color, 0.0f = completely
         transparent, 1.0f = completely opaque
-      @throws GLException If an OpenGL context is not current when this method is called
+
   */
-  public void setColor(final float r, final float g, final float b, final float a) throws GLException {
+  public void setColor(final float r, final float g, final float b, final float a) {
     final GL2 gl = GLContext.getCurrentGL().getGL2();
     this.r = r * a;
     this.g = g * a;
@@ -418,9 +418,9 @@ public class TextureRenderer {
       #setColor(float,float,float,float) setColor} for more details.
 
       @param color the new color to use for rendering
-      @throws GLException If an OpenGL context is not current when this method is called
+
   */
-  public void setColor(final Color color) throws GLException {
+  public void setColor(final Color color) {
     // Get color's RGBA components as floats in the range [0,1].
     if (compArray == null) {
       compArray = new float[4];
@@ -441,9 +441,9 @@ public class TextureRenderer {
       @param screeny the on-screen y coordinate (relative to lower left) at
         which to draw the rectangle
 
-      @throws GLException If an OpenGL context is not current when this method is called
+
   */
-  public void drawOrthoRect(final int screenx, final int screeny) throws GLException {
+  public void drawOrthoRect(final int screenx, final int screeny) {
     drawOrthoRect(screenx, screeny, 0, 0, getWidth(), getHeight());
   }
 
@@ -463,11 +463,11 @@ public class TextureRenderer {
       @param width the width of the rectangle to draw
       @param height the height of the rectangle to draw
 
-      @throws GLException If an OpenGL context is not current when this method is called
+
   */
   public void drawOrthoRect(final int screenx, final int screeny,
                             final int texturex, final int texturey,
-                            final int width, final int height) throws GLException {
+                            final int width, final int height) {
     draw3DRect(screenx, screeny, 0, texturex, texturey, width, height, 1);
   }
 
@@ -494,12 +494,12 @@ public class TextureRenderer {
       @param scaleFactor the scale factor to apply (multiplicatively)
         to the size of the drawn rectangle
 
-      @throws GLException If an OpenGL context is not current when this method is called
+
   */
   public void draw3DRect(final float x, final float y, final float z,
                          final int texturex, final int texturey,
                          final int width, final int height,
-                         final float scaleFactor) throws GLException {
+                         final float scaleFactor) {
     final GL2 gl = GLContext.getCurrentGL().getGL2();
     final Texture texture = getTexture();
     final TextureCoords coords = texture.getSubImageTexCoords(texturex, texturey,
@@ -523,9 +523,9 @@ public class TextureRenderer {
       #beginOrthoRendering} is used to set up the rendering stage for
       this overlay.
 
-      @throws GLException If an OpenGL context is not current when this method is called
+
   */
-  public void endOrthoRendering() throws GLException {
+  public void endOrthoRendering() {
     endRendering(true);
   }
 
@@ -534,9 +534,9 @@ public class TextureRenderer {
       used if {@link #begin3DRendering} is used to set up the
       rendering stage for this overlay.
 
-      @throws GLException If an OpenGL context is not current when this method is called
+
   */
-  public void end3DRendering() throws GLException {
+  public void end3DRendering() {
     endRendering(false);
   }
 
@@ -651,9 +651,9 @@ public class TextureRenderer {
       @param width the width of the region to update
       @param height the height of the region to update
 
-      @throws GLException If an OpenGL context is not current when this method is called
+
   */
-  private void sync(final int x, final int y, final int width, final int height) throws GLException {
+  private void sync(final int x, final int y, final int width, final int height) {
     // Force allocation if necessary
     final boolean canSkipUpdate = ensureTexture();
 

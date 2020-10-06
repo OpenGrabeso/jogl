@@ -44,14 +44,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2ES2;
-import com.jogamp.opengl.GL3;
-import com.jogamp.opengl.GL3ES3;
-import com.jogamp.opengl.GL4;
-import com.jogamp.opengl.GLES2;
-import com.jogamp.opengl.GLContext;
-import com.jogamp.opengl.GLException;
+import com.jogamp.opengl.*;
+
 
 import jogamp.opengl.Debug;
 
@@ -376,7 +370,7 @@ public class ShaderCode {
      * @param type either {@link GL2ES2#GL_VERTEX_SHADER}, {@link GL2ES2#GL_FRAGMENT_SHADER}, {@link GL3#GL_GEOMETRY_SHADER},
      *                    {@link GL4#GL_TESS_CONTROL_SHADER}, {@link GL4#GL_TESS_EVALUATION_SHADER} or {@link GL3ES3#GL_COMPUTE_SHADER}.
      *
-     * @throws GLException if <code>type</code> is not supported
+
      *
      * @see #create(GL2ES2, int, Class, String, String, String, boolean)
      */
@@ -405,7 +399,7 @@ public class ShaderCode {
      *   <li>{@link GLES2#GL_NVIDIA_PLATFORM_BINARY_NV NVIDIA}: {@link #SUB_PATH_NVIDIA}</li>
      * </ul>
      *
-     * @throws GLException if <code>binFormat</code> is not supported
+
      *
      * @see #create(GL2ES2, int, Class, String, String, String, boolean)
      */

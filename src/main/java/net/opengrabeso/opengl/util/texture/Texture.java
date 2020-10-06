@@ -208,7 +208,7 @@ public class Texture {
     private static final boolean disableNPOT    = Debug.isPropertyDefined("jogl.texture.nonpot", true);
     private static final boolean disableTexRect = Debug.isPropertyDefined("jogl.texture.notexrect", true);
 
-    public Texture(final GL gl, final TextureData data) throws GLException {
+    public Texture(final GL gl, final TextureData data) {
         this.texID = 0;
         this.target = 0;
         this.imageTarget = 0;
@@ -284,10 +284,10 @@ public class Texture {
      * </p>
      * @param gl the current GL object
      *
-     * @throws GLException if no OpenGL context was current or if any
+
      * OpenGL-related errors occurred
      */
-    public void enable(final GL gl) throws GLException {
+    public void enable(final GL gl) {
         if( !gl.isGLcore() && GLES2.GL_TEXTURE_EXTERNAL_OES != target) {
             gl.glEnable(target);
         }
@@ -311,10 +311,10 @@ public class Texture {
      * </p>
      * @param gl the current GL object
      *
-     * @throws GLException if no OpenGL context was current or if any
+
      * OpenGL-related errors occurred
      */
-    public void disable(final GL gl) throws GLException {
+    public void disable(final GL gl) {
         if( !gl.isGLcore() && GLES2.GL_TEXTURE_EXTERNAL_OES != target ) {
             gl.glDisable(target);
         }
@@ -331,10 +331,10 @@ public class Texture {
      * on how to maximize performance when using many Texture objects.
      *
      * @param gl the current GL context
-     * @throws GLException if no OpenGL context was current or if any
+
      * OpenGL-related errors occurred
      */
-    public void bind(final GL gl) throws GLException {
+    public void bind(final GL gl) {
         validateTexID(gl, true);
         gl.glBindTexture(target, texID);
     }
@@ -342,9 +342,9 @@ public class Texture {
     /**
      * Destroys the native resources used by this texture object.
      *
-     * @throws GLException if any OpenGL-related errors occurred
+
      */
-    public void destroy(final GL gl) throws GLException {
+    public void destroy(final GL gl) {
         if(0!=texID) {
             gl.glDeleteTextures(1, new int[] {texID}, 0);
             texID = 0;
@@ -478,9 +478,9 @@ public class Texture {
      * Updates the entire content area incl. {@link TextureCoords}
      * of this texture using the data in the given image.
      *
-     * @throws GLException if any OpenGL-related errors occurred
+
      */
-    public void updateImage(final GL gl, final TextureData data) throws GLException {
+    public void updateImage(final GL gl, final TextureData data) {
         updateImage(gl, data, 0);
     }
 
@@ -515,9 +515,9 @@ public class Texture {
      * using the data in the given image. In general this is intended
      * for construction of cube maps.
      *
-     * @throws GLException if any OpenGL-related errors occurred
+
      */
-    public void updateImage(final GL gl, final TextureData data, final int targetOverride) throws GLException {
+    public void updateImage(final GL gl, final TextureData data, final int targetOverride) {
         validateTexID(gl, true);
 
         imgWidth = data.getWidth();
@@ -656,9 +656,9 @@ public class Texture {
      * @param y the y offset (in pixels) relative to the lower-left corner
      * of this texture
      *
-     * @throws GLException if any OpenGL-related errors occurred
+
      */
-    public void updateSubImage(final GL gl, final TextureData data, final int mipmapLevel, final int x, final int y) throws GLException {
+    public void updateSubImage(final GL gl, final TextureData data, final int mipmapLevel, final int x, final int y) {
         if (usingAutoMipmapGeneration && mipmapLevel != 0) {
             // When we're using mipmap generation via GL_GENERATE_MIPMAP, we
             // don't need to update other mipmap levels
@@ -695,13 +695,13 @@ public class Texture {
      * @param width the width (in pixels) of the rectangle to be updated
      * @param height the height (in pixels) of the rectangle to be updated
      *
-     * @throws GLException if no OpenGL context was current or if any
+
      * OpenGL-related errors occurred
      */
     public void updateSubImage(final GL gl, final TextureData data, final int mipmapLevel,
                                final int dstx, final int dsty,
                                final int srcx, final int srcy,
-                               final int width, final int height) throws GLException {
+                               final int width, final int height) {
         if (data.isDataCompressed()) {
             throw new GLException("updateSubImage specifying a sub-rectangle is not supported for compressed TextureData");
         }
@@ -720,7 +720,7 @@ public class Texture {
      * GL_TEXTURE_MAX_ANISOTROPY_EXT. Causes this texture to be bound to
      * the current texture state.
      *
-     * @throws GLException if no OpenGL context was current or if any
+
      * OpenGL-related errors occurred
      */
     public void setTexParameterf(final GL gl, final int parameterName,
@@ -734,7 +734,7 @@ public class Texture {
      * texture's target. Causes this texture to be bound to the current
      * texture state.
      *
-     * @throws GLException if any OpenGL-related errors occurred
+
      */
     public void setTexParameterfv(final GL gl, final int parameterName,
                                   final FloatBuffer params) {
@@ -747,7 +747,7 @@ public class Texture {
      * texture's target. Causes this texture to be bound to the current
      * texture state.
      *
-     * @throws GLException if any OpenGL-related errors occurred
+
      */
     public void setTexParameterfv(final GL gl, final int parameterName,
                                   final float[] params, final int params_offset) {
@@ -763,7 +763,7 @@ public class Texture {
      * platform and GL_CLAMP if not. Causes this texture to be bound to
      * the current texture state.
      *
-     * @throws GLException if any OpenGL-related errors occurred
+
      */
     public void setTexParameteri(final GL gl, final int parameterName,
                                  final int value) {
@@ -776,7 +776,7 @@ public class Texture {
      * target. Causes this texture to be bound to the current texture
      * state.
      *
-     * @throws GLException if any OpenGL-related errors occurred
+
      */
     public void setTexParameteriv(final GL gl, final int parameterName,
                                   final IntBuffer params) {
@@ -789,7 +789,7 @@ public class Texture {
      * target. Causes this texture to be bound to the current texture
      * state.
      *
-     * @throws GLException if any OpenGL-related errors occurred
+
      */
     public void setTexParameteriv(final GL gl, final int parameterName,
                                   final int[] params, final int params_offset) {
@@ -878,7 +878,7 @@ public class Texture {
 
     private void updateSubImageImpl(final GL gl, final TextureData data, final int newTarget, final int mipmapLevel,
                                     int dstx, int dsty,
-                                    int srcx, int srcy, int width, int height) throws GLException {
+                                    int srcx, int srcy, int width, int height) {
         data.setHaveEXTABGR(gl.isExtensionAvailable(GLExtensions.EXT_abgr));
         data.setHaveGL12(gl.isExtensionAvailable(GLExtensions.VERSION_1_2));
 
