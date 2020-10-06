@@ -40,24 +40,18 @@
 package net.opengrabeso.opengl.util.awt;
 
 import com.jogamp.common.nio.Buffers;
-import com.jogamp.common.util.InterruptSource;
-import com.jogamp.common.util.PropertyAccess;
-import net.opengrabeso.opengl.util.*;
 import net.opengrabeso.opengl.util.packrect.*;
 import net.opengrabeso.opengl.util.texture.*;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
 
-// For debugging purposes
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.event.*;
 import java.awt.font.*;
 import java.awt.geom.*;
 import java.nio.*;
@@ -66,10 +60,6 @@ import java.util.*;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.GLPointerFunc;
-import com.jogamp.opengl.glu.*;
-import com.jogamp.opengl.awt.*;
-
-import jogamp.opengl.Debug;
 
 
 /** Renders bitmapped Java 2D text into an OpenGL window with high
@@ -126,12 +116,6 @@ import jogamp.opengl.Debug;
     @author Kenneth Russell
 */
 public class TextRenderer {
-    private static final boolean DEBUG;
-
-    static {
-        Debug.initSingleton();
-        DEBUG = PropertyAccess.isPropertyDefined("jogl.debug.TextRenderer", true);
-    }
 
     // These are occasionally useful for more in-depth debugging
     private static final boolean DISABLE_GLYPH_CACHE = false;
@@ -693,10 +677,6 @@ public class TextRenderer {
         // Disable future attempts to use mipmapping if TextureRenderer
         // doesn't support it
         if (mipmap && !getBackingStore().isUsingAutoMipmapGeneration()) {
-            if (DEBUG) {
-                System.err.println("Disabled mipmapping in TextRenderer");
-            }
-
             mipmap = false;
         }
     }
@@ -738,10 +718,6 @@ public class TextRenderer {
         if (++numRenderCycles >= CYCLES_PER_FLUSH) {
             numRenderCycles = 0;
 
-            if (DEBUG) {
-                System.err.println("Clearing unused entries in endRendering()");
-            }
-
             clearUnusedEntries();
         }
     }
@@ -774,31 +750,16 @@ public class TextRenderer {
                 mGlyphProducer.clearCacheEntry(unicodeToClearFromCache);
             }
 
-            //      if (DEBUG) {
-            //        Graphics2D g = getGraphics2D();
-            //        g.setComposite(AlphaComposite.Clear);
-            //        g.fillRect(r.x(), r.y(), r.w(), r.h());
-            //        g.setComposite(AlphaComposite.Src);
-            //      }
         }
 
         // If we removed dead rectangles this cycle, try to do a compaction
         final float frag = packer.verticalFragmentationRatio();
 
         if (!deadRects.isEmpty() && (frag > MAX_VERTICAL_FRAGMENTATION)) {
-            if (DEBUG) {
-                System.err.println(
-                                   "Compacting TextRenderer backing store due to vertical fragmentation " +
-                                   frag);
-            }
 
             packer.compact();
         }
 
-        if (DEBUG) {
-            getBackingStore().markDirty(0, 0, getBackingStore().getWidth(),
-                                        getBackingStore().getHeight());
-        }
     }
 
     private void internal_draw3D(final CharSequence str, float x, final float y, final float z,
@@ -1133,11 +1094,6 @@ public class TextRenderer {
             }
             renderer.setSmoothing(smoothing);
 
-            if (DEBUG) {
-                System.err.println(" TextRenderer allocating backing store " +
-                                   w + " x " + h);
-            }
-
             return renderer;
         }
 
@@ -1163,12 +1119,6 @@ public class TextRenderer {
             // very quickly to its maximum size, at least with the TextFlow
             // demo when the text is being continually re-laid out.
             if (attemptNumber == 0) {
-                if (DEBUG) {
-                    System.err.println(
-                        "Clearing unused entries in preExpand(): attempt number " +
-                        attemptNumber);
-                }
-
                 if (inBeginEndPair) {
                     // Draw any outstanding glyphs
                     flush();
@@ -1188,11 +1138,6 @@ public class TextRenderer {
             packer.clear();
             stringLocations.clear();
             mGlyphProducer.clearAllCacheEntries();
-
-            if (DEBUG) {
-                System.err.println(
-                                   " *** Cleared all text because addition failed ***");
-            }
 
             if (attemptNumber == 0) {
                 return true;
@@ -1885,64 +1830,6 @@ public class TextRenderer {
 		    vbos[1] = mVBO_For_ResuableTileTexCoords;
 		    gl.glDeleteBuffers(2, IntBuffer.wrap(vbos));
 		}
-    }
-
-    class DebugListener implements GLEventListener {
-        private GLU glu;
-        private Frame frame;
-
-        DebugListener(final GL gl, final Frame frame) {
-            this.glu = GLU.createGLU(gl);
-            this.frame = frame;
-        }
-
-        @Override
-        public void display(final GLAutoDrawable drawable) {
-            final GL2 gl = GLContext.getCurrentGL().getGL2();
-            gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
-
-            if (packer == null) {
-                return;
-            }
-
-            final TextureRenderer rend = getBackingStore();
-            final int w = rend.getWidth();
-            final int h = rend.getHeight();
-            rend.beginOrthoRendering(w, h);
-            rend.drawOrthoRect(0, 0);
-            rend.endOrthoRendering();
-
-            if ((frame.getWidth() != w) || (frame.getHeight() != h)) {
-                EventQueue.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            frame.setSize(w, h);
-                        }
-                    });
-            }
-        }
-
-        @Override
-        public void dispose(final GLAutoDrawable drawable) {
-            mPipelinedQuadRenderer.dispose();
-            // n/a glu.destroy(); ??
-            glu=null;
-            frame=null;
-        }
-
-        // Unused methods
-        @Override
-        public void init(final GLAutoDrawable drawable) {
-        }
-
-        @Override
-        public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width,
-                            final int height) {
-        }
-
-        public void displayChanged(final GLAutoDrawable drawable,
-                                   final boolean modeChanged, final boolean deviceChanged) {
-        }
     }
 
     /**
