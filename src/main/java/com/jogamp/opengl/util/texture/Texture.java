@@ -530,109 +530,23 @@ public class Texture {
         int texParamTarget = this.target;
 
         // See whether we have automatic mipmap generation support
-        boolean haveAutoMipmapGeneration =
-            (gl.isExtensionAvailable(GLExtensions.VERSION_1_4) ||
-             gl.isExtensionAvailable(GLExtensions.SGIS_generate_mipmap));
 
         // Indicate to the TextureData what functionality is available
         data.setHaveEXTABGR(gl.isExtensionAvailable(GLExtensions.EXT_abgr));
         data.setHaveGL12(gl.isExtensionAvailable(GLExtensions.VERSION_1_2));
 
         // Indicates whether both width and height are power of two
-        final boolean isPOT = Bitfield.Util.isPowerOf2(imgWidth) && Bitfield.Util.isPowerOf2(imgHeight);
+        final boolean isPOT = true;
 
         // Note that automatic mipmap generation doesn't work for
         // GL_ARB_texture_rectangle
-        if (!isPOT && !haveNPOT(gl)) {
-            haveAutoMipmapGeneration = false;
-        }
 
-        boolean expandingCompressedTexture = false;
-        boolean done = false;
-        if (data.getMipmap() && !haveAutoMipmapGeneration) {
-            // GLU always scales the texture's dimensions to be powers of
-            // two. It also doesn't really matter exactly what the texture
-            // width and height are because the texture coords are always
-            // between 0.0 and 1.0.
-            imgWidth = Bitfield.Util.roundToPowerOf2(imgWidth);
-            imgHeight = Bitfield.Util.roundToPowerOf2(imgHeight);
-            texWidth = imgWidth;
-            texHeight = imgHeight;
-            texTarget = GL.GL_TEXTURE_2D;
-            done = true;
-        }
+        preferTexRect(gl);
 
-        if (!done && preferTexRect(gl) && !isPOT &&
-            haveTexRect(gl) && !data.isDataCompressed() && !gl.isGL3() && !gl.isGLES()) {
-            // GL_ARB_texture_rectangle does not work for compressed textures
-            if (DEBUG) {
-                System.err.println("Using GL_ARB_texture_rectangle preferentially on this hardware");
-            }
+        texWidth = imgWidth;
+        texHeight = imgHeight;
+        texTarget = GL.GL_TEXTURE_2D;
 
-            texWidth = imgWidth;
-            texHeight = imgHeight;
-            texTarget = GL2.GL_TEXTURE_RECTANGLE_ARB;
-            done = true;
-        }
-
-        if (!done && (isPOT || haveNPOT(gl))) {
-            if (DEBUG) {
-                if (isPOT) {
-                    System.err.println("Power-of-two texture");
-                } else {
-                    System.err.println("Using GL_ARB_texture_non_power_of_two");
-                }
-            }
-
-            texWidth = imgWidth;
-            texHeight = imgHeight;
-            texTarget = GL.GL_TEXTURE_2D;
-            done = true;
-        }
-
-        if (!done && haveTexRect(gl) && !data.isDataCompressed() && !gl.isGL3() && !gl.isGLES()) {
-            // GL_ARB_texture_rectangle does not work for compressed textures
-            if (DEBUG) {
-                System.err.println("Using GL_ARB_texture_rectangle");
-            }
-
-            texWidth = imgWidth;
-            texHeight = imgHeight;
-            texTarget = GL2.GL_TEXTURE_RECTANGLE_ARB;
-            done = true;
-        }
-
-        if (!done) {
-            // If we receive non-power-of-two compressed texture data and
-            // don't have true hardware support for compressed textures, we
-            // can fake this support by producing an empty "compressed"
-            // texture image, using glCompressedTexImage2D with that to
-            // allocate the texture, and glCompressedTexSubImage2D with the
-            // incoming data.
-            if (data.isDataCompressed()) {
-                if (data.getMipmapData() != null) {
-
-                    // We don't currently support expanding of compressed,
-                    // mipmapped non-power-of-two textures to the nearest power
-                    // of two; the obvious port of the non-mipmapped code didn't
-                    // work
-                    throw new GLException("Mipmapped non-power-of-two compressed textures only supported on OpenGL 2.0 hardware (GL_ARB_texture_non_power_of_two)");
-                }
-
-                expandingCompressedTexture = true;
-            }
-
-            if (DEBUG) {
-                System.err.println("Expanding texture to power-of-two dimensions");
-            }
-
-            if (data.getBorder() != 0) {
-                throw new RuntimeException("Scaling up a non-power-of-two texture which has a border won't work");
-            }
-            texWidth = Bitfield.Util.roundToPowerOf2(imgWidth);
-            texHeight = Bitfield.Util.roundToPowerOf2(imgHeight);
-            texTarget = GL.GL_TEXTURE_2D;
-        }
         texParamTarget = texTarget;
         imageTarget = texTarget;
         updateTexCoords();
@@ -650,80 +564,50 @@ public class Texture {
             gl.glBindTexture(texTarget, texID);
         }
 
-        if (data.getMipmap() && !haveAutoMipmapGeneration) {
-            final int[] align = new int[1];
-            gl.glGetIntegerv(GL.GL_UNPACK_ALIGNMENT, align, 0); // save alignment
-            gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, data.getAlignment());
+        checkCompressedTextureExtensions(gl, data);
+        final Buffer[] mipmapData = data.getMipmapData();
+        if (mipmapData != null) {
+            int width = texWidth;
+            int height = texHeight;
+            for (int i = 0; i < mipmapData.length; i++) {
+                if (data.isDataCompressed()) {
+                    // Need to use glCompressedTexImage2D directly to allocate and fill this image
+                    // Avoid spurious memory allocation when possible
+                    gl.glCompressedTexImage2D(texTarget, i, data.getInternalFormat(),
+                                              width, height, data.getBorder(),
+                                              mipmapData[i].remaining(), mipmapData[i]);
+                } else {
+                    // Allocate texture image at this level
+                    gl.glTexImage2D(texTarget, i, data.getInternalFormat(),
+                                    width, height, data.getBorder(),
+                                    data.getPixelFormat(), data.getPixelType(), null);
+                    updateSubImageImpl(gl, data, texTarget, i, 0, 0, 0, 0, data.getWidth(), data.getHeight());
+                }
 
-            if (data.isDataCompressed()) {
-                throw new GLException("May not request mipmap generation for compressed textures");
-            }
-
-            try {
-                // FIXME: may need check for GLUnsupportedException
-                final GLU glu = GLU.createGLU(gl);
-                glu.gluBuild2DMipmaps(texTarget, data.getInternalFormat(),
-                                      data.getWidth(), data.getHeight(),
-                                      data.getPixelFormat(), data.getPixelType(), data.getBuffer());
-            } finally {
-                gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, align[0]); // restore alignment
+                width = Math.max(width / 2, 1);
+                height = Math.max(height / 2, 1);
             }
         } else {
-            checkCompressedTextureExtensions(gl, data);
-            final Buffer[] mipmapData = data.getMipmapData();
-            if (mipmapData != null) {
-                int width = texWidth;
-                int height = texHeight;
-                for (int i = 0; i < mipmapData.length; i++) {
-                    if (data.isDataCompressed()) {
-                        // Need to use glCompressedTexImage2D directly to allocate and fill this image
-                        // Avoid spurious memory allocation when possible
-                        gl.glCompressedTexImage2D(texTarget, i, data.getInternalFormat(),
-                                                  width, height, data.getBorder(),
-                                                  mipmapData[i].remaining(), mipmapData[i]);
-                    } else {
-                        // Allocate texture image at this level
-                        gl.glTexImage2D(texTarget, i, data.getInternalFormat(),
-                                        width, height, data.getBorder(),
-                                        data.getPixelFormat(), data.getPixelType(), null);
-                        updateSubImageImpl(gl, data, texTarget, i, 0, 0, 0, 0, data.getWidth(), data.getHeight());
-                    }
-
-                    width = Math.max(width / 2, 1);
-                    height = Math.max(height / 2, 1);
-                }
+            if (data.isDataCompressed()) {
+                // Need to use glCompressedTexImage2D directly to allocate and fill this image
+                // Avoid spurious memory allocation when possible
+                gl.glCompressedTexImage2D(texTarget, 0, data.getInternalFormat(),
+                                          texWidth, texHeight, data.getBorder(),
+                                          data.getBuffer().capacity(), data.getBuffer());
             } else {
-                if (data.isDataCompressed()) {
-                    if (!expandingCompressedTexture) {
-                        // Need to use glCompressedTexImage2D directly to allocate and fill this image
-                        // Avoid spurious memory allocation when possible
-                        gl.glCompressedTexImage2D(texTarget, 0, data.getInternalFormat(),
-                                                  texWidth, texHeight, data.getBorder(),
-                                                  data.getBuffer().capacity(), data.getBuffer());
-                    } else {
-                        final ByteBuffer buf = DDSImage.allocateBlankBuffer(texWidth,
-                                                                      texHeight,
-                                                                      data.getInternalFormat());
-                        gl.glCompressedTexImage2D(texTarget, 0, data.getInternalFormat(),
-                                                  texWidth, texHeight, data.getBorder(),
-                                                  buf.capacity(), buf);
-                        updateSubImageImpl(gl, data, texTarget, 0, 0, 0, 0, 0, data.getWidth(), data.getHeight());
-                    }
-                } else {
-                    if (data.getMipmap() && haveAutoMipmapGeneration && gl.isGL2ES1()) {
-                        // For now, only use hardware mipmapping for uncompressed 2D
-                        // textures where the user hasn't explicitly specified
-                        // mipmap data; don't know about interactions between
-                        // GL_GENERATE_MIPMAP and glCompressedTexImage2D
-                        gl.glTexParameteri(texParamTarget, GL2ES1.GL_GENERATE_MIPMAP, GL.GL_TRUE);
-                        usingAutoMipmapGeneration = true;
-                    }
-
-                    gl.glTexImage2D(texTarget, 0, data.getInternalFormat(),
-                                    texWidth, texHeight, data.getBorder(),
-                                    data.getPixelFormat(), data.getPixelType(), null);
-                    updateSubImageImpl(gl, data, texTarget, 0, 0, 0, 0, 0, data.getWidth(), data.getHeight());
+                if (data.getMipmap() && gl.isGL2ES1()) {
+                    // For now, only use hardware mipmapping for uncompressed 2D
+                    // textures where the user hasn't explicitly specified
+                    // mipmap data; don't know about interactions between
+                    // GL_GENERATE_MIPMAP and glCompressedTexImage2D
+                    gl.glTexParameteri(texParamTarget, GL2ES1.GL_GENERATE_MIPMAP, GL.GL_TRUE);
+                    usingAutoMipmapGeneration = true;
                 }
+
+                gl.glTexImage2D(texTarget, 0, data.getInternalFormat(),
+                                texWidth, texHeight, data.getBorder(),
+                                data.getPixelFormat(), data.getPixelType(), null);
+                updateSubImageImpl(gl, data, texTarget, 0, 0, 0, 0, 0, data.getWidth(), data.getHeight());
             }
         }
 
