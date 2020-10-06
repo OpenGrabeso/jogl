@@ -155,74 +155,12 @@ public class ShaderUtil {
      * via {@link GL2ES2#glGetIntegerv(int, int[], int)}.
      */
     public static Set<Integer> getShaderBinaryFormats(final GL _gl) {
-        final GL2ES2 gl = _gl.getGL2ES2();
-        final ProfileInformation info = getProfileInformation(gl);
-        if(null == info.shaderBinaryFormats) {
-            info.shaderBinaryFormats = new HashSet<Integer>();
-            if (gl.isGLES2Compatible()) {
-                try {
-                    final int[] param = new int[1];
-                    gl.glGetIntegerv(GL2ES2.GL_NUM_SHADER_BINARY_FORMATS, param, 0);
-                    final int err = gl.glGetError();
-                    final int numFormats = GL.GL_NO_ERROR == err ? param[0] : 0;
-                    if(numFormats>0) {
-                        final int[] formats = new int[numFormats];
-                        gl.glGetIntegerv(GL2ES2.GL_SHADER_BINARY_FORMATS, formats, 0);
-                        for(int i=0; i<numFormats; i++) {
-                            info.shaderBinaryFormats.add(Integer.valueOf(formats[i]));
-                        }
-                    }
-                } catch (final GLException gle) {
-                    System.err.println("Caught exception on thread "+Thread.currentThread().getName());
-                    gle.printStackTrace();
-                }
-            }
-        }
-        return info.shaderBinaryFormats;
+        return new HashSet<Integer>();
     }
 
-    /** Returns true if a hader compiler is available, otherwise false. */
+    /** Returns true if a shader compiler is available, otherwise false. */
     public static boolean isShaderCompilerAvailable(final GL _gl) {
-        final GL2ES2 gl = _gl.getGL2ES2();
-        final ProfileInformation info = getProfileInformation(gl);
-        if(null==info.shaderCompilerAvailable) {
-            if(gl.isGLES2()) {
-                boolean queryOK = false;
-                try {
-                    final byte[] param = new byte[1];
-                    gl.glGetBooleanv(GL2ES2.GL_SHADER_COMPILER, param, 0);
-                    final int err = gl.glGetError();
-                    boolean v = GL.GL_NO_ERROR == err && param[0]!=(byte)0x00;
-                    if(!v) {
-                        final Set<Integer> bfs = getShaderBinaryFormats(gl);
-                        if(bfs.size()==0) {
-                            // no supported binary formats, hence a compiler must be available!
-                            v = true;
-                        }
-                    }
-                    info.shaderCompilerAvailable = Boolean.valueOf(v);
-                    queryOK = true;
-                } catch (final GLException gle) {
-                    System.err.println("Caught exception on thread "+Thread.currentThread().getName());
-                    gle.printStackTrace();
-                }
-                if(!queryOK) {
-                    info.shaderCompilerAvailable = Boolean.valueOf(true);
-                }
-            } else if( gl.isGL2ES2() ) {
-                info.shaderCompilerAvailable = new Boolean(true);
-            } else {
-                throw new GLException("Invalid OpenGL profile");
-            }
-        }
-        return info.shaderCompilerAvailable.booleanValue();
-    }
-
-    /** Returns true if GeometryShader is supported, i.e. whether GLContext is &ge; 3.2 or ARB_geometry_shader4 extension is available. */
-    public static boolean isGeometryShaderSupported(final GL _gl) {
-      final GLContext ctx = _gl.getContext();
-      return ctx.getGLVersionNumber().compareTo(GLContext.Version3_2) >= 0 ||
-             ctx.isExtensionAvailable(GLExtensions.ARB_geometry_shader4);
+        return false;
     }
 
     public static void shaderSource(final GL _gl, final int shader, final CharSequence[] source)
